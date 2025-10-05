@@ -50,7 +50,7 @@ notification:
 # ----- Posts related labels -----
 
 post:
-  written_by: By
+  written_by: Written By
   posted: Posted
   updated: Updated
   words: words

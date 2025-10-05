@@ -1,5 +1,7 @@
 ---
 title: Obscure Tooltips
+date: 2025-09-25 12:00:00 -0300
+last_modified_at: 2025-10-05 16:00:00 -0300
 layout: post
 icon: fas fa-book
 order: 1
@@ -9,9 +11,7 @@ image:
   path: /assets/images/obscure-tooltips-logo.jpg
 ---
 
-# Welcome to the Obscure Tooltips Wiki!
-
-The information provided here is intended to help understand the core concepts of the mod and customize it to your needs.
+**Obscure Tooltips** is a client-side mod that enhances item tooltips with animated visual and particle effects, making rarer items more vibrant and eye-catching. The information provided here is intended to help understand the core concepts of the mod and customize it to your needs.
 
 > This wiki is relevant only for **version 3.0.0 and above**.<br>Older versions are incomplete and may be unstable.
 {: .prompt-info }
@@ -20,11 +20,11 @@ The information provided here is intended to help understand the core concepts o
 
 Obscure Tooltips is a fully data-driven mod with a **modular approach** to content. Tooltips are built like with a **constructor**: complex elements combine smaller blocks for flexibility, reusability, and easy customization – you can assemble existing parts or create entirely new ones.
 
-- The smallest building blocks are [Panels](https://github.com/ObscuriaLithium/obscure-tooltips/wiki/Tooltip-Elements#panels), [Frames](https://github.com/ObscuriaLithium/obscure-tooltips/wiki/Tooltip-Elements#frames), [Slots](https://github.com/ObscuriaLithium/obscure-tooltips/wiki/Tooltip-Elements#slots), [Icons](https://github.com/ObscuriaLithium/obscure-tooltips/wiki/Tooltip-Elements#icons), and [Effects](https://github.com/ObscuriaLithium/obscure-tooltips/wiki/Tooltip-Elements#effects) – JSON files that define how each element looks. These elements are **visual definitions only**: they don’t know how or where they will be used, only how they appear.
+- The smallest building blocks are [Panels](#panels), [Frames](#frames), [Slots](#slots), [Icons](#icons), and [Effects](#effects) – JSON files that define how each element looks. These elements are **visual definitions only**: they don’t know how or where they will be used, only how they appear.
 
-- These elements are then combined into [Styles](https://github.com/ObscuriaLithium/obscure-tooltips/wiki/Tooltip-Styles) – JSON files containing references to a Panel, a Frame, and other constituent elements. A Style is also purely descriptive and does not contain application logic.
+- These elements are then combined into [Styles](#tooltip-styles) – JSON files containing references to a Panel, a Frame, and other constituent elements. A Style is also purely descriptive and does not contain application logic.
 
-- To apply a Style to items, [Definitions](https://github.com/ObscuriaLithium/obscure-tooltips/wiki/Tooltip-Definitions) are used – JSON files that specify a priority, a reference to a Style, and filters determining which items the Style applies to (by ID, tags, rarity, NBT, etc.).
+- To apply a Style to items, [Definitions](#tooltip-definitions) are used – JSON files that specify a priority, a reference to a Style, and filters determining which items the Style applies to (by ID, tags, rarity, NBT, etc.).
 
 In summary, each layer has a **single responsibility**: either describing the visual appearance or defining application rules. This separation makes maintaining and scaling your designs straightforward and efficient.
 
@@ -599,7 +599,7 @@ A particle rendered from a square texture. Any 1:1 resolution texture can be use
 }
 ```
 
-## Example Usage
+## Examples
 
 To see all features in action, check out the built-in Obscuria Tooltips [resource pack](https://github.com/ObscuriaLithium/obscure-tooltips/tree/master/common/src/main/resources).
 
