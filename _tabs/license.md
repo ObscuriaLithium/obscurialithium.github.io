@@ -7,7 +7,7 @@ order: 4
 toc: true
 ---
 
-# Copyright © Obscuria. All Rights Reserved.
+# Obscuria Limited-Use License
 
 -----
 
