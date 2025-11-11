@@ -4,7 +4,7 @@ date: 2025-09-25 12:00:00 -0300
 last_modified_at: 2025-10-05 16:00:00 -0300
 layout: post
 icon: fas fa-book
-order: 1
+order: 2
 toc: true
 comments: true
 image:
@@ -18,7 +18,7 @@ image:
 
 ### Core Concept
 
-Obscure Tooltips is a fully data-driven mod with a **modular approach** to content. Tooltips are built like with a **constructor**: complex elements combine smaller blocks for flexibility, reusability, and easy customization – you can assemble existing parts or create entirely new ones.
+Obscure Tooltips is a fully data-driven mod with a modular system. Each tooltip is built from small pieces, like using building blocks – you can combine existing parts or create your own. All customization is done either through a **custom resource pack**, or in a **config-like way** using [Fragmentum Layer](/fragmentum-layer/), without needing to package or enable anything manually.
 
 - The smallest building blocks are [Panels](#panels), [Frames](#frames), [Slots](#slots), [Icons](#icons), and [Effects](#effects) – JSON files that define how each element looks. These elements are **visual definitions only**: they don’t know how or where they will be used, only how they appear.
 
@@ -26,7 +26,22 @@ Obscure Tooltips is a fully data-driven mod with a **modular approach** to conte
 
 - To apply a Style to items, [Definitions](#tooltip-definitions) are used – JSON files that specify a priority, a reference to a Style, and filters determining which items the Style applies to (by ID, tags, rarity, NBT, etc.).
 
-In summary, each layer has a **single responsibility**: either describing the visual appearance or defining application rules. This separation makes maintaining and scaling your designs straightforward and efficient.
+### Folder Structure
+
+```text
+assets/
+└── <mod_id>/              -> the namespace of your mod or target mod
+    └── tooltips/
+        ├── element/       -> contains visual building blocks
+        │   ├── panel/     -> tooltip backgrounds
+        │   ├── frame/     -> decorative borders and outlines
+        │   ├── slot/      -> item slot visuals
+        │   ├── icon/      -> static or animated icons
+        │   └── effect/    -> particle and glow effects
+        ├── style/         -> combines elements into full tooltip styles
+        ├── definition/    -> assigns styles to items using filters
+        └── label/         -> defines additional text lines under item names
+```
 
 -----
 
@@ -35,9 +50,6 @@ In summary, each layer has a **single responsibility**: either describing the vi
 ### Panels
 
 Panels define the visual background of a tooltip and serve as the foundation for text and other elements.
- 
-> Resource Pack Directory: `assets/<modid>/tooltips/element/panel/`
-{: .prompt-tip }
 
 #### 1. [Blank Panel](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/panel/BlankPanel.java)
 
@@ -77,9 +89,6 @@ A rectangular panel with a border styled after the vanilla design. The gradient 
 
 Frames are decorative layers drawn on top of panels in tooltips.
 
-> Resource Pack Directory: `assets/<modid>/tooltips/element/frame/`
-{: .prompt-tip }
-
 #### 1. [Blank Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/frame/BlankFrame.java)
 
 Essentially, it acts as an invisible placeholder.
@@ -104,9 +113,6 @@ This frame uses a texture divided into 9 sections to automatically stretch and a
 <br>
 
 ### Slots
-
-> Resource Pack Directory: `assets/<modid>/tooltips/element/slot/`
-{: .prompt-tip }
 
 #### 1. [Blank Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/slot/BlankSlot.java)
 
@@ -138,9 +144,6 @@ A rectangular panel with a borders.
 <br>
 
 ### Icons
-
-> Resource Pack Directory: `assets/<modid>/tooltips/element/icon/`
-{: .prompt-tip }
 
 #### 1. [Blank Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/icon/BlankIcon.java)
 
@@ -209,9 +212,6 @@ See [Transform](#transform) for more details.
 <br>
 
 ### Effects
-
-> Resource Pack Directory: `assets/<modid>/tooltips/element/effect/`
-{: .prompt-tip }
 
 #### 1. [Rim Light Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/effect/RimLightEffect.java)
 
@@ -286,9 +286,6 @@ See [Particles](#particles) for more details.
 
 Style files simply combine elements to define the visual appearance of a style. In the example below, elements are referenced from `assets/obscure_tooltips/tooltips/element/<kind>/default.json`. Here, `<kind>` can be `panel`, `frame`, `slot`, `icon`, etc.
 
-> Resource Pack Directory: `assets/<modid>/tooltips/style/`
-{: .prompt-tip }
-
 ```json
 {
   "panel": "obscure_tooltips:default",
@@ -307,9 +304,6 @@ Style files simply combine elements to define the visual appearance of a style. 
 ## Tooltip Definitions
 
 Definition files determine which items a style should apply to, based on the specified filter. In the example below, the style located at `assets/obscure_tooltips/tooltips/style/default.json` will be applied to **all items**:
-
-> Resource Pack Directory: `assets/<modid>/tooltips/definition/`
-{: .prompt-tip }
 
 ```json
 {
@@ -488,9 +482,6 @@ You can also nest aggregate filters inside one another to create more advanced f
 ## Tooltip Labels
 
 Label files define the additional line of text displayed beneath an item’s name. Using **providers**, labels can display the item’s rarity or custom text. If an item matches multiple label definitions, the one with the **highest priority** is applied.
-
-> Resource Pack Directory: `assets/<modid>/tooltips/label/`
-{: .prompt-tip }
 
 For example, the following file will display the **rarity label** for **all items**:
 

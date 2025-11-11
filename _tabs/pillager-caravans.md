@@ -4,7 +4,7 @@ date: 2025-10-05 16:00:00 -0300
 last_modified_at: 2025-10-05 16:00:00 -0300
 layout: post
 icon: fas fa-book
-order: 2
+order: 3
 toc: true
 comments: true
 image:
@@ -13,16 +13,25 @@ image:
 
 **Pillager Caravans** adds roaming, cargo-filled convoys guarded by pillagers, vindicators, and even ravagers. Instead of static treasure chests, caravans travel across biomes – sometimes near your base – with cargo that changes depending on the environment. The information provided here is intended to help understand the core concepts of the mod and customize it to your needs.
 
-## Core Concept
+### Core Concept
 
-Caravan generation is fully data-driven, meaning everything can be customized with datapacks. It’s divided into two main parts – [Caravan Variations](#caravan-variation) and [Caravan Placements](#caravan-placement):
+Caravan generation is fully data-driven. All customization is done either through a **custom datapack**, or in a **config-like way** using [Fragmentum Layer](/fragmentum-layer/), without needing to package or enable anything manually. It’s divided into two main parts – [Caravan Variations](#caravan-variation) and [Caravan Placements](#caravan-placement):
 - **Caravan Variation** defines what a caravan looks like: which mobs are part of it, what cargo it carries, and any special properties it has.
 - **Caravan Placement** defines where and when caravans appear, setting their spawn conditions and selecting one of the available variations based on weighted chances.
 
-## Caravan Variation
+### Folder Structure
 
-> Data Pack Directory: `data/<modid>/caravans/variation/`
-{: .prompt-tip }
+```text
+data/
+└── <mod_id>/             -> the namespace of your mod or target mod
+    └── caravans/
+        ├── variation/    -> defines different caravan types
+        └── placement/    -> defines spawn rules and selection logic
+```
+
+-----
+
+## Caravan Variation
 
 - **cooldown** – The number of ticks (20 ticks = 1 second) before the game tries to spawn another caravan after this one has successfully spawned.
 - **leader** – A [Caravan Member](#caravan-member) object that acts as the leader of the caravan. This should be an illager-type mob (including modded ones), a ravager, or at least a witch – only these entities have the necessary AI to travel and lead others.
@@ -71,9 +80,6 @@ A nested object inside a [Caravan Variation](#caravan-variation) that defines an
 ```
 
 ## Caravan Placement
-
-> Data Pack Directory: `data/<modid>/caravans/placement/`
-{: .prompt-tip }
 
 - **weight** – How likely this placement file is to be chosen compared to others. If several placements match the same area, one of them will be picked randomly using these weights.
 - **biomes** – A single biome ID, a biome tag (like #minecraft:is_forest), or a list of them. Caravans from this placement will only spawn in these biomes.
@@ -124,6 +130,8 @@ A nested object inside a [Caravan Variation](#caravan-variation) that defines an
   ]
 }
 ```
+
+-----
 
 ## Examples
 
