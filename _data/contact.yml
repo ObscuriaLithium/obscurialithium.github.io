@@ -1,7 +1,7 @@
 #  The contact options.
 
 - type: discord
-  icon: "fas fa-brands fa-discord"
+  icon: "fas fa-comment-dots"
   url: "https://dsc.gg/obscuria"
 
 - type: curseforge
