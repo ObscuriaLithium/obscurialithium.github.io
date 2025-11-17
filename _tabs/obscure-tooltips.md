@@ -51,7 +51,7 @@ assets/
 
 Panels define the visual background of a tooltip and serve as the foundation for text and other elements.
 
-#### 1. [Blank Panel](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/panel/BlankPanel.java)
+#### 1. [Blank Panel](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/panel/BlankPanel.java)
 
 Essentially, it acts as an invisible placeholder.
 
@@ -61,7 +61,7 @@ Essentially, it acts as an invisible placeholder.
 }
 ```
 
-#### 2. [Color Rect Panel](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/panel/ColorRectPanel.java)
+#### 2. [Color Rect Panel](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/panel/ColorRectPanel.java)
 
 A rectangular panel with a border styled after the vanilla design. The gradient palette can be customized for both the panel surface and its border. See [Colors](#colors) for more details.
 
@@ -89,7 +89,7 @@ A rectangular panel with a border styled after the vanilla design. The gradient 
 
 Frames are decorative layers drawn on top of panels in tooltips.
 
-#### 1. [Blank Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/frame/BlankFrame.java)
+#### 1. [Blank Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/frame/BlankFrame.java)
 
 Essentially, it acts as an invisible placeholder.
 
@@ -99,7 +99,7 @@ Essentially, it acts as an invisible placeholder.
 }
 ```
 
-#### 2. [Nine Sliced Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/frame/NineSlicedFrame.java)
+#### 2. [Nine Sliced Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/frame/NineSlicedFrame.java)
 
 This frame uses a texture divided into 9 sections to automatically stretch and align the corners and edges of the tooltip. You can use the built-in [golden_frame.png](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/resources/assets/obscure_tooltips/textures/gui/golden_frame.png) as a reference for positioning your own textures.
 
@@ -114,7 +114,7 @@ This frame uses a texture divided into 9 sections to automatically stretch and a
 
 ### Slots
 
-#### 1. [Blank Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/slot/BlankSlot.java)
+#### 1. [Blank Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/slot/BlankSlot.java)
 
 Essentially, it acts as an invisible placeholder.
 
@@ -124,7 +124,7 @@ Essentially, it acts as an invisible placeholder.
 }
 ```
 
-#### 2. [Color Rect Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/slot/ColorRectSlot.java)
+#### 2. [Color Rect Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/slot/ColorRectSlot.java)
 
 A rectangular panel with a borders.
 
@@ -145,7 +145,7 @@ A rectangular panel with a borders.
 
 ### Icons
 
-#### 1. [Blank Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/icon/BlankIcon.java)
+#### 1. [Blank Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/icon/BlankIcon.java)
 
 Essentially, it acts as an invisible placeholder.
 
@@ -155,7 +155,7 @@ Essentially, it acts as an invisible placeholder.
 }
 ```
 
-#### 2. [Static Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/icon/StaticIcon.java)
+#### 2. [Static Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/icon/StaticIcon.java)
 
 See [Transform](#transform) for more details.
 
@@ -170,7 +170,7 @@ See [Transform](#transform) for more details.
 }
 ```
 
-#### 3. [Accent Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/icon/AccentIcon.java)
+#### 3. [Accent Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/icon/AccentIcon.java)
 
 ```json
 {
@@ -183,7 +183,7 @@ See [Transform](#transform) for more details.
 }
 ```
 
-#### 4. [Accent Spin Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/icon/AccentSpinIcon.java)
+#### 4. [Accent Spin Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/icon/AccentSpinIcon.java)
 
 ```json
 {
@@ -196,7 +196,7 @@ See [Transform](#transform) for more details.
 }
 ```
 
-#### 5. [Accent Burst Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/icon/AccentBurstIcon.java)
+#### 5. [Accent Burst Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/icon/AccentBurstIcon.java)
 
 ```json
 {
@@ -213,7 +213,7 @@ See [Transform](#transform) for more details.
 
 ### Effects
 
-#### 1. [Rim Light Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/effect/RimLightEffect.java)
+#### 1. [Rim Light Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/RimLightEffect.java)
 
 ```json
 {
@@ -233,7 +233,7 @@ See [Transform](#transform) for more details.
 }
 ```
 
-#### 2. [Ray Glow Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/effect/RayGlowEffect.java)
+#### 2. [Ray Glow Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/RayGlowEffect.java)
 
 ```json
 {
@@ -243,7 +243,7 @@ See [Transform](#transform) for more details.
 }
 ```
 
-#### 3. [Inward Particle Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/effect/InwardParticleEffect.java)
+#### 3. [Inward Particle Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/InwardParticleEffect.java)
 
 See [Particles](#particles) for more details.
 
@@ -263,7 +263,7 @@ See [Particles](#particles) for more details.
 }
 ```
 
-#### 4. [Icon Particle Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/element/effect/IconParticleEffect.java)
+#### 4. [Icon Particle Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/IconParticleEffect.java)
 
 ```json
 {
@@ -370,7 +370,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 
 <br>
 
-### 1. [Always Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/AlwaysFilter.java)
+### 1. [Always Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/AlwaysFilter.java)
 
 ```json
 "filter": {
@@ -378,7 +378,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 2. [Never Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/NeverFilter.java)
+### 2. [Never Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/NeverFilter.java)
 
 ```json
 "filter": {
@@ -386,7 +386,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 3. [All Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/AllOfFilter.java)
+### 3. [All Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/AllOfFilter.java)
 
 ```json
 "filter": {
@@ -395,7 +395,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 4. [Any Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/AnyOfFilter.java)
+### 4. [Any Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/AnyOfFilter.java)
 
 ```json
 "filter": {
@@ -404,7 +404,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 5. [None Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/NoneOfFilter.java)
+### 5. [None Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/NoneOfFilter.java)
 
 ```json
 "filter": {
@@ -413,7 +413,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 6. [Item Or Tag Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/ItemOrTagFilter.java)
+### 6. [Item Or Tag Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/ItemOrTagFilter.java)
 
 ```json
 "filter": {
@@ -425,7 +425,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 7. [Mod Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/ModFilter.java)
+### 7. [Mod Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/ModFilter.java)
 
 ```json
 "filter": {
@@ -437,7 +437,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 8. [Enchantment Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/EnchantmentFilter.java)
+### 8. [Enchantment Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/EnchantmentFilter.java)
 
 ```json
 "filter": {
@@ -450,7 +450,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 9. [Rarity Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/RarityFilter.java)
+### 9. [Rarity Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/RarityFilter.java)
 
 ```json
 "filter": {
@@ -459,7 +459,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 10. [NBT Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/NbtFilter.java)
+### 10. [NBT Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/NbtFilter.java)
 
 ```json
 "filter": {
@@ -468,7 +468,7 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
-### 11. [Property Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/filter/PropertyFilter.java)
+### 11. [Property Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/PropertyFilter.java)
 
 ```json
 "filter": {
@@ -499,7 +499,7 @@ For example, the following file will display the **rarity label** for **all item
 
 <br>
 
-### 1. [Rarity Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/label/RarityLabelProvider.java)
+### 1. [Rarity Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/label/RarityLabelProvider.java)
 
 ```json
 "provider": {
@@ -507,7 +507,7 @@ For example, the following file will display the **rarity label** for **all item
 }
 ```
 
-### 2. [Literal Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/label/LiteralLabelProvider.java)
+### 2. [Literal Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/label/LiteralLabelProvider.java)
 
 ```json
 "provider": {
@@ -516,7 +516,7 @@ For example, the following file will display the **rarity label** for **all item
 }
 ```
 
-### 3. [Translatable Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/label/TranslatableLabelProvider.java)
+### 3. [Translatable Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/label/TranslatableLabelProvider.java)
 
 ```json
 "provider": {
@@ -565,7 +565,7 @@ The transform object is always optional. If omitted, default values are used. Ea
 
 Particles are used by certain effects. There are multiple particle types available:
 
-#### 1. [Line Particle](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/particle/LineParticle.java)
+#### 1. [Line Particle](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/particle/LineParticle.java)
 
 A horizontal line one pixel thick, with a gradient fading toward the center.
 
@@ -578,7 +578,7 @@ A horizontal line one pixel thick, with a gradient fading toward the center.
 }
 ```
 
-#### 2. [Texture Particle](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/particle/TextureParticle.java)
+#### 2. [Texture Particle](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/particle/TextureParticle.java)
 
 A particle rendered from a square texture. Any 1:1 resolution texture can be used, but with the default scale it is treated as having a virtual size of 16x16 pixels.
 
