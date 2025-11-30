@@ -15,7 +15,7 @@ image:
 
 ### Core Concept
 
-Caravan generation is fully data-driven. All customization is done either through a **custom datapack**, or in a **config-like way** using [Fragmentum Layer](/fragmentum-layer/), without needing to package or enable anything manually. It’s divided into two main parts – [Caravan Variations](#caravan-variation) and [Caravan Placements](#caravan-placement):
+Caravan generation is fully data-driven. All customization is done either through a **custom data pack**, or in a **config-like way** using [Fragmentum Layer](/fragmentum-layer/), without needing to package or enable anything manually. It’s divided into two main parts – [Caravan Variations](#caravan-variation) and [Caravan Placements](#caravan-placement):
 - **Caravan Variation** defines what a caravan looks like: which mobs are part of it, what cargo it carries, and any special properties it has.
 - **Caravan Placement** defines where and when caravans appear, setting their spawn conditions and selecting one of the available variations based on weighted chances.
 
@@ -135,11 +135,11 @@ A nested object inside a [Caravan Variation](#caravan-variation) that defines an
 
 ## Examples
 
-To see all features in action, check out the built-in Pillager Caravans [data pack](https://github.com/ObscuriaLithium/pillager-caravans/tree/master/common/src/main/resources).
+To see all features in action, check out the built-in [Classic Caravans](https://github.com/ObscuriaLithium/pillager-caravans/tree/master/common/src/main/resources/packs/classic_caravans) data pack.
 
 ## Overriding
 
-If you want to completely disable the built-in caravans, you can override the [Caravan Placement](#caravan-placement) files in your data pack. Simply follow the standard Minecraft resource override rules and set the biomes array to empty – this will exclude the file from being used during caravan generation.
+You can completely disable the built-in caravans by either turning off the **Classic Caravans** data pack or overriding its [Caravan Placement](#caravan-placement) files in your data pack with an empty `biomes` array.
 
 ## Any Questions?
 

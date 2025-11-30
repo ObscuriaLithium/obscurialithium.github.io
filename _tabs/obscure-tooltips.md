@@ -592,11 +592,11 @@ A particle rendered from a square texture. Any 1:1 resolution texture can be use
 
 ## Examples
 
-To see all features in action, check out the built-in Obscuria Tooltips [resource pack](https://github.com/ObscuriaLithium/obscure-tooltips/tree/master/common/src/main/resources).
+To see all features in action, check out the built-in [Vibrant Tooltips](https://github.com/ObscuriaLithium/obscure-tooltips/tree/master/common/src/main/resources/packs/vibrant_tooltips) resource pack.
 
 ## Overriding
 
-If you want to completely disable the built-in tooltips from the mod, you can override the Obscure Tooltips definition files in your resource pack. Just follow the standard Minecraft resource override rules and apply the `obscure_tooltips:never` filter. This ensures that none of the default styles will ever be applied to any item.
+You can completely disable the built-in styles by turning off the **Vibrant Tooltips** resource pack. This lets you create your own styles and definitions on a clean slate, without needing to override the built-in resources.
 
 ## Hotswap
 
