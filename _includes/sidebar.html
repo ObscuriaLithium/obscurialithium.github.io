@@ -32,8 +32,8 @@
           <a href="{{ tab.url | relative_url }}" class="nav-link">
             {% if tab.icon_url %}
               <span style="display: inline-flex; align-items: center;">
-                <img src="{{ tab.icon_url }}" alt="{{ tab.title }} icon" class="nav-icon fa-fw">
-                <span style="display: inline-block; width: 24px;"></span>
+                <img src="{{ tab.icon_url }}" alt="{{ tab.title }} icon" width="32px" height="32px">
+                <span style="display: inline-block; width: 16px;"></span>
               </span>
             {% else %}
               <i class="fa-fw {{ tab.icon }}"></i>
@@ -46,6 +46,7 @@
         <!-- .nav-item -->
       {% endfor %}
       {% comment %}
+        class="nav-icon fa-fw"
         <!-- the real tabs -->
         {% for tab in site.tabs %}
           <li class="nav-item{% if tab.url == page.url %}{{ " active" }}{% endif %}">
