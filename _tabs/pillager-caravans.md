@@ -3,6 +3,7 @@ title: Pillager Caravans
 date: 2025-10-05 16:00:00 -0300
 last_modified_at: 2025-10-05 16:00:00 -0300
 layout: post
+icon_url: /assets/img/tabs/pillager-caravans.png
 icon: fas fa-book
 order: 3
 toc: true

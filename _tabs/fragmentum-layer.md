@@ -3,6 +3,7 @@ title: Fragmentum Layer
 date: 2025-11-10 12:00:00 -0300
 last_modified_at: 2025-11-10 16:00:00 -0300
 layout: post
+icon_url: /assets/img/tabs/fragmentum-layer.png
 icon: fas fa-layer-group
 order: 1
 toc: true
