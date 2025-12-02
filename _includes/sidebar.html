@@ -12,7 +12,7 @@
         {%- endif -%}
       </a>
     {% endcomment %}
-    <img src="/assets/img/obscuria-collection.png" width="75%">
+    <img src="/assets/img/obscuria-collection.png" alt="obscuria collection logo" width="75%">
     <p class="site-subtitle fst-italic mb-0">{{ site.tagline }}</p>
   </header>
   <!-- .profile-wrapper -->
@@ -32,11 +32,7 @@
           <a href="{{ tab.url | relative_url }}" class="nav-link">
             {% if tab.icon_url %}
               <span style="display: inline-flex; align-items: center;">
-                <img
-                  src="{{ tab.icon_url }}"
-                  alt="<?>"
-                  class="nav-icon fa-fw"
-                >
+                <img src="{{ tab.icon_url }}" alt="{{ tab.title }} icon" class="nav-icon fa-fw">
                 <span style="display: inline-block; width: 24px;"></span>
               </span>
             {% else %}
