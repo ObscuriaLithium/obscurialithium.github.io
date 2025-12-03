@@ -113,16 +113,16 @@ Create these files under your Minecraft user folder. Example path:
 {
   "type": "obscure_tooltips:color_rect",
   "background_palette": {
-    "top_left": "#20a8a800",
-    "top_right": "#20bfcf00",
-    "bottom_left": "#108f7000",
-    "bottom_right": "#108f7000"
+    "top_left": "#F0001010",
+    "top_right": "#F0001010",
+    "bottom_left": "#F0001010",
+    "bottom_right": "#F0001010"
   },
   "border_palette": {
-    "top_left": "#40a8a8ff",
-    "top_right": "#40bfcfff",
-    "bottom_left": "#308f70bf",
-    "bottom_right": "#308f70bf"
+    "top_left": "#6050FF00",
+    "top_right": "#6050FF00",
+    "bottom_left": "#50287F00",
+    "bottom_right": "#50287F00"
   }
 }
 ```
@@ -178,6 +178,8 @@ Create these files under your Minecraft user folder. Example path:
 1. Save the three JSON files under the `config/fragmentum/assets/...` folder described above.
 2. In Minecraft, press `F3 + T` to reload resources (or restart the game).
 3. Hover an item with uncommon rarity – your new style should appear.
+
+![Example Style](/assets/img/snowcase/tooltips-example-style.png)
 
 If nothing changes, check the troubleshooting tips below.
 
