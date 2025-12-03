@@ -1,7 +1,7 @@
 ---
 title: Obscure Tooltips
 date: 2025-09-25 12:00:00 -0300
-last_modified_at: 2025-10-05 16:00:00 -0300
+last_modified_at: 2025-12-02 16:00:00 -0300
 layout: post
 icon_url: /assets/img/tabs/obscure-tooltips.png
 icon: fas fa-book
@@ -17,38 +17,190 @@ image:
 > This wiki is relevant only for **version 3.0.0 and above**.<br>Older versions are incomplete and may be unstable.
 {: .prompt-info }
 
-### Core Concept
 
-Obscure Tooltips is a fully data-driven mod with a modular system. Each tooltip is built from small pieces, like using building blocks – you can combine existing parts or create your own. All customization is done either through a **custom resource pack**, or in a **config-like way** using [Fragmentum Layer](/fragmentum-layer/), without needing to package or enable anything manually.
 
-- The smallest building blocks are [Panels](#panels), [Frames](#frames), [Slots](#slots), [Icons](#icons), and [Effects](#effects) – JSON files that define how each element looks. These elements are **visual definitions only**: they don’t know how or where they will be used, only how they appear.
 
-- These elements are then combined into [Styles](#tooltip-styles) – JSON files containing references to a Panel, a Frame, and other constituent elements. A Style is also purely descriptive and does not contain application logic.
 
-- To apply a Style to items, [Definitions](#tooltip-definitions) are used – JSON files that specify a priority, a reference to a Style, and filters determining which items the Style applies to (by ID, tags, rarity, NBT, etc.).
+![separator](/assets/img/separator.png)
 
-### Folder Structure
+
+
+
+
+## Key Concept
+
+Obscure Tooltips works like a box of LEGO. Every tooltip is made from small pieces. You can mix existing pieces or create your own. All customization is done either through a **custom resource pack**, or in a **config-like way** using [Fragmentum Layer](/fragmentum-layer/) – no compiling, no manual enabling, nothing complicated.
+
+### How Everything Works
+
+- There are basic visual pieces: [Panels](#panels), [Frames](#frames), [Slots](#slots), [Icons](#icons), and [Effects](#effects). These are simply visual JSON definitions. They don't know when or where they'll be used – only what they look like.
+
+- These pieces are combined into [Styles](#tooltip-styles). A Style is a JSON file that says: "use this panel, this frame, these effects." Styles contain no logic – only appearance.
+
+- To actually apply a Style to items, you use [Definitions](#tooltip-definitions). A Definition is a JSON file with a priority, a link to a Style, and filters: by item ID, tags, rarity, NBT, and so on.
+
+### Pack Structure
+
+The folder layout below shows how Obscure Tooltips organizes all its data. This structure is the same whether you are using a **resource pack** or the **root directory of Fragmentum Layer** – the mod reads both in exactly the same format.
 
 ```text
 assets/
-└── <mod_id>/              -> the namespace of your mod or target mod
+└── <mod_id>/              -> your pack's namespace
     └── tooltips/
-        ├── element/       -> contains visual building blocks
-        │   ├── panel/     -> tooltip backgrounds
-        │   ├── frame/     -> decorative borders and outlines
-        │   ├── slot/      -> item slot visuals
-        │   ├── icon/      -> static or animated icons
-        │   └── effect/    -> particle and glow effects
-        ├── style/         -> combines elements into full tooltip styles
-        ├── definition/    -> assigns styles to items using filters
-        └── label/         -> defines additional text lines under item names
+        ├── element/       -> element repository
+        │   ├── panel/
+        │   ├── frame/
+        │   ├── slot/
+        │   ├── icon/
+        │   └── effect/
+        ├── style/         -> style repository
+        ├── definition/    -> definition repository
+        └── label/         -> label repository
 ```
+
+
+
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
+
+## Make Your First Style
+
+To see a full production-ready example of many features (particles, animated accents, textured frames), check the built-in [Vibrant Tooltips](https://github.com/ObscuriaLithium/obscure-tooltips/tree/master/common/src/main/resources/packs/vibrant_tooltips) resource pack in the project repository. 
+
+If you want to work on a clean canvas without fighting against predefined styles, simply **disable Vibrant Tooltips** before following the steps below.
+
+Below – a minimal 5-step guide to create a custom style that will apply only to uncommon items using the Fragmentum Layer (config folder). This example:
+- creates a small custom panel (light green tint),
+- creates a style that uses that panel, and
+- creates a definition that applies the style to uncommon rarity items.
+
+### Quick Summary (what you'll create)
+
+1. `tooltips/element/panel/uncommon_panel.json` – custom panel (color)
+2. `tooltips/style/uncommon_style.json` – style that references the panel
+3. `tooltips/definition/uncommon_definition.json` – rule: apply to uncommon items
+
+### Where to Put Files
+
+Create these files under your Minecraft user folder. Example path:
+
+```text
+.minecraft/config/fragmentum/assets/my_tooltips/
+└── tooltips/
+    ├── element/panel/
+    │   └── uncommon_panel.json
+    ├── style/
+    │   └── uncommon_style.json
+    └── definition/
+        └── uncommon_definition.json
+```
+
+> If you use a different namespace instead of `my_tooltips`, keep paths consistent and use the same namespace in style and definition JSONs.
+{: .prompt-tip }
 
 -----
 
-## Tooltip Elements
+### 1. Create a Custom Panel
 
-### Panels
+`tooltips/element/panel/uncommon_panel.json`:
+
+```json
+{
+  "type": "obscure_tooltips:color_rect",
+  "background_palette": {
+    "top_left": "#20a8a800",
+    "top_right": "#20bfcf00",
+    "bottom_left": "#108f7000",
+    "bottom_right": "#108f7000"
+  },
+  "border_palette": {
+    "top_left": "#40a8a8ff",
+    "top_right": "#40bfcfff",
+    "bottom_left": "#308f70bf",
+    "bottom_right": "#308f70bf"
+  }
+}
+```
+
+> - This is a simple rectangular panel with a subtle green gradient and a soft border.
+> - You can tweak the hex ARGB colors (#AARRGGBB) to taste.
+{: .prompt-info }
+
+-----
+
+### 2. Create the Style That Uses the Panel
+
+`tooltips/style/uncommon_style.json`:
+
+```json
+{
+  "panel": "my_tooltips:uncommon_panel",
+  "frame": "obscure_tooltips:default",
+  "slot": "obscure_tooltips:default",
+  "icon": "obscure_tooltips:default",
+  "effects": []
+}
+```
+
+> - `panel` points to the custom panel we created.
+> - `frame`, `slot`, `icon` reuse built-in defaults so we change only the background.
+> - `effects` must be present even if empty.
+{: .prompt-info }
+
+-----
+
+### 3. Create the Definition That Applies the Style to Uncommon Items
+
+`tooltips/definition/uncommon_definition.json`:
+
+```json
+{
+  "priority": 50,
+  "style": "my_tooltips:uncommon_style",
+  "filter": {
+    "type": "obscure_tooltips:rarity",
+    "rarity": "uncommon"
+  }
+}
+```
+
+> - `priority`: higher numbers override lower numbers in the merging system. 50 is arbitrary – pick a number that makes sense in your setup.
+> - `filter` uses the rarity filter to target uncommon items only.
+{: .prompt-info }
+
+### 4. Save Files and Reload In-Game
+
+1. Save the three JSON files under the `config/fragmentum/assets/...` folder described above.
+2. In Minecraft, press `F3 + T` to reload resources (or restart the game).
+3. Hover an item with uncommon rarity – your new style should appear.
+
+If nothing changes, check the troubleshooting tips below.
+
+### 5. Troubleshooting & Tips
+
+- **Paths & Namespace** – Make sure the JSON style/panel references match the filenames and the namespace (`my_tooltips:uncommon_panel` matches `.../my_tooltips/tooltips/element/panel/uncommon_panel.json`).
+- **Effects Array** – effects must always exist in a style file (even if empty []). Missing it can cause the style to be ignored.
+- **JSON Validity** - Use a JSON linter to avoid trailing commas or syntax errors.
+- **Layer Precedence** — If another definition with higher priority matches the same items, your style might be partially or fully overridden. Increase priority or adjust filters if necessary.
+
+
+
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
+
+## About Elements
+
+### Available Panels
 
 Panels define the visual background of a tooltip and serve as the foundation for text and other elements.
 
@@ -86,7 +238,7 @@ A rectangular panel with a border styled after the vanilla design. The gradient 
 
 <br>
 
-### Frames
+### Available Frames
 
 Frames are decorative layers drawn on top of panels in tooltips.
 
@@ -113,7 +265,7 @@ This frame uses a texture divided into 9 sections to automatically stretch and a
 
 <br>
 
-### Slots
+### Available Slots
 
 #### 1. [Blank Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/slot/BlankSlot.java)
 
@@ -144,7 +296,7 @@ A rectangular panel with a borders.
 
 <br>
 
-### Icons
+### Available Icons
 
 #### 1. [Blank Icon](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/icon/BlankIcon.java)
 
@@ -212,7 +364,7 @@ See [Transform](#transform) for more details.
 
 <br>
 
-### Effects
+### Available Effects
 
 #### 1. [Rim Light Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/RimLightEffect.java)
 
@@ -281,11 +433,19 @@ See [Particles](#particles) for more details.
 }
 ```
 
------
 
-## Tooltip Styles
 
-Style files simply combine elements to define the visual appearance of a style. In the example below, elements are referenced from `assets/obscure_tooltips/tooltips/element/<kind>/default.json`. Here, `<kind>` can be `panel`, `frame`, `slot`, `icon`, etc.
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
+
+## About Styles
+
+Style files simply combine elements to define the visual appearance of a style.
 
 ```json
 {
@@ -300,9 +460,17 @@ Style files simply combine elements to define the visual appearance of a style. 
 > Note that all fields except `effects` are optional. The `effects` array **must always be included**, even if it is empty.
 {: .prompt-info }
 
------
 
-## Tooltip Definitions
+
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
+
+## About Definitions
 
 Definition files determine which items a style should apply to, based on the specified filter. In the example below, the style located at `assets/obscure_tooltips/tooltips/style/default.json` will be applied to **all items**:
 
@@ -339,9 +507,17 @@ Next, you create an `enchanted.json` definition for enchanted items, assign a st
 > This system allows you to layer styles, avoid repetition, and easily create complex tooltip designs that automatically adapt to different item types.
 {: .prompt-info }
 
------
 
-## Tooltip Filters
+
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
+
+## About Filters
 
 Filters are not registered as separate files – instead, they are written inline wherever they are needed:
 
@@ -478,9 +654,17 @@ You can also nest aggregate filters inside one another to create more advanced f
 }
 ```
 
------
 
-## Tooltip Labels
+
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
+
+## About Labels
 
 Label files define the additional line of text displayed beneath an item’s name. Using **providers**, labels can display the item’s rarity or custom text. If an item matches multiple label definitions, the one with the **highest priority** is applied.
 
@@ -526,7 +710,15 @@ For example, the following file will display the **rarity label** for **all item
 }
 ```
 
------
+
+
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
 
 ## Miscellaneous
 
@@ -591,9 +783,15 @@ A particle rendered from a square texture. Any 1:1 resolution texture can be use
 }
 ```
 
-## Examples
 
-To see all features in action, check out the built-in [Vibrant Tooltips](https://github.com/ObscuriaLithium/obscure-tooltips/tree/master/common/src/main/resources/packs/vibrant_tooltips) resource pack.
+
+
+
+![separator](/assets/img/separator.png)
+
+
+
+
 
 ## Overriding
 
