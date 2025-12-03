@@ -33,11 +33,11 @@ Obscure Tooltips works like a box of LEGO. Every tooltip is made from small piec
 
 ### How Everything Works
 
-- There are basic visual pieces: [Panels](#panels), [Frames](#frames), [Slots](#slots), [Icons](#icons), and [Effects](#effects). These are simply visual JSON definitions. They don't know when or where they'll be used – only what they look like.
+- There are basic visual pieces: [Panels](#available-panels), [Frames](#available-frames), [Slots](#available-slots), [Icons](#available-icons), and [Effects](#available-effects). These are simply visual JSON definitions. They don't know when or where they'll be used – only what they look like.
 
-- These pieces are combined into [Styles](#tooltip-styles). A Style is a JSON file that says: "use this panel, this frame, these effects." Styles contain no logic – only appearance.
+- These pieces are combined into [Styles](#about-styles). A Style is a JSON file that says: "use this panel, this frame, these effects." Styles contain no logic – only appearance.
 
-- To actually apply a Style to items, you use [Definitions](#tooltip-definitions). A Definition is a JSON file with a priority, a link to a Style, and filters: by item ID, tags, rarity, NBT, and so on.
+- To actually apply a Style to items, you use [Definitions](#about-definitions). A Definition is a JSON file with a priority, a link to a Style, and filters: by item ID, tags, rarity, NBT, and so on.
 
 ### Pack Structure
 
@@ -254,7 +254,7 @@ Essentially, it acts as an invisible placeholder.
 
 #### 2. [Nine Sliced Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/frame/NineSlicedFrame.java)
 
-This frame uses a texture divided into 9 sections to automatically stretch and align the corners and edges of the tooltip. You can use the built-in [golden_frame.png](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/resources/assets/obscure_tooltips/textures/gui/golden_frame.png) as a reference for positioning your own textures.
+This frame uses a texture divided into 9 sections to automatically stretch and align the corners and edges of the tooltip. You can use the built-in [golden_frame.png](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/resources/packs/vibrant_tooltips/assets/vibrant_tooltips/textures/gui/golden_frame.png) as a reference for positioning your own textures.
 
 ```json
 {
