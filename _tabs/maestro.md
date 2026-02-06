@@ -3,7 +3,7 @@ title: Maestro
 date: 2026-02-05 16:00:00 -0300
 last_modified_at: 2026-02-05 16:00:00 -0300
 layout: post
-icon_url: /assets/img/tabs/maestro.png
+icon_url: /assets/img/mods/maestro/icon.png
 icon: fas fa-book
 order: 4
 toc: true
@@ -16,7 +16,7 @@ comments: true
 
 
 
-![separator](/assets/img/separator.png)
+![separator](/assets/img/mods/maestro/separator.png)
 
 
 
@@ -59,7 +59,7 @@ Under the hood, Maestro works entirely on top of vanilla music mechanics, acting
 
 
 
-![separator](/assets/img/separator.png)
+![separator](/assets/img/mods/maestro/separator.png)
 
 
 
@@ -174,7 +174,7 @@ my_namespace:music.boss.captain_cornelia
 
 
 
-![separator](/assets/img/separator.png)
+![separator](/assets/img/mods/maestro/separator.png)
 
 
 
@@ -248,7 +248,7 @@ This definition plays the custom blizzard music track when the player is located
 
 
 
-![separator](/assets/img/separator.png)
+![separator](/assets/img/mods/maestro/separator.png)
 
 
 
@@ -417,7 +417,7 @@ No conditions can be true:
 
 
 
-![separator](/assets/img/separator.png)
+![separator](/assets/img/mods/maestro/separator.png)
 
 
 
@@ -463,7 +463,7 @@ Using structured priority ranges makes your music logic easier to reason about, 
 
 
 
-![separator](/assets/img/separator.png)
+![separator](/assets/img/mods/maestro/separator.png)
 
 
 
@@ -483,7 +483,7 @@ Using structured priority ranges makes your music logic easier to reason about, 
 
 
 
-![separator](/assets/img/separator.png)
+![separator](/assets/img/mods/maestro/separator.png)
 
 
 
