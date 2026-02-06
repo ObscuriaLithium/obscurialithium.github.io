@@ -33,6 +33,8 @@ Maestro loads music definitions from both **resource packs** and **Fragmentum La
 ```text
 assets/
 └── <namespace>/          -> the namespace of your pack
+    ├── sounds.json       -> vanilla sound event registration
+    ├── sounds/           -> audio files (.ogg)
     └── music/            -> music definitions
 ```
 
@@ -65,7 +67,7 @@ Under the hood, Maestro works entirely on top of vanilla music mechanics, acting
 
 ## **Resource Structure**
 
-### **Basic File Structure**
+### **Example Pack Structure**
 
 ```text
 resourcepacks/
@@ -73,6 +75,15 @@ resourcepacks/
     ├── pack.mcmeta
     └── assets/
         └── my_namespace/
+            ├── sounds.json
+            ├── sounds/
+            │   ├── ambient/
+            │   │   └── frozen_winds.ogg
+            │   ├── biome/
+            │   │   ├── taiga.ogg
+            │   │   └── frozen_ocean.ogg
+            │   └── boss/
+            │       └── captain_cornelia.ogg
             └── music/
                 ├── default.json
                 ├── biome.taiga.json
@@ -85,6 +96,79 @@ resourcepacks/
 > - Use your modpack/resourcepack namespace (e.g., `my_modpack`)
 > - Reference built-in elements with `maestro:`
 {: .prompt-tip }
+
+<br>
+
+### **Audio Format**
+
+Minecraft plays music using the **OGG** audio format. Maestro does not introduce a custom audio system – it works **entirely on top of vanilla Minecraft sound handling**.
+
+> Any audio format (`.mp3`, `.wav`, `.flac`, etc.) must be converted to `.ogg`. Once converted, Maestro treats the sound exactly like a vanilla track.
+{: .prompt-info }
+
+#### **Converting Audio to OGG**
+
+You can convert audio files using tools like:
+- **Audacity** (free, cross-platform)
+- ffmpeg
+- any audio editor capable of exporting .ogg
+
+Basic Audacity workflow:
+1.	Open your audio file
+2.	File -> Export -> Export as OGG
+3.	Use default settings (they are fine)
+4.	Save the file into your resource pack under `assets/<namespace>/sounds/`
+
+If Minecraft can play the sound, Maestro can use it.
+
+<br>
+
+### **Registering Sounds**
+
+Before Maestro can reference a music track, the sound must be **registered in vanilla Minecraft**. This is done using the standard [`sounds.json`](https://minecraft.wiki/w/Sounds.json) file.
+
+> Maestro references **sound events**, not raw audio files. 
+> `sounds.json` assigns a **sound event ID** to your .ogg file, which Maestro can then use in music definitions.
+{: .prompt-info }
+
+#### **Example: sounds.json**
+
+```json
+{
+  "music.biome.frozen_ocean": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "my_namespace:biome/frozen_ocean",
+        "stream": true
+      }
+    ]
+  },
+  "music.boss.captain_cornelia": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "my_namespace:boss/captain_cornelia",
+        "stream": true
+      }
+    ]
+  }
+}
+```
+
+This registers the following sound files:
+
+```text
+assets/my_namespace/sounds/biome/frozen_ocean.ogg
+assets/my_namespace/sounds/boss/captain_cornelia.ogg
+```
+
+and exposes them as the following **sound events**:
+
+```text
+my_namespace:music.biome.frozen_ocean
+my_namespace:music.boss.captain_cornelia
+```
 
 
 
@@ -130,8 +214,8 @@ Music definitions describe **what music should play** and **under which in-game 
 
 ```json
 {
-  "priority": 100,
-  "sound_event": "minecraft:music_disc.pigstep",
+  "priority": 400,
+  "sound_event": "my_namespace:music.event.blizzard",
   "condition": {
     "type": "maestro:all_of",
     "terms": [
@@ -174,6 +258,8 @@ This definition plays the vanilla **Pigstep** music track when the player is loc
 
 Conditions define **which game state** a music definition applies to. They are evaluated dynamically and can be **combined using logical** operators to describe complex scenarios.
 
+<br>
+
 ### [**Always Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/AlwaysCondition.java)
 
 Always evaluates to `true`.
@@ -189,6 +275,8 @@ This condition is useful for:
 }
 ```
 
+<br>
+
 ### [**Never Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/NeverCondition.java)
 
 Always evaluates to `false`.
@@ -203,6 +291,8 @@ This condition is mainly useful for:
   "type": "maestro:never"
 }
 ```
+
+<br>
 
 ### [**Biome Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeCondition.java)
 
@@ -223,6 +313,8 @@ Checks whether the player is currently located in a specific biome, defined eith
 - `namespace:biome_id` – a specific biome
 - `#namespace:tag_name` - a biome tag (matches all biomes with this tag)
 
+<br>
+
 ### [**Weather Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/WeatherCondition.java)
 
 Checks the current **weather state** at the player’s position.
@@ -241,6 +333,8 @@ Checks the current **weather state** at the player’s position.
 | --------------- | ---------------------- | ------------------------------------------------------------------------ |
 | `is_raining`    | **Boolean** (Optional) | If specified, requires the world to be in the matching<br>rain state.    |
 | `is_thundering` | **Boolean** (Optional) | If specified, requires the world to be in the matching<br>thunder state. |
+
+<br>
 
 ### [**Entity Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityCondition.java)
 
@@ -261,6 +355,8 @@ Checks for the presence of a specific entity within a **square area** centered o
 | `entity`   | **Identifier**         | The entity ID to check for.                                                                           |
 | `distance` | **Integer** (Optional) | Half-size of the square detection area in all directions,<br>centered on the player. Defaults to `64` |
 
+<br>
+
 ### [**Screen Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/ScreenCondition.java)
 
 Checks whether a specific **GUI screen** is currently open.
@@ -279,6 +375,8 @@ Checks whether a specific **GUI screen** is currently open.
 | ------------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `kind`       | **Enum Value** (Optional) | If present, checks the current screen against a<br>predefined category: `title`, `credits`,<br>`inventory`, or `pause`.                                                     |
 | `class_path` | **String** (Optional)     | If present, checks whether the current screen is an<br>instance of the specified class. This is an advanced<br>option – use only if you know exactly what you<br>are doing. |
+
+<br>
 
 ### **Logical Operators**
 
