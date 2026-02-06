@@ -35,7 +35,7 @@ assets/
 └── <namespace>/          -> the namespace of your pack
     ├── sounds.json       -> vanilla sound event registration
     ├── sounds/           -> audio files (.ogg)
-    └── music/            -> music definitions
+    └── music/            -> maestro music definitions
 ```
 
 ### **Priority System**
@@ -235,7 +235,7 @@ Music definitions describe **what music should play** and **under which in-game 
 }
 ```
 
-This definition plays the vanilla **Pigstep** music track when the player is located in either the **Snowy Beach** or **Frozen** Ocean biome **and** it is currently raining.
+This definition plays the custom blizzard music track when the player is located in either the **Snowy Beach** or **Frozen** Ocean biome **and** it is currently raining.
 
 > Because `replace_current_music` is not specified and defaults to `false`, this track will only start if:
 > - no other music is currently playing, and
