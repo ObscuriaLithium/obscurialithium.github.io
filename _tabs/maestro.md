@@ -10,7 +10,7 @@ toc: true
 comments: true
 ---
 
-**Maestro** is a client-side, data-driven music orchestration framework for Minecraft, giving modpack and map creators full control over music behavior. The information provided here is intended to help understand the key concepts of the mod and customize it to your needs.
+**Maestro** is a data-driven music orchestration framework for Minecraft, giving modpack and map creators full control over music behavior. The information provided here is intended to help understand the key concepts of the mod and customize it to your needs.
 
 
 
@@ -24,7 +24,11 @@ comments: true
 
 ## **Core Concepts**
 
-Maestro music definitions is fully data-driven. All customization is done either through a **custom resource pack**, or in a **config-like way** using [Fragmentum Layer](/fragmentum-layer/), without needing to package or enable anything manually.
+Maestro is built around the idea that music should be continuous, reactive, and context-aware. Instead of treating music as isolated tracks separated by silence, Maestro treats it as an evolving soundtrack that responds to gameplay in real time.
+
+All music behavior is fully data-driven and configured either through **resource packs** or via the **config folder** using the [Fragmentum Layer](/fragmentum-layer/) system.
+
+<br>
 
 ### **Resource Loading** 
 
@@ -33,27 +37,41 @@ Maestro loads music definitions from both **resource packs** and **Fragmentum La
 ```text
 assets/
 └── <namespace>/          -> the namespace of your pack
-    ├── sounds.json       -> vanilla sound event registration
+    ├── sounds.json       -> sound event registration
     ├── sounds/           -> audio files (.ogg)
     └── music/            -> maestro music definitions
 ```
 
+<br>
+
+### **Music Layers**
+
+Maestro organizes music into two logical layers, each with a clear purpose:
+- **UNDERSCORE**: The persistent background layer.
+Used for ambient and exploratory music tied to dimensions, biomes, time of day, or other slowly changing conditions.
+- **ENCOUNTER**: A dynamic foreground layer.
+Used for temporary situations such as structures, boss fights, special events, or short-lived encounters.
+
+When an Encounter track becomes active, the Underscore layer smoothly fades down in volume instead of stopping. Importantly, the background music keeps its progress while muted – so when the encounter ends, the underscore fades back in naturally, continuing from where it left off instead of restarting.
+
+<br>
+
 ### **Priority System**
 
-Multiple music definitions can match the same game state at the same time. When this happens, Maestro selects the definition with the **highest priority**.
+Multiple music definitions can match the same game state at the same time. Priorities are evaluated **within each music layer independently**. When multiple definitions compete in the same layer, Maestro selects the one with the **highest priority**.
 
-This system allows you to layer music logic naturally, for example:
+<br>
 
-1. Set base background music (priority 0)
-2. Biome-specific overrides (priority 100)
-3. Screen- or UI-specific music (priority 200)
-4. Boss or special encounter music (priority 300)
+### **Vanilla Integration & Fallback**
 
-### **Vanilla Fallback**
+Maestro integrates directly with Minecraft's vanilla music system and preserves full compatibility with it. Vanilla music is always treated as part of the **Underscore** layer. If Maestro cannot find a matching music definition for the Underscore layer, it automatically falls back to vanilla music selection and lets Minecraft choose the appropriate track.
 
-If Maestro cannot find a matching music definition, it **automatically falls back to vanilla Minecraft music selection**.
+This means:
+- Vanilla biome and dimension music continues to work as expected
+- Mods that rely on the vanilla music system remain fully compatible
+- Maestro only takes control where custom definitions are explicitly provided
 
-Under the hood, Maestro works entirely on top of vanilla music mechanics, acting as a higher-priority layer rather than a replacement. This guarantees **seamless integration** and ensures that vanilla behavior remains intact when no custom music applies.
+Encounter music never pulls from vanilla sources and is handled exclusively through Maestro definitions. As soon as a Maestro Underscore definition becomes applicable again, it smoothly takes over from vanilla playback without breaking musical continuity.
 
 
 
@@ -65,90 +83,56 @@ Under the hood, Maestro works entirely on top of vanilla music mechanics, acting
 
 
 
-## **Resource Structure**
-
-### **Example Pack Structure**
-
-```text
-resourcepacks/
-└── MyCustomMusic.zip/
-    ├── pack.mcmeta
-    └── assets/
-        └── my_namespace/
-            ├── sounds.json
-            ├── sounds/
-            │   ├── ambient/
-            │   │   └── frozen_winds.ogg
-            │   ├── biome/
-            │   │   ├── taiga.ogg
-            │   │   └── frozen_ocean.ogg
-            │   └── boss/
-            │       └── captain_cornelia.ogg
-            └── music/
-                ├── default.json
-                ├── biome.taiga.json
-                ├── biome.frozen_ocean.json
-                ├── screen.title.json
-                └── entity.captain_cornelia.json
-```
-
-> **Namespace Convention**
-> - Use your modpack/resourcepack namespace (e.g., `my_modpack`)
-> - Reference built-in elements with `maestro:`
-{: .prompt-tip }
-
-<br>
+## **Sounds**
 
 ### **Audio Format**
 
-Minecraft plays music using the **OGG** audio format. Maestro does not introduce a custom audio system – it works **entirely on top of vanilla Minecraft sound handling**.
+Minecraft plays sounds using the **OGG** audio format. Maestro does not introduce a custom audio system – it works **entirely on top of vanilla Minecraft sound handling**.
 
-> Any audio format (`.mp3`, `.wav`, `.flac`, etc.) must be converted to `.ogg`. Once converted, Maestro treats the sound exactly like a vanilla track.
-{: .prompt-info }
+Any audio file (`.mp3`, `.wav`, `.flac`, etc.) must be converted to `.ogg`. Once converted, Maestro treats the sound exactly like a vanilla music track.
+
+<br>
 
 #### **Converting Audio to OGG**
 
 You can convert audio files using tools like:
 - **Audacity** (free, cross-platform)
 - ffmpeg
-- any audio editor capable of exporting .ogg
+- any audio editor capable of exporting `.ogg`
 
-Basic Audacity workflow:
+**Basic Audacity workflow:**
 1.	Open your audio file
-2.	File -> Export -> Export as OGG
-3.	Use default settings (they are fine)
-4.	Save the file into your resource pack under `assets/<namespace>/sounds/`
-
-If Minecraft can play the sound, Maestro can use it.
+2.	File -> Export Audio -> Format: Ogg Vorbis Files
+3.	Use default settings (they are sufficient)
+4.	Save the file under  `assets/<namespace>/sounds/`
 
 <br>
 
 ### **Registering Sounds**
 
-Before Maestro can reference a music track, the sound must be **registered in vanilla Minecraft**. This is done using the standard [`sounds.json`](https://minecraft.wiki/w/Sounds.json) file.
+Before Maestro can reference a track, it must be **registered as a vanilla sound event** using the standard [`sounds.json`](https://minecraft.wiki/w/Sounds.json) file.
 
-> Maestro references **sound events**, not raw audio files. 
-> `sounds.json` assigns a **sound event ID** to your .ogg file, which Maestro can then use in music definitions.
+> Maestro references **sound events**, not raw audio files. `sounds.json` assigns a sound event ID to one or more `.ogg` files, which Maestro then uses in music definitions.
 {: .prompt-info }
 
-#### **Example: sounds.json**
+<br>
+
+### **Example: sounds.json**
 
 ```json
 {
   "music.biome.frozen_ocean": {
-    "category": "music",
     "sounds": [
       {
-        "name": "my_namespace:biome/frozen_ocean",
+        "name": "my_namespace:my_audio_file",
         "stream": true
       }
     ]
   },
   "music.boss.captain_cornelia": {
-    "category": "music",
     "sounds": [
       {
-        "name": "my_namespace:boss/captain_cornelia",
+        "name": "my_namespace:other_audio_file",
         "stream": true
       }
     ]
@@ -156,19 +140,52 @@ Before Maestro can reference a music track, the sound must be **registered in va
 }
 ```
 
-This registers the following sound files:
+This registers the following files:
 
 ```text
-assets/my_namespace/sounds/biome/frozen_ocean.ogg
-assets/my_namespace/sounds/boss/captain_cornelia.ogg
+assets/my_namespace/sounds/my_audio_file.ogg
+assets/my_namespace/sounds/other_audio_file.ogg
 ```
 
-and exposes them as the following **sound events**:
+and exposes them as sound events:
 
 ```text
 my_namespace:music.biome.frozen_ocean
 my_namespace:music.boss.captain_cornelia
 ```
+
+<br>
+
+### **Multiple Files per Sound Event**
+
+A single sound event can reference **multiple audio files**.
+
+If multiple sounds are registered under the same ID, Minecraft will **randomly choose one** each time the track starts. This is useful for adding subtle variation without additional logic.
+
+<br>
+
+### **Why stream: true?**
+
+Music tracks should always be registered with `"stream": true`.
+
+Streaming tells Minecraft to:
+- Load the audio gradually instead of fully into memory
+- Avoid memory spikes for long tracks
+- Behave consistently with vanilla music playback
+
+Short sound effects usually do not need streaming – music does.
+
+<br>
+
+### **Naming Conventions**
+
+Use clear, self-describing sound event names:
+- ✅ `music.biome.frozen_ocean`
+- ✅ `music.boss.captain_cornelia`
+- ❌ `track1`
+- ❌ `some_music`
+
+Good naming makes music definitions easier to read, debug, and maintain.
 
 
 
@@ -188,61 +205,49 @@ Music definitions describe **what music should play** and **under which in-game 
 
 ```json
 {
-  "priority": 100,
+  "priority": 0,
+  "layer": "underscore",
   "sound_event": "minecraft:music_disc.pigstep",
-  "replace_current_music": true,
-  "min_delay": 1200,
-  "max_delay": 2400,
   "condition": {
     "type": "maestro:always"
   }
 }
 ```
 
-### **Fields**
-
-| Field                   | Type                   | Description                                                                                          |
-| ----------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------- |
-| `priority`              | **Inreger**            | Determines override order. Higher values<br>take precedence over lower ones.                         |
-| `sound_event`           | **Identifier**         | Reference to a sound event<br>(`namespace:path`).                                                    |
-| `replace_current_music` | **Boolean** (Optional) | Whether this track should immediately<br>replace any currently playing music.<br>Defaults to `false` |
-| `min_delay`             | **Integer** (Optional) | Minimum delay before the next track<br>may start (in ticks). Defaults to `1200`                      |
-| `max_delay`             | **Integer** (Optional) | Maximum delay before the next track<br>may start (in ticks). Defaults to `2400`                      |
-| `condition`             | **Condition**          | Defines when this music definition<br>is considered valid.                                           |
+| Field         | Type           | Description                                                                                  |
+| ------------- | -------------- | -------------------------------------------------------------------------------------------- |
+| `priority`    | **Inreger**    | Determines priority within the same layer.<br>Higher values take precedence over lower ones. |
+| `layer`       | **Enum Value** | Target music layer. Supported values:<br>`underscore`, `encounter`.                          |
+| `sound_event` | **Identifier** | Reference to a sound event (`namespace:path`).                                               |
+| `condition`   | **Condition**  | Defines when this music definition is<br>considered valid.                                   |
 
 ### **Example: Biome & Weather Based Definition**
 
 ```json
 {
-  "priority": 400,
-  "sound_event": "my_namespace:music.event.blizzard",
+  "priority": 100,
+  "layer": "underscore",
+  "sound_event": "my_namespace:music.blizzard",
   "condition": {
     "type": "maestro:all_of",
     "terms": [
       {
         "type": "maestro:biome",
-        "biomes": [ 
+        "values": [ 
           "minecraft:snowy_beach",
           "minecraft:frozen_ocean" 
         ]
       },
       {
         "type": "maestro:weather",
-        "is_raining": true
+        "is_snowing": true
       }
     ]
   }
 }
 ```
 
-This definition plays the custom blizzard music track when the player is located in either the **Snowy Beach** or **Frozen** Ocean biome **and** it is currently raining.
-
-> Because `replace_current_music` is not specified and defaults to `false`, this track will only start if:
-> - no other music is currently playing, and
-> - the delay timer from the previous track has already elapsed.
-> 
-> This makes the definition suitable for **ambient**, **non-intrusive background music** that should not interrupt higher-priority or already playing tracks.
-{: .prompt-info }
+This definition plays the custom blizzard music track when the player is located in either the **Snowy Beach** or **Frozen** Ocean biome **and** it is currently snowing.
 
 
 
@@ -296,22 +301,30 @@ This condition is mainly useful for:
 
 ### [**Biome Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeCondition.java)
 
-Checks whether the player is currently located in a specific biome, defined either by **biome ID** or **biome tag**.
+Checks whether the player is currently located in a specific biome, defined either by **biome ID**.
 
 ```json
 "condition": {
   "type": "maestro:biome",
-  "biomes": [
-    "minecraft:some_biome",
-    "#minecraft:some_biome_tag"
+  "values": [
+    "minecraft:plains",
+    "minecraft:ocean"
   ]
 }
 ```
 
-#### **Syntax**
+<br>
 
-- `namespace:biome_id` – a specific biome
-- `#namespace:tag_name` - a biome tag (matches all biomes with this tag)
+### [**Biome Tag Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeTagCondition.java)
+
+Checks whether the player is currently located in a specific biome, defined either by **biome Tag**.
+
+```json
+"condition": {
+  "type": "maestro:biome_tag",
+  "tag_key": "minecraft:is_desert"
+}
+```
 
 <br>
 
@@ -323,15 +336,15 @@ Checks the current **weather state** at the player’s position.
 "condition": {
   "type": "maestro:weather",
   "is_raining": true,
+  "is_snowing": true,
   "is_trundering": true
 }
 ```
 
-#### **Fields**
-
 | Field           | Type                   | Description                                                              |
 | --------------- | ---------------------- | ------------------------------------------------------------------------ |
 | `is_raining`    | **Boolean** (Optional) | If specified, requires the world to be in the matching<br>rain state.    |
+| `is_snowing`    | **Boolean** (Optional) | If specified, requires the world to be in the matching<br>snow state.    |
 | `is_thundering` | **Boolean** (Optional) | If specified, requires the world to be in the matching<br>thunder state. |
 
 <br>
@@ -347,8 +360,6 @@ Checks for the presence of a specific entity within a **square area** centered o
   "distance": 64
 }
 ```
-
-#### **Fields**
 
 | Field      | Type                   | Description                                                                                           |
 | ---------- | ---------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -368,8 +379,6 @@ Checks whether a specific **GUI screen** is currently open.
   "class_path": "net.minecraft.client.gui.screens.TitleScreen"
 }
 ```
-
-#### **Fields**
 
 | Field        | Type                      | Description                                                                                                                                                                 |
 | ------------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -439,25 +448,13 @@ Choose file names that **describe their purpose at a glance** and naturally grou
 
 Prefer names that reflect **what the music reacts to**, not vague or generic concepts:
 
-- ✅ `"biome.frozen_ocean.json"`
-- ✅ `"entity.wither.json"`
+- ✅ `"music/underscore/biome.frozen_ocean.json"`
+- ✅ `"music/encounter/entity.wither.json"`
 
 Avoid names that hide intent or lump unrelated logic together:
 
-- ❌ `"some_biomes.json"`
-- ❌ `"boss_music.json"`
-
-### **3. Layer Priorities Thoughtfully**
-
-Define a clear and consistent **priority hierarchy** to avoid conflicts and ensure predictable music behavior:
-
-- **0–99** – Base background music
-- **100–199** – Biome-specific music
-- **200–299** – Screen- and UI-based music
-- **300–399** – Boss music and special encounters
-- **400+** – Highly specific overrides and exceptional cases
-  
-Using structured priority ranges makes your music logic easier to reason about, maintain, and extend over time.
+- ❌ `"music/some_biomes.json"`
+- ❌ `"music/boss_music.json"`
 
 
 
@@ -493,6 +490,7 @@ Using structured priority ranges makes your music logic easier to reason about, 
 
 ### **Community Resources**
 
+- **Example Pack**: [https://github.com/ObscuriaLithium/maestro-overture](https://github.com/ObscuriaLithium/maestro-overture)
 - **CurseForge**: [https://www.curseforge.com/minecraft/mc-mods/maestro](https://www.curseforge.com/minecraft/mc-mods/maestro)
 - **Modrinth**: [https://www.curseforge.com/minecraft/mc-mods/maestro-music](https://www.curseforge.com/minecraft/mc-mods/maestro-music)
 - **Issues**: Report bugs and request features on GitHub
