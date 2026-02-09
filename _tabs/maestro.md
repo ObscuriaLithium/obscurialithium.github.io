@@ -1,7 +1,7 @@
 ---
 title: Maestro
 date: 2026-02-05 16:00:00 -0300
-last_modified_at: 2026-02-05 16:00:00 -0300
+last_modified_at: 2026-02-09 8:00:00 -0300
 layout: post
 icon_url: /assets/img/mods/maestro/icon.png
 icon: fas fa-book
@@ -93,7 +93,7 @@ Any audio file (`.mp3`, `.wav`, `.flac`, etc.) must be converted to `.ogg`. Once
 
 <br>
 
-#### **Converting Audio to OGG**
+### **Converting Audio to OGG**
 
 You can convert audio files using tools like:
 - **Audacity** (free, cross-platform)
@@ -201,6 +201,8 @@ Good naming makes music definitions easier to read, debug, and maintain.
 
 Music definitions describe **what music should play** and **under which in-game conditions**. Each definition is evaluated dynamically, and the one with the highest priority that matches the current game state is selected.
 
+<br>
+
 ### **Basic Definition**
 
 ```json
@@ -208,18 +210,30 @@ Music definitions describe **what music should play** and **under which in-game 
   "priority": 0,
   "layer": "underscore",
   "sound_event": "minecraft:music_disc.pigstep",
+  "cooldown_seconds": 0,
+  "occupy_layer_during_cooldown": true,
+  "reset_cooldown_on_reactivation": false,
   "condition": {
     "type": "maestro:always"
   }
 }
 ```
 
-| Field         | Type           | Description                                                                                  |
-| ------------- | -------------- | -------------------------------------------------------------------------------------------- |
-| `priority`    | **Inreger**    | Determines priority within the same layer.<br>Higher values take precedence over lower ones. |
-| `layer`       | **Enum Value** | Target music layer. Supported values:<br>`underscore`, `encounter`.                          |
-| `sound_event` | **Identifier** | Reference to a sound event (`namespace:path`).                                               |
-| `condition`   | **Condition**  | Defines when this music definition is<br>considered valid.                                   |
+| Field                            | Type                   | Description                                                                                                     |
+| -------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `priority`                       | **Inreger**            | Determines priority within the same layer.<br>Higher values take precedence over lower ones.                    |
+| `layer`                          | **Enum Value**         | Target music layer. Supported values:<br>`underscore`, `encounter`.                                             |
+| `sound_event`                    | **Identifier**         | Reference to a sound event (`namespace:path`).                                                                  |
+| `cooldown_seconds`               | **Integer** (Optional) | Time after the track finishes playing naturally<br>before it can play again (in seconds).<br>Defaults to `0`    |
+| `occupy_layer_during_cooldown`   | **Boolean** (Optional) | Keeps the track valid during cooldown,<br>occupying the layer with silence.<br>Defaults to `true`               |
+| `reset_cooldown_on_reactivation` | **Boolean** (Optional) | Resets the cooldown when the track becomes<br>valid again after its condition was false.<br>Defaults to `false` |
+| `condition`                      | **Condition**          | Defines when this music definition is<br>considered valid.                                                      |
+
+> **Note**<br>
+> `reset_cooldown_on_reactivation` only works when `occupy_layer_during_cooldown` is enabled. If disabled, the track is not selected during cooldown, so it cannot be re-selected and the cooldown will never reset.
+{: .prompt-tip }
+
+<br>
 
 ### **Example: Biome & Weather Based Definition**
 
@@ -351,20 +365,25 @@ Checks the current **weather state** at the player’s position.
 
 ### [**Entity Condition**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityCondition.java)
 
-Checks for the presence of a specific entity within a **square area** centered on the player.
+Checks for the presence of one or more specific entities within a **cubic area** centered on the player.
 
 ```json
 "condition": {
   "type": "maestro:entity",
-  "entity": "minecraft:wither",
-  "distance": 64
+  "required_amount": 1,
+  "search_radius": 64,
+  "values": [
+    "minecraft:wither",
+    "minecraft:ender_dragon"
+  ]
 }
 ```
 
-| Field      | Type                   | Description                                                                                           |
-| ---------- | ---------------------- | ----------------------------------------------------------------------------------------------------- |
-| `entity`   | **Identifier**         | The entity ID to check for.                                                                           |
-| `distance` | **Integer** (Optional) | Half-size of the square detection area in all directions,<br>centered on the player. Defaults to `64` |
+| Field             | Type                   | Description                                                                     |
+| ----------------- | ---------------------- | ------------------------------------------------------------------------------- |
+| `required_amount` | **Integer** (Optional) | Minimum number of matching entities required.<br>Defaults to `1`.               |
+| `search_radius`   | **Integer** (Optional) | Radius of the cubic detection area centered on the<br>player. Defaults to `64`. |
+| `values`          | **Array[Identifier]**  | Entity IDs to check for.                                                        |
 
 <br>
 
