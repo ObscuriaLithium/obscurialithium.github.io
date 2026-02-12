@@ -1,7 +1,7 @@
 ---
 title: Maestro
 date: 2026-02-05 16:00:00 -0300
-last_modified_at: 2026-02-11 8:00:00 -0300
+last_modified_at: 2026-02-12 5:00:00 -0300
 layout: post
 icon_url: /assets/img/mods/maestro/icon.png
 icon: fas fa-book
@@ -281,7 +281,7 @@ Conditions define **which game state** a music definition applies to. They are e
 
 ### **Constants**
 
-#### [**Always**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/constant/AlwaysCondition.java)
+#### [**Always**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/constant/AlwaysCondition.java)
 
 Always evaluates to `true`.
 
@@ -298,7 +298,7 @@ This condition is useful for:
 
 <br>
 
-#### [**Never**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/constant/NeverCondition.java)
+#### [**Never**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/constant/NeverCondition.java)
 
 Always evaluates to `false`.
 
@@ -317,7 +317,7 @@ This condition is mainly useful for:
 
 ### **World & Environment**
 
-#### [**Dimension**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/DimensionCondition.java)
+#### [**Dimension**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/DimensionCondition.java)
 
 Checks whether the player is currently in one of the specified **dimensions**.
 
@@ -336,7 +336,7 @@ Checks whether the player is currently in one of the specified **dimensions**.
 
 <br>
 
-#### [**Biome**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeCondition.java)
+#### [**Biome**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeCondition.java)
 
 Checks whether the player is currently in one of the specified **biomes**.
 
@@ -356,7 +356,7 @@ Checks whether the player is currently in one of the specified **biomes**.
 
 <br>
 
-#### [**Biome Tag**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeTagCondition.java)
+#### [**Biome Tag**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeTagCondition.java)
 
 Checks whether the player is currently in one of the specified **biomes**.
 
@@ -376,7 +376,7 @@ Checks whether the player is currently in one of the specified **biomes**.
 
 <br>
 
-#### [**Weather**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/WeatherCondition.java)
+#### [**Weather**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/WeatherCondition.java)
 
 Evaluates the current **weather state** at the player's position.
 
@@ -403,7 +403,7 @@ Evaluates the current **weather state** at the player's position.
 
 <br>
 
-#### [**Day Cycle**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/DayCycleCondition.java)
+#### [**Day Cycle**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/DayCycleCondition.java)
 
 Evaluates the current **phase of the in-game day** based on world time.
 
@@ -426,7 +426,7 @@ Evaluates the current **phase of the in-game day** based on world time.
 
 <br>
 
-#### [**Time**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/TimeCondition.java)
+#### [**Time**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/TimeCondition.java)
 
 Evaluates the current **in-game time of day** using numeric tick thresholds (`0â€“24000`).
 
@@ -445,7 +445,7 @@ Evaluates the current **in-game time of day** using numeric tick thresholds (`0â
 
 <br>
 
-#### [**Height**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/HeightCondition.java)
+#### [**Height**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/HeightCondition.java)
 
 Evaluates the player's current **Y level** against numeric thresholds.
 
@@ -466,7 +466,7 @@ Evaluates the player's current **Y level** against numeric thresholds.
 
 ### **Player & Entities**
 
-#### [**Entity**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityCondition.java)
+#### [**Entity**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityCondition.java)
 
 Checks for the presence of one or more specific entities within a **cubic area** centered on the player.
 
@@ -490,7 +490,7 @@ Checks for the presence of one or more specific entities within a **cubic area**
 
 <br>
 
-#### [**Entity Tag**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityTagCondition.java)
+#### [**Entity Tag**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityTagCondition.java)
 
 Checks for the presence of one or more specific entities within a **cubic area** centered on the player.
 
@@ -513,7 +513,7 @@ Checks for the presence of one or more specific entities within a **cubic area**
 
 <br>
 
-#### [**Vehicle**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/VehicleCondition.java)
+#### [**Vehicle**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/VehicleCondition.java)
 
 Checks the player's current **vehicle** (the entity they are riding).
 
@@ -535,7 +535,7 @@ Leave values empty to match **any** vehicle.
 
 <br>
 
-#### [**Screen**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/ScreenCondition.java)
+#### [**Screen**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/ScreenCondition.java)
 
 Checks whether a specific **GUI screen** is currently open.
 
@@ -554,7 +554,7 @@ Checks whether a specific **GUI screen** is currently open.
 
 <br>
 
-#### [**Boss Event**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/VehicleCondition.java)
+#### [**Boss Event**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/BossEventCondition.java)
 
 Checks whether any **boss health overlay** is currently active.
 
@@ -569,7 +569,7 @@ Set `value` to `false` to invert the condition.
 
 <br>
 
-#### [**Creative**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/CreativeCondition.java)
+#### [**Creative**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/CreativeCondition.java)
 
 Checks whether the player is in **Creative mode**.
 
@@ -584,7 +584,7 @@ Set `value` to `false` to invert the condition.
 
 <br>
 
-#### [**In Game**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/InGameCondition.java)
+#### [**In Game**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/InGameCondition.java)
 
 Checks whether a world and player are currently active (i.e. not in the main menu).
 
@@ -599,7 +599,7 @@ Set `value` to `false` to invert the condition.
 
 <br>
 
-#### [**Underwater**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/UnderwaterCondition.java)
+#### [**Underwater**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/UnderwaterCondition.java)
 
 Checks whether the player is currently underwater.
 
@@ -614,7 +614,7 @@ Set `value` to `false` to invert the condition.
 
 <br>
 
-#### [**Fishing**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/FishingCondition.java)
+#### [**Fishing**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/FishingCondition.java)
 
 Checks whether the player is currently fishing.
 
@@ -631,7 +631,7 @@ Set `value` to `false` to invert the condition.
 
 ### **Logical Operators**
 
-#### [**All Of**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/AllOfCondition.java) **(AND)**
+#### [**All Of**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/AllOfCondition.java) **(AND)**
 
 All conditions must be true:
 
@@ -642,7 +642,7 @@ All conditions must be true:
 }
 ```
 
-#### [**Any Of**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/AnyOfCondition.java) **(OR)**
+#### [**Any Of**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/AnyOfCondition.java) **(OR)**
 
 At least one condition must be true:
 
@@ -653,7 +653,7 @@ At least one condition must be true:
 }
 ```
 
-#### [**None Of**](https://github.com/ObscuriaLithium/maestro/blob/79de5700e7d1340d8366125fd064542afe3e340a/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/NoneOfCondition.java) **(NOT)**
+#### [**None Of**](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/NoneOfCondition.java) **(NOT)**
 
 No conditions can be true:
 
