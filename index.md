@@ -37,37 +37,37 @@ Alongside solo development, the Collection also includes selected collaboration 
     <th style="text-align:center;">Summary</th>
   </tr>
   <tr>
-    <td><img alt="" src="https://media.forgecdn.net/avatars/thumbnails/464/755/64/64/637744772991786976.png"></td>
+    <td><img alt="" width="100px" src="https://media.forgecdn.net/avatars/thumbnails/464/755/64/64/637744772991786976.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/aquamirae"><strong>Aquamirae</strong></a></td>
     <td style="white-space: normal;">Ship graveyard with terrible deep sea creatures.</td>
   </tr>
   <tr>
-    <td><img alt="" src="https://media.forgecdn.net/avatars/thumbnails/1532/336/64/64/638995048599943260.png"></td>
+    <td><img alt="" width="100px" src="https://media.forgecdn.net/avatars/thumbnails/1532/336/64/64/638995048599943260.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/loot-journal"><strong>Loot Journal</strong></a></td>
     <td style="white-space: normal;">Smoothly animated item pick-up notifications!</td>
   </tr>
   <tr>
-    <td><img alt="" src="/assets/img/tabs/obscure-tooltips.png"></td>
+    <td><img alt="" width="100px" src="/assets/img/tabs/obscure-tooltips.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/obscure-tooltips"><strong>Obscure Tooltips</strong></a></td>
     <td style="white-space: normal;">Stylized tooltips with beautiful effects and smooth animations!</td>
   </tr>
   <tr>
-    <td><img alt="" src="/assets/img/tabs/pillager-caravans.png"></td>
+    <td><img alt="" width="100px" src="/assets/img/tabs/pillager-caravans.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/pillager-caravans"><strong>Pillager Caravans</strong></a></td>
     <td style="white-space: normal;">Adds roaming pillager caravans with biome-themed loot and guarded convoys!</td>
   </tr>
   <tr>
-    <td><img alt="" src="https://github.com/ObscuriaLithium/accents/blob/master/common/src/main/resources/accents.png?raw=true"></td>
+    <td><img alt="" width="100px" src="https://github.com/ObscuriaLithium/accents/blob/master/common/src/main/resources/accents.png?raw=true"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/accents"><strong>Accents</strong></a></td>
     <td style="white-space: normal;">Adds dyeable style accents with subtle gameplay bonuses!</td>
   </tr>
   <tr>
-    <td><img alt="" src="/assets/img/mods/maestro/icon.png"></td>
+    <td><img alt="" width="100px" src="/assets/img/mods/maestro/icon.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/maestro"><strong>Maestro</strong></a></td>
     <td style="white-space: normal;">Reimagine vanilla music with smooth, reactive orchestration!</td>
   </tr>
   <tr>
-    <td><img alt="" src="https://media.forgecdn.net/avatars/thumbnails/1490/988/64/64/638968874427978534.png"></td>
+    <td><img alt="" width="100px" src="https://media.forgecdn.net/avatars/thumbnails/1490/988/64/64/638968874427978534.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/healight"><strong>Healight</strong></a></td>
     <td style="white-space: normal;">Adds a green glow when entities heal for clearer feedback.</td>
   </tr>
@@ -87,12 +87,12 @@ Alongside solo development, the Collection also includes selected collaboration 
     <th style="text-align:center;">Summary</th>
   </tr>
   <tr>
-    <td><img alt="" src="https://media.forgecdn.net/avatars/thumbnails/1094/8/64/64/638638590527736767.png"></td>
+    <td><img alt="" width="100px" src="https://media.forgecdn.net/avatars/thumbnails/1094/8/64/64/638638590527736767.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/ars-elixirum"><strong>Ars Elixirum</strong></a></td>
     <td style="white-space: normal;">Ultimate extension of potion crafting, applications, and diversity!</td>
   </tr>
   <tr>
-    <td><img alt="" src="https://media.forgecdn.net/avatars/thumbnails/1487/303/64/64/638966542785894071.png"></td>
+    <td><img alt="" width="100px" src="https://media.forgecdn.net/avatars/thumbnails/1487/303/64/64/638966542785894071.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/archogenum"><strong>Archogenum</strong></a></td>
     <td style="white-space: normal;">A technomagical genetics mod where your body becomes your build.</td>
   </tr>
@@ -112,12 +112,12 @@ Alongside solo development, the Collection also includes selected collaboration 
     <th style="text-align:center;">Summary</th>
   </tr>
   <tr>
-    <td><img alt="" src="/assets/img/tabs/fragmentum-layer.png"></td>
+    <td><img alt="" width="100px" src="/assets/img/tabs/fragmentum-layer.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/fragmentum"><strong>Fragmentum</strong></a></td>
     <td style="white-space: normal;">The lightweight framework for the Obscuria Collection cross-platform mods.</td>
   </tr>
   <tr>
-    <td><img alt="" src="https://media.forgecdn.net/avatars/thumbnails/1532/326/64/64/638995045245783285.png"></td>
+    <td><img alt="" width="100px" src="https://media.forgecdn.net/avatars/thumbnails/1532/326/64/64/638995045245783285.png"></td>
     <td style="white-space: normal;"><a href="https://www.curseforge.com/minecraft/mc-mods/obscure-api"><strong>Obscure API</strong></a></td>
     <td style="white-space: normal;">Auxiliary library (for early Obscuria Collection mods).</td>
   </tr>
