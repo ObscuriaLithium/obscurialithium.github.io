@@ -1,5 +1,6 @@
 ---
 layout: page
+icon_url: /assets/img/tabs/home.png
 # Index page
 ---
 

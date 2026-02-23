@@ -2,6 +2,7 @@
 date: 2023-01-01 12:00:00 -0300
 last_modified_at: 2026-02-23 14:00:00 -0300
 layout: post
+icon_url: /assets/img/tabs/license.png
 icon: fas fa-balance-scale
 order: 5
 toc: true

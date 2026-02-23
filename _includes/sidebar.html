@@ -22,7 +22,10 @@
       <!-- home -->
       <li class="nav-item{% if page.layout == 'home' %}{{ " active" }}{% endif %}">
         <a href="{{ '/' | relative_url }}" class="nav-link">
-          <i class="fa-fw fas fa-home"></i>
+          <span style="display: inline-flex; align-items: center;">
+            <img src="/assets/img/tabs/home.png" alt="Home icon" width="32px" height="32px">
+            <span style="display: inline-block; width: 14px;"></span>
+          </span>
           <span>{{ site.data.locales[include.lang].tabs.home | upcase }}</span>
         </a>
       </li>
