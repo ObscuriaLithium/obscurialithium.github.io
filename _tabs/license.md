@@ -8,9 +8,11 @@ order: 5
 toc: true
 ---
 
-# Obscuria Ecosystem License (OEL) v1.2
+# Obscuria Ecosystem License (OEL) v1.3
 
 Obscuria projects are distributed under a custom license designed to protect project identity and official distribution while supporting an open modding ecosystem. All rights not expressly granted remain reserved.
+
+This license applies to projects solely authored by the original Obscuria author. For collaborative projects co-authored with one or more additional authors — typically identified by joint branding such as "Obscuria X [Collaborator]" in official project materials — see Section 7.
 
 -----
 
@@ -89,7 +91,7 @@ Activity on *any* official channel counts, regardless of which project it relate
 **Tier 1 — 90 days of inactivity:**
 The restrictions in Section 2 on distributing and publishing modified versions are suspended. Community members may publish forks under the following conditions:
 
-- the release title must include the label **"Community Fork"**
+- the release title must include the label **"Community Fork"** (e.g. *"Obscuria [ProjectName] — Community Fork"*)
 - the original author must be clearly credited in the project description and README
 - the fork must link to the original official release page
 - rebranding remains prohibited — the original project name may be referenced but the fork must not present itself as the official project
@@ -118,3 +120,29 @@ If the author resumes activity after a period of inactivity:
 
 ### 6.5 Good Faith Requirement
 This section may not be invoked in bad faith. Actions that constitute bad faith include but are not limited to: deliberately avoiding contact attempts while claiming inactivity; initiating the process within days of a known hiatus announcement by the author; coordinating with others to manufacture the appearance of inactivity. Forks published under this section that are later found to have been initiated in bad faith are considered in violation of this license.
+
+-----
+
+## 7. Collaborative Projects
+
+### 7.1 Scope
+This section applies exclusively to projects jointly created by the Obscuria author and one or more named collaborators. Such projects are typically identified by joint branding in official project materials, such as "Obscuria X [Collaborator Name]" in cover art, project titles, or official descriptions. If a project's authorship is ambiguous, it is governed by the solo-author terms of this license unless a separate written agreement states otherwise.
+
+### 7.2 Inactivity in Collaborative Projects
+The inactivity provisions of Section 6 apply differently to collaborative projects. If the Obscuria author becomes inactive as defined in Section 6.1:
+
+- **Tier 1 (90 days)** and **Tier 2 (365 days)** community provisions described in Section 6.2 do **not** apply to collaborative projects.
+- Instead, full ownership, maintenance rights, and distribution rights over the collaborative project transfer exclusively to the named co-author(s).
+- The co-author(s) may continue to develop, publish, and maintain the project under their own terms without restriction, provided the Obscuria author's original contribution is credited.
+
+### 7.3 Transfer of Rights
+Upon confirmed inactivity of the Obscuria author (verified using the process in Section 6.3), the co-author(s) of a collaborative project receive:
+
+- the right to publish updates and new versions of the project independently
+- the right to determine the license under which the project is distributed going forward
+- the right to maintain or retire the original branding at their discretion, including removing the "Obscuria X" joint branding if they choose
+
+The co-author(s) may not, however, misrepresent the Obscuria author's past contributions or claim sole original authorship of work created jointly.
+
+### 7.4 Author Return
+If the Obscuria author returns after a period of inactivity in a collaborative project, any rights already exercised by the co-author(s) under Section 7.3 are not revoked. Future development of the project is subject to mutual agreement between all original authors. Neither party may unilaterally revoke the other's authorship credit or contributions.
