@@ -1,0 +1,189 @@
+{
+  "maestro": {
+    "title": "Maestro",
+    "icon": "/assets/img/mods/icons/maestro.png",
+    "description": "Data-driven music orchestration framework for Minecraft.",
+    "pages": [
+      {
+        "slug": "index",
+        "title": "Overview",
+        "href": "/docs/maestro",
+        "icon": "BookOpen"
+      },
+      {
+        "category": "Configuration"
+      },
+      {
+        "slug": "sounds",
+        "title": "Sounds",
+        "href": "/docs/maestro/sounds",
+        "icon": "Volume2"
+      },
+      {
+        "slug": "music-definitions",
+        "title": "Music Definitions",
+        "href": "/docs/maestro/music-definitions",
+        "icon": "FileText"
+      },
+      {
+        "slug": "music-conditions",
+        "title": "Music Conditions",
+        "href": "/docs/maestro/music-conditions",
+        "icon": "GitBranch"
+      },
+      {
+        "category": "Reference"
+      },
+      {
+        "slug": "best-practices",
+        "title": "Best Practices",
+        "href": "/docs/maestro/best-practices",
+        "icon": "Star"
+      },
+      {
+        "slug": "troubleshooting",
+        "title": "Troubleshooting",
+        "href": "/docs/maestro/troubleshooting",
+        "icon": "Wrench"
+      },
+      {
+        "slug": "additional-resources",
+        "title": "Additional Resources",
+        "href": "/docs/maestro/additional-resources",
+        "icon": "ExternalLink"
+      }
+    ]
+  },
+  "obscure-tooltips": {
+    "title": "Obscure Tooltips",
+    "icon": "/assets/img/tabs/obscure-tooltips.png",
+    "description": "Stylized tooltips with beautiful effects and smooth animations.",
+    "pages": [
+      {
+        "slug": "index",
+        "title": "Overview",
+        "href": "/docs/obscure-tooltips",
+        "icon": "book-open"
+      },
+      {
+        "slug": "styles-and-definitions",
+        "title": "Styles & Definitions",
+        "href": "/docs/obscure-tooltips/styles-and-definitions",
+        "icon": "Palette"
+      },
+      {
+        "slug": "make-your-first-style",
+        "title": "Make Your First Style",
+        "href": "/docs/obscure-tooltips/make-your-first-style",
+        "icon": "Paintbrush"
+      },
+      {
+        "category": "Elements"
+      },
+      {
+        "slug": "tooltip-panels",
+        "title": "Panels",
+        "href": "/docs/obscure-tooltips/tooltip-panels",
+        "icon": "panel-top"
+      },
+      {
+        "slug": "tooltip-frames",
+        "title": "Frames",
+        "href": "/docs/obscure-tooltips/tooltip-frames",
+        "icon": "frame"
+      },
+      {
+        "slug": "tooltip-slots",
+        "title": "Slots",
+        "href": "/docs/obscure-tooltips/tooltip-slots",
+        "icon": "diamond"
+      },
+      {
+        "slug": "tooltip-icons",
+        "title": "Icons",
+        "href": "/docs/obscure-tooltips/tooltip-icons",
+        "icon": "swords"
+      },
+      {
+        "slug": "tooltip-effects",
+        "title": "Effects",
+        "href": "/docs/obscure-tooltips/tooltip-effects",
+        "icon": "sparkles"
+      },
+      {
+        "category": "Advanced"
+      },
+      {
+        "slug": "tooltip-filters",
+        "title": "Filters",
+        "href": "/docs/obscure-tooltips/tooltip-filters",
+        "icon": "Filter"
+      },
+      {
+        "slug": "tooltip-labels",
+        "title": "Labels",
+        "href": "/docs/obscure-tooltips/tooltip-labels",
+        "icon": "Tag"
+      },
+      {
+        "slug": "miscellaneous",
+        "title": "Misc",
+        "href": "/docs/obscure-tooltips/miscellaneous",
+        "icon": "MoreHorizontal"
+      }
+    ]
+  },
+  "pillager-caravans": {
+    "title": "Pillager Caravans",
+    "icon": "/assets/img/tabs/pillager-caravans.png",
+    "description": "Roaming caravans with biome-themed loot and guarded convoys.",
+    "pages": [
+      {
+        "slug": "index",
+        "title": "Overview",
+        "href": "/docs/pillager-caravans",
+        "icon": "BookOpen"
+      },
+      {
+        "category": "Data Types"
+      },
+      {
+        "slug": "caravan-variation",
+        "title": "Caravan Variation",
+        "href": "/docs/pillager-caravans/caravan-variation",
+        "icon": "Shuffle"
+      },
+      {
+        "slug": "caravan-member",
+        "title": "Caravan Member",
+        "href": "/docs/pillager-caravans/caravan-member",
+        "icon": "User"
+      },
+      {
+        "slug": "caravan-placement",
+        "title": "Caravan Placement",
+        "href": "/docs/pillager-caravans/caravan-placement",
+        "icon": "MapPin"
+      }
+    ]
+  },
+  "fragmentum-layer": {
+    "title": "Fragmentum Layer",
+    "icon": "/assets/img/tabs/fragmentum-layer.png",
+    "description": "Lightweight framework powering cross-platform mods.",
+    "pages": [
+      {
+        "slug": "index",
+        "title": "Overview",
+        "href": "/docs/fragmentum-layer",
+        "icon": "book-open"
+      },
+      {
+        "slug": "limitations-and-intended-use",
+        "title": "Limitations & Intended Use",
+        "href": "/docs/fragmentum-layer/limitations-and-intended-use",
+        "icon": "badge-alert"
+      }
+    ]
+  }
+}

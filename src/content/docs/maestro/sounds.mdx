@@ -1,0 +1,115 @@
+---
+title: "Sounds"
+mod: "maestro"
+modTitle: "Maestro"
+order: 2
+lastModified: "2026-02-12"
+---
+
+Minecraft plays sounds using the **OGG** audio format. Maestro does not introduce a custom audio system – it works **entirely on top of vanilla Minecraft sound handling**.
+
+Any audio file (`.mp3`, `.wav`, `.flac`, etc.) must be converted to `.ogg`. Once converted, Maestro treats the sound exactly like a vanilla music track.
+
+
+
+## Converting Audio to OGG
+
+You can convert audio files using tools like:
+- **Audacity** (free, cross-platform)
+- ffmpeg
+- any audio editor capable of exporting `.ogg`
+
+**Basic Audacity workflow:**
+1.	Open your audio file
+2.	File -> Export Audio -> Format: Ogg Vorbis Files
+3.	Use default settings (they are sufficient)
+4.	Save the file under  `assets/<namespace>/sounds/`
+
+
+
+## Registering Sounds
+
+Before Maestro can reference a track, it must be **registered as a vanilla sound event** using the standard [`sounds.json`](https://minecraft.wiki/w/Sounds.json) file.
+
+> Maestro references **sound events**, not raw audio files. `sounds.json` assigns a sound event ID to one or more `.ogg` files, which Maestro then uses in music definitions.
+
+<CodeBlock file="assets/example/sounds.json">
+```json
+{
+  "music.biome.frozen_ocean": {
+    "sounds": [
+      {
+        "name": "example:some_music",
+        "stream": true
+      }
+    ]
+  },
+  "music.overworld.rain": {
+    "sounds": [
+      {
+        "name": "example:rain_variation_1",
+        "stream": true
+      },
+      {
+        "name": "example:rain_variation_2",
+        "stream": true
+      },
+      {
+        "name": "example:rain_variation_3",
+        "stream": true
+      }
+    ]
+  }
+}
+```
+</CodeBlock>
+
+This registers the following files:
+
+<FileTree label="Files" tree={[
+    { path: 'assets/' },
+    { path: 'assets/example/', desc: "Your pack's namespace", indent: 1 },
+    { path: 'assets/example/sounds/', indent: 2 },
+    { path: 'assets/example/sounds/some_music.ogg', indent: 3 },
+    { path: 'assets/example/sounds/rain_variation_1.ogg', indent: 3  },
+    { path: 'assets/example/sounds/rain_variation_2.ogg', indent: 3  },
+    { path: 'assets/example/sounds/rain_variation_3.ogg', indent: 3 }
+]} />
+
+and exposes them as sound events:
+
+`example:music.biome.frozen_ocean`<br/>
+`example:music.overworld.rain`
+
+
+
+## Multiple Files per Sound Event
+
+A single sound event can reference **multiple audio files** (like in `example:music.overworld.rain` registration).
+
+If multiple sounds are registered under the same ID, Minecraft will **randomly choose one** each time the track starts. This is useful for adding subtle variation without additional logic.
+
+
+
+## Why stream: true?
+
+Music tracks should always be registered with `"stream": true`.
+
+Streaming tells Minecraft to:
+- Load the audio gradually instead of fully into memory
+- Avoid memory spikes for long tracks
+- Behave consistently with vanilla music playback
+
+Short sound effects usually do not need streaming – music does.
+
+
+
+## Naming Conventions
+
+Use clear, self-describing sound event names:
+- ✅ `music.biome.frozen_ocean`
+- ✅ `music.overworld.rain`
+- ❌ `track1`
+- ❌ `tarja_turunen__darkness`
+
+Good naming makes music definitions easier to read, debug, and maintain.

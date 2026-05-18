@@ -1,0 +1,81 @@
+---
+title: "Music Definitions"
+mod: "maestro"
+modTitle: "Maestro"
+order: 3
+lastModified: "2026-02-12"
+---
+
+Music definitions describe **what music should play** and **under which in-game conditions**. Each definition is evaluated dynamically, and the one with the highest priority that matches the current game state is selected.
+
+## Basic Definition
+
+<SchemaBlock label="JSON Example" json={
+`{
+    "priority": 0,
+    "layer": "underscore",
+    "sound_event": "minecraft:music_disc.pigstep",
+    "cooldown_seconds": 0,
+    "occupy_layer_during_cooldown": true,
+    "reset_cooldown_on_reactivation": false,
+    "condition": {
+      "type": "maestro:always"
+    }
+}`}>
+  <SchemaField name="priority" type="Integer">
+    Determines priority within the same layer. Higher values take precedence over lower ones.
+  </SchemaField>
+  <SchemaField name="layer" type="Enum">
+    Target music layer. Supported values: `underscore`, `encounter`.
+  </SchemaField>
+  <SchemaField name="sound_event" type="Identifier">
+    Reference to a sound event (`namespace:path`).
+  </SchemaField>
+  <SchemaField name="cooldown_seconds" type="Integer" optional>
+    Time after the track finishes playing naturally before it can play again (in seconds). Defaults to `0`.
+  </SchemaField>
+  <SchemaField name="occupy_layer_during_cooldown" type="Boolean" optional>
+    Keeps the track valid during cooldown, occupying the layer with silence. Defaults to `true`.
+  </SchemaField>
+  <SchemaField name="reset_cooldown_on_reactivation" type="Boolean" optional>
+    Resets the cooldown when the track becomes valid again after its condition was false. Defaults to `false`.
+  </SchemaField>
+  <SchemaField name="condition" type="MusicCondition">
+    Defines when this music definition is considered valid.
+  </SchemaField>
+</SchemaBlock>
+
+> **Note**<br />
+> `reset_cooldown_on_reactivation` only works when `occupy_layer_during_cooldown` is enabled. If disabled, the track is not selected during cooldown, so it cannot be re-selected and the cooldown will never reset.
+
+
+
+## Example: Biome & Weather Based Definition
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "priority": 100,
+  "layer": "underscore",
+  "sound_event": "example:music.blizzard",
+  "condition": {
+    "type": "maestro:all_of",
+    "terms": [
+      {
+        "type": "maestro:biome",
+        "values": [ 
+          "minecraft:snowy_beach",
+          "minecraft:frozen_ocean" 
+        ]
+      },
+      {
+        "type": "maestro:weather",
+        "is_snowing": true
+      }
+    ]
+  }
+}
+```
+</CodeBlock>
+
+This definition plays the custom blizzard music track when the player is located in either the **Snowy Beach** or **Frozen Ocean** biome **and** it is **currently snowing**.

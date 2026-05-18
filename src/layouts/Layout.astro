@@ -1,0 +1,810 @@
+---
+import '../styles/global.css';
+import navData from '../data/nav.json';
+import Icon from '../components/Icon.astro';
+import Search from '../components/Search.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  headings?: { depth: number; slug: string; text: string }[];
+  mod?: string;
+  modTitle?: string;
+  pageSlug?: string;
+  isHome?: boolean;
+}
+
+const {
+  title,
+  description,
+  headings = [],
+  mod,
+  modTitle,
+  pageSlug,
+  isHome = false,
+} = Astro.props;
+
+const allMods = [
+  { slug: 'fragmentum-layer', title: 'Fragmentum Layer', icon: '/assets/img/tabs/fragmentum-layer.png', description: 'Lightweight framework powering cross-platform mods.' },
+  { slug: 'obscure-tooltips',  title: 'Obscure Tooltips',  icon: '/assets/img/tabs/obscure-tooltips.png', description: 'Stylized tooltips with beautiful effects.' },
+  { slug: 'pillager-caravans', title: 'Pillager Caravans', icon: '/assets/img/tabs/pillager-caravans.png', description: 'Roaming caravans with biome-themed loot.' },
+  { slug: 'maestro',           title: 'Maestro',           icon: '/assets/img/mods/icons/maestro.png', description: 'Data-driven music orchestration framework.' },
+];
+
+const currentModPages = mod ? (navData as any)[mod]?.pages ?? [] : [];
+const hasToc = headings.filter(h => h.depth === 2 || h.depth === 3).length > 1;
+
+// Prev / next — only real pages (not category entries)
+const realPages = currentModPages.filter((p: any) => p.slug);
+const currentPageIndex = realPages.findIndex((p: any) => p.slug === (pageSlug ?? 'index'));
+const prevPage = currentPageIndex > 0 ? realPages[currentPageIndex - 1] : null;
+const nextPage = currentPageIndex < realPages.length - 1 ? realPages[currentPageIndex + 1] : null;
+
+const pageTitle = title ? `${title} — Obscuria Collection` : 'Obscuria Collection';
+const canonicalURL = new URL(Astro.url.pathname, 'https://obscurialithium.github.io');
+
+// Breadcrumb: home > mod > page
+const breadcrumbs: { label: string; href: string }[] = [];
+if (mod) {
+  const modInfo = allMods.find(m => m.slug === mod);
+  breadcrumbs.push({ label: modInfo?.title ?? mod, href: `/docs/${mod}` });
+  if (pageSlug && pageSlug !== 'index') {
+    breadcrumbs.push({ label: title ?? pageSlug, href: `/docs/${mod}/${pageSlug}` });
+  }
+}
+
+// Convert PascalCase icon names to kebab-case for Lucide
+function toKebab(s: string): string {
+  return s.replace(/([A-Z])/g, (m, c, i) => (i > 0 ? '-' : '') + c.toLowerCase());
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{pageTitle}</title>
+  {description && <meta name="description" content={description} />}
+  <link rel="canonical" href={canonicalURL.toString()} />
+
+  <!-- Open Graph / Discord unfurl -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL.toString()} />
+  <meta property="og:title" content={pageTitle} />
+  {description && <meta property="og:description" content={description} />}
+  <meta property="og:image" content="https://obscurialithium.github.io/assets/img/obscuria-collection.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/assets/img/favicons/favicon-96x96.png" />
+</head>
+<body>
+
+<!-- Reading progress bar -->
+<div id="reading-progress" class="reading-progress" aria-hidden="true"></div>
+
+<!-- Mobile header (visible only on small screens) -->
+<header class="mobile-header" id="mobile-header">
+  <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open navigation menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a href="/" class="mobile-logo">Obscuria Collection</a>
+  <button class="mobile-search-btn" id="mobile-search-btn" aria-label="Search">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  </button>
+</header>
+
+<!-- Mobile sidebar overlay -->
+<div class="mobile-overlay" id="mobile-overlay"></div>
+
+<div class={`page-layout${isHome ? ' home-layout' : ''}${!hasToc ? ' no-toc' : ''}`}>
+
+  <!-- ── Sidebar ── -->
+  <aside id="sidebar">
+
+    <!-- Logo -->
+    <a href="/" class="sidebar-logo-link">
+      <div class="sidebar-logo">
+        <img src="/assets/img/obscuria-collection.png" alt="Obscuria Collection" class="sidebar-logo-img" />
+        <div class="sidebar-logo-glow"></div>
+      </div>
+      <p class="sidebar-logo-sub">All the docs you need for Obscuria Collection's data-driven mods.</p>
+    </a>
+
+    <!-- Search -->
+    <div class="sidebar-search">
+      <Search />
+    </div>
+
+    <!-- Mod cards -->
+    <nav class="sidebar-nav" aria-label="Documentation">
+      {allMods.map(m => {
+        const isActive = mod === m.slug;
+        const modPages = (navData as any)[m.slug]?.pages ?? [];
+        const realModPages = modPages.filter((p: any) => p.slug);
+        const firstPage = realModPages[0];
+        return (
+          <div class={`mod-card-nav${isActive ? ' is-open' : ''}`} data-mod={m.slug}>
+            <!-- Card header — click navigates to first page -->
+            <a
+              href={firstPage ? firstPage.href : `/docs/${m.slug}`}
+              class="mod-card-nav-header"
+              data-mod-toggle={m.slug}
+            >
+              <img src={m.icon} alt="" class="mod-card-nav-icon" />
+              <div class="mod-card-nav-info">
+                <span class="mod-card-nav-title">{m.title}</span>
+                <span class="mod-card-nav-desc">{m.description}</span>
+              </div>
+              <span class="mod-card-nav-chevron">
+                <Icon name="chevron-right" size={14} />
+              </span>
+            </a>
+
+            <!-- Expanded pages list -->
+            <div class="mod-card-nav-pages">
+              <div class="mod-card-nav-pages-inner">
+              {modPages.map((page: any) => {
+                if (page.category) {
+                  return (
+                    <span class="pages-category-label">{page.category}</span>
+                  );
+                }
+                const isCurrent = page.slug === (pageSlug ?? 'index') && isActive;
+                return (
+                  <a
+                    href={page.href}
+                    class={`page-nav-item${isCurrent ? ' active' : ''}`}
+                  >
+                    {page.icon && <Icon name={toKebab(page.icon)} size={18} />}
+                    {page.title}
+                  </a>
+                );
+              })}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </nav>
+
+    <!-- Bottom social links -->
+    <div class="sidebar-footer">
+      <a href="https://discord.gg/jSHHJSUWdY" target="_blank" rel="noopener" title="Discord">
+        <Icon name="message-circle" size={16} />
+      </a>
+      <a href="https://www.curseforge.com/members/obscuria/projects" target="_blank" rel="noopener" title="CurseForge">
+        <Icon name="flame" size={16} />
+      </a>
+      <a href="https://github.com/ObscuriaLithium" target="_blank" rel="noopener" title="GitHub">
+        <Icon name="github" size={16} />
+      </a>
+      <a href="mailto:contact@obscuria.dev" title="Email">
+        <Icon name="mail" size={16} />
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main id="main-content">
+
+    <!-- Breadcrumbs (only on doc pages) -->
+    {breadcrumbs.length > 0 && (
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/" class="breadcrumb-item">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          Docs
+        </a>
+        {breadcrumbs.map((crumb, i) => (
+          <>
+            <span class="breadcrumb-sep" aria-hidden="true">/</span>
+            {i === breadcrumbs.length - 1
+              ? <span class="breadcrumb-item current">{crumb.label}</span>
+              : <a href={crumb.href} class="breadcrumb-item">{crumb.label}</a>
+            }
+          </>
+        ))}
+      </nav>
+    )}
+
+    <slot />
+
+    <!-- Prev / Next navigation -->
+    {(prevPage || nextPage) && (
+      <nav class="page-nav" aria-label="Page navigation">
+        <div>
+          {prevPage && (
+            <a href={prevPage.href} class="page-nav-link prev">
+              <span class="page-nav-label">
+                <Icon name="chevron-left" size={12} />
+                Previous
+              </span>
+              <span class="page-nav-title">{prevPage.title}</span>
+            </a>
+          )}
+        </div>
+        <div>
+          {nextPage && (
+            <a href={nextPage.href} class="page-nav-link next">
+              <span class="page-nav-label">
+                Next
+                <Icon name="chevron-right" size={12} />
+              </span>
+              <span class="page-nav-title">{nextPage.title}</span>
+            </a>
+          )}
+        </div>
+      </nav>
+    )}
+  </main>
+
+  <!-- ── Right TOC ── -->
+  {hasToc && (
+    <aside id="toc-panel" aria-label="On this page">
+      <p class="toc-label">On this page</p>
+      <ul class="toc-list">
+        {headings
+          .filter(h => h.depth === 2 || h.depth === 3)
+          .map(h => (
+            <li class={`toc-item depth-${h.depth}`}>
+              <a
+                href={`#${h.slug}`}
+                class="toc-link"
+                data-toc={h.slug}
+              >
+                {h.text.replace(/\*\*/g, '')}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+  )}
+
+</div>
+
+<!-- Back to top button (outside layout grid, fixed position) -->
+<button id="back-to-top" class="back-to-top" aria-label="Back to top">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- ── Search modal (at body level to escape sidebar overflow clipping) ── -->
+<div id="search-modal" class="search-modal" aria-modal="true" role="dialog" aria-label="Search documentation" hidden>
+  <div class="search-backdrop" id="search-backdrop"></div>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input
+        id="search-input"
+        class="search-input"
+        type="text"
+        placeholder="Search documentation…"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="search-esc">Esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" role="listbox"></div>
+    <div class="search-footer">
+      <span><kbd>↑↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>Esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const SIDEBAR_STATE_KEY = 'sidebar-state';
+
+  // ── Restore sidebar state (open tabs + scroll) before first paint ──
+  const sidebar = document.getElementById('sidebar');
+
+  function saveState() {
+    if (!sidebar) return;
+    const openMods = Array.from(document.querySelectorAll('.mod-card-nav.is-open'))
+      .map(el => (el as HTMLElement).dataset.mod ?? '');
+    const state = { openMods, scrollTop: sidebar.scrollTop };
+    sessionStorage.setItem(SIDEBAR_STATE_KEY, JSON.stringify(state));
+  }
+
+  // If no saved state exists yet, scroll the active page into view in the sidebar
+  function scrollActiveIntoView() {
+    if (!sidebar) return;
+    const active = sidebar.querySelector('.page-nav-item.active') as HTMLElement | null;
+    if (!active) return;
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    const relTop = activeRect.top - sidebarRect.top + sidebar.scrollTop;
+    const center = relTop - sidebar.clientHeight / 2 + active.offsetHeight / 2;
+    sidebar.scrollTop = Math.max(0, center);
+  }
+
+  // Determine which mod is active according to the server-rendered HTML
+  const serverActiveMod = (document.querySelector('.mod-card-nav.is-open') as HTMLElement | null)
+    ?.dataset.mod ?? null;
+
+  const hadSavedState = !!sessionStorage.getItem(SIDEBAR_STATE_KEY);
+
+  if (hadSavedState && serverActiveMod) {
+    // Only restore from sessionStorage if the active mod matches what's saved.
+    // If the server says a different mod should be open (e.g. after search navigation),
+    // trust the server and discard the saved state.
+    try {
+      const raw = sessionStorage.getItem(SIDEBAR_STATE_KEY)!;
+      const state = JSON.parse(raw) as { openMods: string[]; scrollTop: number };
+      if (state.openMods.includes(serverActiveMod)) {
+        // Same mod — safe to restore scroll position only, tabs are already correct server-side
+        sidebar!.scrollTop = state.scrollTop ?? 0;
+      } else {
+        // Different mod — server wins, clear stale state and scroll active into view
+        sessionStorage.removeItem(SIDEBAR_STATE_KEY);
+        setTimeout(scrollActiveIntoView, 320);
+      }
+    } catch {
+      sessionStorage.removeItem(SIDEBAR_STATE_KEY);
+    }
+  } else if (!hadSavedState) {
+    scrollActiveIntoView();
+  }
+
+  // Save state on every scroll
+  sidebar?.addEventListener('scroll', saveState, { passive: true });
+
+  // ── Sidebar accordion ──
+  // Clicking the mod header always just toggles the accordion — no navigation.
+  // To navigate into a mod, the user clicks a page link inside the expanded list.
+  document.querySelectorAll('.mod-card-nav-header').forEach(header => {
+    header.addEventListener('click', (e) => {
+      e.preventDefault(); // never navigate from the header itself
+
+      const card = header.closest('.mod-card-nav') as HTMLElement;
+      if (!card) return;
+
+      const isOpen = card.classList.contains('is-open');
+
+      if (isOpen) {
+        // Close this card
+        card.classList.remove('is-open');
+      } else {
+        // Close all other open cards, open this one
+        document.querySelectorAll('.mod-card-nav.is-open').forEach(c => {
+          c.classList.remove('is-open');
+        });
+        card.classList.add('is-open');
+      }
+
+      saveState();
+    });
+  });
+
+  // Logo click → clear saved state so sidebar opens fresh on the home page
+  document.querySelector('.sidebar-logo-link')?.addEventListener('click', () => {
+    sessionStorage.removeItem(SIDEBAR_STATE_KEY);
+  });
+
+  // Save state whenever a page link is clicked (before navigation)
+  // If the link is already the active page — do nothing (prevents sidebar jitter)
+  document.querySelectorAll('.page-nav-item').forEach(link => {
+    link.addEventListener('click', (e) => {
+      if (link.classList.contains('active')) {
+        e.preventDefault();
+        return;
+      }
+      saveState();
+    });
+  });
+
+  // ── TOC smooth scroll & active tracker ──
+  document.querySelectorAll('.toc-link[data-toc]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = (link as HTMLElement).dataset.toc!;
+      const el = document.getElementById(id);
+      if (el) {
+        const offset = 32;
+        window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+        history.replaceState(null, '', '#' + id);
+        setActive(id);
+      }
+    });
+  });
+
+  const headingEls = Array.from(document.querySelectorAll('.content h2[id], .content h3[id]')) as HTMLElement[];
+
+  function setActive(id: string) {
+    document.querySelectorAll('.toc-link').forEach(l =>
+      l.classList.toggle('is-active', (l as HTMLElement).dataset.toc === id)
+    );
+  }
+
+  if (headingEls.length) {
+    let raf: number;
+    function track() {
+      const scrollY = window.scrollY + 80;
+      let current = headingEls[0];
+      for (const h of headingEls) {
+        if (h.offsetTop <= scrollY) current = h;
+        else break;
+      }
+      if (current) setActive(current.id);
+    }
+    window.addEventListener('scroll', () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(track);
+    }, { passive: true });
+    if (window.location.hash) setActive(window.location.hash.slice(1));
+    else track();
+  }
+
+  // ── Copy buttons on code blocks ──
+  document.querySelectorAll('.content pre').forEach(pre => {
+    if (pre.closest('.cb-root')) return; // skip CodeBlock — has its own copy button
+    const code = pre.querySelector('code');
+    if (!code) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+
+    btn.addEventListener('click', async () => {
+      const text = code.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch {}
+    });
+
+    (pre as HTMLElement).style.position = 'relative';
+    pre.appendChild(btn);
+  });
+
+  // ── Steam-style 3D card tilt ──
+  document.querySelectorAll<HTMLElement>('.mod-card').forEach(card => {
+    const gloss = card.querySelector<HTMLElement>('.mod-card-gloss');
+    let raf = 0;
+
+    card.addEventListener('mousemove', e => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width  / 2;
+        const cy = rect.height / 2;
+        const dx = (x - cx) / cx;   // -1 … 1
+        const dy = (y - cy) / cy;
+        const rotX = -dy * 9;        // degrees
+        const rotY =  dx * 9;
+
+        card.style.transform =
+          `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.04)`;
+
+        if (gloss) {
+          const gx = Math.round(x / rect.width  * 100);
+          const gy = Math.round(y / rect.height * 100);
+          gloss.style.setProperty('--gx', `${gx}%`);
+          gloss.style.setProperty('--gy', `${gy}%`);
+        }
+      });
+    });
+
+    card.addEventListener('mouseleave', () => {
+      cancelAnimationFrame(raf);
+      card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
+      if (gloss) gloss.style.background = '';
+    });
+  });
+
+  // ── Scroll active sidebar item into view on load ──
+  const sidebarEl2 = document.getElementById('sidebar');
+  const activeNavItem = sidebarEl2?.querySelector<HTMLElement>('.page-nav-item.active');
+  if (sidebarEl2 && activeNavItem) {
+    setTimeout(() => {
+      const sidebarRect = sidebarEl2.getBoundingClientRect();
+      const itemRect = activeNavItem.getBoundingClientRect();
+      if (itemRect.top < sidebarRect.top || itemRect.bottom > sidebarRect.bottom) {
+        activeNavItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }, 320);
+  }
+
+  // ── Anchor links on headings ──
+  document.querySelectorAll<HTMLElement>('.content h2[id], .content h3[id], .content h4[id]').forEach(heading => {
+    const id = heading.id;
+    const anchor = document.createElement('a');
+    anchor.href = `#${id}`;
+    anchor.className = 'heading-anchor';
+    anchor.setAttribute('aria-label', `Link to ${heading.textContent}`);
+    anchor.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+    anchor.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: heading.getBoundingClientRect().top + window.scrollY - 32, behavior: 'smooth' });
+      history.replaceState(null, '', `#${id}`);
+      // Brief visual feedback
+      anchor.classList.add('copied');
+      setTimeout(() => anchor.classList.remove('copied'), 1200);
+    });
+    heading.appendChild(anchor);
+  });
+
+  // ── External link icons ──
+  document.querySelectorAll<HTMLAnchorElement>('.content a[href^="http"]').forEach(link => {
+    if (link.hostname === window.location.hostname) return;
+    const icon = document.createElement('svg');
+    icon.setAttribute('width', '10');
+    icon.setAttribute('height', '10');
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('stroke', 'currentColor');
+    icon.setAttribute('stroke-width', '2');
+    icon.setAttribute('stroke-linecap', 'round');
+    icon.setAttribute('stroke-linejoin', 'round');
+    icon.setAttribute('aria-hidden', 'true');
+    icon.style.cssText = 'display:inline;margin-left:2px;vertical-align:middle;opacity:0.55;flex-shrink:0';
+    icon.innerHTML = '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>';
+    link.appendChild(icon);
+    if (!link.hasAttribute('target')) link.setAttribute('target', '_blank');
+    if (!link.hasAttribute('rel')) link.setAttribute('rel', 'noopener');
+  });
+
+  // ── Reading progress bar ──
+  const progressBar = document.getElementById('reading-progress');
+  const mainContent = document.getElementById('main-content');
+  if (progressBar && mainContent) {
+    function updateProgress() {
+      const rect = mainContent!.getBoundingClientRect();
+      const total = mainContent!.scrollHeight - window.innerHeight;
+      const scrolled = window.scrollY;
+      const pct = total > 0 ? Math.min(100, (scrolled / total) * 100) : 0;
+      progressBar!.style.width = `${pct}%`;
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  // ── Back to top ──
+  const backToTop = document.getElementById('back-to-top');
+  if (backToTop) {
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('is-visible', window.scrollY > 400);
+    }, { passive: true });
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // ── Mobile sidebar ──
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileSearchBtn = document.getElementById('mobile-search-btn');
+  const mobileOverlay = document.getElementById('mobile-overlay');
+  const sidebarEl = document.getElementById('sidebar');
+
+  function openMobileSidebar() {
+    sidebarEl?.classList.add('mobile-open');
+    mobileOverlay?.classList.add('is-visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileSidebar() {
+    sidebarEl?.classList.remove('mobile-open');
+    mobileOverlay?.classList.remove('is-visible');
+    document.body.style.overflow = '';
+  }
+
+  mobileMenuBtn?.addEventListener('click', openMobileSidebar);
+  mobileOverlay?.addEventListener('click', closeMobileSidebar);
+
+  // Mobile search button opens the search modal
+  mobileSearchBtn?.addEventListener('click', () => {
+    document.getElementById('search-trigger')?.click();
+  });
+
+  // ── Search modal ──
+  (function () {
+    const PAGE_SIZE = 12;
+
+    const trigger = document.getElementById('search-trigger');
+    const modal = document.getElementById('search-modal') as HTMLElement;
+    const backdrop = document.getElementById('search-backdrop');
+    const input = document.getElementById('search-input') as HTMLInputElement;
+    const resultsEl = document.getElementById('search-results') as HTMLElement;
+
+    if (!modal || !input || !resultsEl) return;
+
+    let searchIndex: Array<{title: string; mod: string; modTitle: string; href: string; excerpt: string; headings: string[]}> = [];
+    let indexLoaded = false;
+    let selectedIdx = -1;
+    let currentPage = 1;
+    let currentQuery = '';
+    let allFiltered: typeof searchIndex = [];
+
+    // ── Block background scroll while modal is open ──
+    function blockScroll(e: Event) { e.preventDefault(); e.stopPropagation(); }
+
+    function openSearch() {
+      modal.hidden = false;
+      // Lock page scroll without shifting layout
+      const scrollY = window.scrollY;
+      document.body.style.top = `-${scrollY}px`;
+      document.body.classList.add('search-open');
+      // Block wheel/touch on backdrop (not on the panel itself)
+      backdrop?.addEventListener('wheel', blockScroll, { passive: false });
+      backdrop?.addEventListener('touchmove', blockScroll, { passive: false });
+      requestAnimationFrame(() => {
+        modal.classList.add('is-open');
+        input.focus();
+      });
+      loadIndex().then(() => renderResults(input.value.trim()));
+      renderResults('');
+    }
+
+    function closeSearch() {
+      modal.classList.remove('is-open');
+      const scrollY = parseInt(document.body.style.top || '0') * -1;
+      document.body.classList.remove('search-open');
+      document.body.style.top = '';
+      window.scrollTo({ top: scrollY, behavior: 'instant' as ScrollBehavior });
+      backdrop?.removeEventListener('wheel', blockScroll);
+      backdrop?.removeEventListener('touchmove', blockScroll);
+      setTimeout(() => { modal.hidden = true; }, 200);
+      input.value = '';
+      selectedIdx = -1;
+      currentPage = 1;
+    }
+
+    async function loadIndex() {
+      if (indexLoaded) return;
+      try {
+        const res = await fetch('/search-index.json');
+        searchIndex = await res.json();
+        indexLoaded = true;
+      } catch {}
+    }
+
+    trigger?.addEventListener('click', openSearch);
+    backdrop?.addEventListener('click', closeSearch);
+
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        modal.hidden ? openSearch() : closeSearch();
+      }
+      if (e.key === 'Escape' && !modal.hidden) closeSearch();
+      if (!modal.hidden) {
+        const items = resultsEl.querySelectorAll<HTMLElement>('.search-result-item');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIdx = Math.min(selectedIdx + 1, items.length - 1);
+          updateSelected(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIdx = Math.max(selectedIdx - 1, 0);
+          updateSelected(items);
+        } else if (e.key === 'Enter') {
+          const active = resultsEl.querySelector<HTMLAnchorElement>('.search-result-item.is-selected');
+          if (active) { closeSearch(); active.click(); }
+        }
+      }
+    });
+
+    function updateSelected(items: NodeListOf<HTMLElement> | HTMLElement[]) {
+      const arr = Array.isArray(items) ? items : Array.from(items);
+      arr.forEach((el, i) => el.classList.toggle('is-selected', i === selectedIdx));
+      arr[selectedIdx]?.scrollIntoView({ block: 'nearest' });
+    }
+
+    input.addEventListener('input', () => {
+      selectedIdx = -1;
+      currentPage = 1;
+      renderResults(input.value.trim());
+    });
+
+    function esc(s: string): string {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function highlight(text: string, query: string): string {
+      if (!query) return esc(text);
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return esc(text).replace(new RegExp(`(${esc(escaped)})`, 'gi'), '<mark>$1</mark>');
+    }
+
+    function scoreItem(item: typeof searchIndex[0], q: string): number {
+      const ql = q.toLowerCase();
+      let s = 0;
+      if (item.title.toLowerCase().includes(ql)) s += 10;
+      if (item.title.toLowerCase().startsWith(ql)) s += 5;
+      if (item.modTitle.toLowerCase().includes(ql)) s += 3;
+      if (item.excerpt.toLowerCase().includes(ql)) s += 2;
+      if (item.headings.some(h => h.toLowerCase().includes(ql))) s += 4;
+      return s;
+    }
+
+    function renderResults(q: string, append = false) {
+      currentQuery = q;
+
+      if (!q) {
+        resultsEl.innerHTML = '<p class="search-empty">Start typing to search…</p>';
+        return;
+      }
+      if (!indexLoaded) {
+        resultsEl.innerHTML = '<p class="search-empty">Loading…</p>';
+        return;
+      }
+
+      if (!append) {
+        allFiltered = searchIndex
+          .map(item => ({ item, s: scoreItem(item, q) }))
+          .filter(({ s }) => s > 0)
+          .sort((a, b) => b.s - a.s)
+          .map(({ item }) => item);
+      }
+
+      if (!allFiltered.length) {
+        resultsEl.innerHTML = `<p class="search-empty">No results for <strong>${esc(q)}</strong></p>`;
+        return;
+      }
+
+      const visible = allFiltered.slice(0, currentPage * PAGE_SIZE);
+      const hasMore = allFiltered.length > visible.length;
+      const remaining = allFiltered.length - visible.length;
+
+      const itemsHTML = visible.map((item, i) => `
+        <a href="${esc(item.href)}" class="search-result-item${!append && i === 0 ? ' is-selected' : ''}" role="option">
+          <div class="search-result-meta">${highlight(item.modTitle, q)}</div>
+          <div class="search-result-title">${highlight(item.title, q)}</div>
+          ${item.excerpt ? `<div class="search-result-excerpt">${highlight(item.excerpt, q)}</div>` : ''}
+        </a>
+      `).join('');
+
+      const moreHTML = hasMore ? `
+        <button class="search-load-more" id="search-load-more">
+          Show ${Math.min(PAGE_SIZE, remaining)} more
+          <span style="opacity:0.5;font-size:0.68rem">(${remaining} remaining)</span>
+        </button>
+      ` : '';
+
+      resultsEl.innerHTML = itemsHTML + moreHTML;
+
+      if (!append) selectedIdx = 0;
+
+      updateSelected(Array.from(resultsEl.querySelectorAll<HTMLElement>('.search-result-item')));
+
+      resultsEl.querySelectorAll<HTMLElement>('.search-result-item').forEach((el, i) => {
+        el.addEventListener('mouseenter', () => {
+          selectedIdx = i;
+          updateSelected(Array.from(resultsEl.querySelectorAll<HTMLElement>('.search-result-item')));
+        });
+        el.addEventListener('click', () => closeSearch());
+      });
+
+      document.getElementById('search-load-more')?.addEventListener('click', () => {
+        currentPage++;
+        renderResults(currentQuery, true);
+        // Scroll to bottom of results to reveal new items
+        resultsEl.scrollTop = resultsEl.scrollHeight;
+      });
+    }
+  })();
+
+})();
+</script>
+
+<style>
+/* Body scroll lock while search is open — prevents layout shift */
+body.search-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
+}
+</style>
+</body>
+</html>

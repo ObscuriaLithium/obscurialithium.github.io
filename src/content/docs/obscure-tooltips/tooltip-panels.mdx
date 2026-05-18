@@ -1,0 +1,44 @@
+---
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Tooltip Panels"
+lastModified: "May 17, 2026"
+---
+
+Panels define the visual background of a tooltip and serve as the foundation for text and other elements.
+
+## [Blank Panel](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/panel/BlankPanel.java)
+
+Essentially, it acts as an invisible placeholder.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:blank"
+}
+```
+</CodeBlock>
+
+## [Color Rect Panel](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/panel/ColorRectPanel.java)
+
+A rectangular panel with a border styled after the vanilla design. The gradient palette can be customized for both the panel surface and its border. See [Colors](#colors) for more details.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:color_rect",
+  "background_palette": {
+    "top_left": "#f0100010",
+    "top_right": "#f0100010",
+    "bottom_left": "#f0100010",
+    "bottom_right": "#f0100010"
+  },
+  "border_palette": {
+    "top_left": "#505000ff",
+    "top_right": "#505000ff",
+    "bottom_left": "#5028007f",
+    "bottom_right": "#5028007f"
+  }
+}
+```
+</CodeBlock>

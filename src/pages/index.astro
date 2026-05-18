@@ -1,0 +1,138 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Home" isHome={true}>
+
+  <!-- Hero: centred logo with radial glow -->
+
+  <div class="home-hero">
+    <h1>Obscuria Collection</h1>
+    <p>
+      A unified ecosystem of Minecraft projects focused on atmosphere, presentation quality,
+      and mechanically interesting systems.</a>.
+    </p>
+    <p>
+      Each mod is built with long-term support in mind, clean architecture,
+      and cross-loader compatibility. Selected collaboration projects also exist
+      under a <a href="#collaboration">structured creative format</a>.
+    </p>
+  </div>
+
+  <p class="home-section-title">Docs — click to open</p>
+  <div class="mod-grid">
+    <a href="/docs/fragmentum-layer" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/tabs/fragmentum-layer.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/tabs/fragmentum-layer.png" alt="Fragmentum Layer" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Fragmentum Layer <span class="mod-card-has-docs">docs</span></div>
+        <div class="mod-card-desc">Lightweight framework powering cross-platform mods.</div>
+      </div>
+    </a>
+    <a href="/docs/obscure-tooltips" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/tabs/obscure-tooltips.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/tabs/obscure-tooltips.png" alt="Obscure Tooltips" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Obscure Tooltips <span class="mod-card-has-docs">docs</span></div>
+        <div class="mod-card-desc">Stylized tooltips with beautiful effects and smooth animations.</div>
+      </div>
+    </a>
+    <a href="/docs/pillager-caravans" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/tabs/pillager-caravans.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/tabs/pillager-caravans.png" alt="Pillager Caravans" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Pillager Caravans <span class="mod-card-has-docs">docs</span></div>
+        <div class="mod-card-desc">Roaming caravans with biome-themed loot and guarded convoys.</div>
+      </div>
+    </a>
+    <a href="/docs/maestro" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/mods/icons/maestro.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/mods/icons/maestro.png" alt="Maestro" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Maestro <span class="mod-card-has-docs">docs</span></div>
+        <div class="mod-card-desc">Data-driven music orchestration framework for Minecraft.</div>
+      </div>
+    </a>
+  </div>
+
+  <p class="home-section-title">Other projects</p>
+  <div class="mod-grid">
+    <a href="https://www.curseforge.com/minecraft/mc-mods/aquamirae" target="_blank" rel="noopener" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/mods/icons/aquamirae.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/mods/icons/aquamirae.png" alt="Aquamirae" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Aquamirae</div>
+        <div class="mod-card-desc">Ship graveyard with terrible deep sea creatures.</div>
+      </div>
+    </a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/loot-journal" target="_blank" rel="noopener" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/mods/icons/loot-journal.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/mods/icons/loot-journal.png" alt="Loot Journal" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Loot Journal</div>
+        <div class="mod-card-desc">Smoothly animated item pick-up notifications.</div>
+      </div>
+    </a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/accents" target="_blank" rel="noopener" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/mods/icons/accents.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/mods/icons/accents.png" alt="Accents" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Accents</div>
+        <div class="mod-card-desc">Dyeable style accents with subtle gameplay bonuses.</div>
+      </div>
+    </a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/healight" target="_blank" rel="noopener" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/mods/icons/healight.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/mods/icons/healight.png" alt="Healight" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Healight</div>
+        <div class="mod-card-desc">Green glow when entities heal for clearer feedback.</div>
+      </div>
+    </a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/ars-elixirum" target="_blank" rel="noopener" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/mods/icons/ars-elixirum.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/mods/icons/ars-elixirum.png" alt="Ars Elixirum" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Ars Elixirum <span class="mod-card-has-docs">beta</span></div>
+        <div class="mod-card-desc">Ultimate extension of potion crafting and diversity.</div>
+      </div>
+    </a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/archogenum" target="_blank" rel="noopener" class="mod-card">
+      <img class="mod-card-bg" src="/assets/img/mods/icons/archogenum.png" aria-hidden="true" />
+      <div class="mod-card-gloss"></div>
+      <img class="mod-card-icon" src="/assets/img/mods/icons/archogenum.png" alt="Archogenum" />
+      <div class="mod-card-body">
+        <div class="mod-card-name">Archogenum <span class="mod-card-has-docs">alpha</span></div>
+        <div class="mod-card-desc">Technomagical genetics mod — your body is your build.</div>
+      </div>
+    </a>
+  </div>
+
+  <p class="home-section-title" id="collaboration">Collaboration</p>
+  <div class="collab-box">
+    <p>
+      While most projects are developed independently, a dedicated collaboration format exists:
+      <strong>one project — one artist</strong>. Each collaboration is a close creative partnership
+      where I fully manage the codebase, architecture, multi-version support, and cross-loader
+      maintenance, while the artist owns the complete visual direction. Revenue is shared <strong>50/50</strong>.
+    </p>
+    <p>
+      This applies both to new concepts developed together and to existing mods — in the latter case
+      I can take over active development while the original author retains creative credit and receives
+      50% revenue share.
+    </p>
+    <p>
+      If you are a skilled artist with a strong visual identity, or a mod author interested in
+      long-term structured support — feel free to reach out on Discord.
+    </p>
+  </div>
+</Layout>

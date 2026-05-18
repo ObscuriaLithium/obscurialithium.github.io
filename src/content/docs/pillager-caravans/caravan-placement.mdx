@@ -1,0 +1,40 @@
+---
+title: "Caravan Placement"
+mod: "pillager-caravans"
+modTitle: "Pillager Caravans"
+order: 3
+lastModified: "2025-10-05"
+---
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "weight": 1000,
+  "biomes": "#caravans:has_desert_caravan",
+  "pools": [
+    {
+      "weight": 80,
+      "variations": [
+        "caravans:desert_gold_tier_1",
+        "caravans:desert_gold_tier_2",
+        "caravans:desert_gold_tier_3"
+      ]
+    },
+    {
+      "weight": 20,
+      "variations": [
+        "caravans:desert_sugar_cane_tier_1",
+        "caravans:desert_sugar_cane_tier_2",
+        "caravans:desert_sugar_cane_tier_3"
+      ]
+    }
+  ]
+}
+```
+</CodeBlock>
+
+| Field      | Type                     | Description                           |
+| ---------- | ------------------------ | ------------------------------------- |
+| `weight`     | **Integer**           | How likely this placement file is to be chosen compared to others. If several placements match the same area, one of them will be picked randomly using these weights. |
+| `biomes`    | **Identifier** or **Array[Identifier]**           | A single biome ID, a biome tag (like `#minecraft:is_forest`), or an array of them. Caravans from this placement will only spawn in these biomes. |
+| `pools`    | **Array[CaravanPool]**           | An array of themed groups of caravan variations.<br/><br/>- Each pool has its own **weight** – controlling how often that pool is picked.<br/>- Inside each pool is an array of **variations**.<br/>- When a caravan spawns, the game first chooses a random pool based on pool weights, then picks one of that pool’s variations by its own weight. |

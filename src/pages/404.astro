@@ -1,0 +1,94 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page Not Found" isHome={false}>
+  <div class="not-found">
+    <div class="not-found-code">404</div>
+    <h1 class="not-found-title">Page not found</h1>
+    <p class="not-found-desc">
+      This page doesn't exist — it may have been moved, renamed, or never existed in the first place.
+    </p>
+    <div class="not-found-actions">
+      <a href="/" class="not-found-btn primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Back to home
+      </a>
+      <a href="https://github.com/ObscuriaLithium/obscurialithium.github.io/issues" target="_blank" rel="noopener" class="not-found-btn secondary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Report an issue
+      </a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 4rem 0;
+}
+.not-found-code {
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  background: var(--grad-acc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.04em;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+.not-found-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--txt-head);
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+.not-found-desc {
+  color: var(--txt-muted);
+  font-size: 1rem;
+  max-width: 420px;
+  line-height: 1.7;
+  margin: 0 0 2rem;
+}
+.not-found-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.not-found-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.15s var(--ease);
+}
+.not-found-btn.primary {
+  background: var(--acc-dim);
+  color: var(--acc);
+  border: 1px solid var(--acc-border);
+}
+.not-found-btn.primary:hover {
+  background: rgba(160,110,210,0.15);
+  border-color: var(--acc);
+}
+.not-found-btn.secondary {
+  background: var(--bg-card);
+  color: var(--txt-muted);
+  border: 1px solid var(--border);
+}
+.not-found-btn.secondary:hover {
+  color: var(--txt);
+  border-color: rgba(255,255,255,0.12);
+}
+</style>

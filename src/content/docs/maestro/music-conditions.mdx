@@ -1,0 +1,468 @@
+---
+mod: "maestro"
+modTitle: "Maestro"
+title: "Music Conditions"
+lastModified: "May 17, 2026"
+---
+
+Conditions define **which game state** a music definition applies to. They are evaluated dynamically and can be **combined using logical** operators to describe complex scenarios.
+
+## [Always](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/constant/AlwaysCondition.java)
+
+This condition always evaluates to `true`, regardless of the current game state. It is commonly used for fallback tracks, global ambience, layered music systems, or simply for testing whether a music definition loads correctly.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:always"
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:always`.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Never](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/constant/NeverCondition.java)
+
+This condition always evaluates to `false` and therefore can never pass naturally. It is primarily useful for temporarily disabling music definitions without deleting them, creating placeholders in resource packs, or debugging condition priority and selection behavior.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:never"
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:never`.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Dimension](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/DimensionCondition.java)
+
+Checks whether the player is currently located in one of the specified dimensions. This is one of the most commonly used conditions for separating music between the Overworld, Nether, End, or custom modded dimensions.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:dimension",
+    "values": [
+      "minecraft:overworld"
+    ]
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:dimension`.
+  </SchemaField>
+  <SchemaField name="values" type="Array[Identifier]">
+    An array of dimension IDs that are allowed.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Biome](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeCondition.java)
+
+Checks whether the player is currently inside one of the specified biomes. This allows music to react to local environmental atmosphere rather than the entire dimension.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:biome",
+    "values": [
+      "minecraft:plains",
+      "minecraft:ocean"
+    ]
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:biome`.
+  </SchemaField>
+  <SchemaField name="values" type="Array[Identifier]">
+    An array of biome IDs that are allowed.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Biome Tag](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/BiomeTagCondition.java)
+
+Checks whether the player’s current biome matches one of the specified biome tags. Unlike the regular biome condition, this works with grouped biome categories, making it especially useful for mod compatibility and large-scale music rules such as deserts, forests, oceans, or snowy regions.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:biome_tag",
+    "values": [
+      "c:is_desert",
+      "c:is_mesa"
+    ]
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:biome_tag`.
+  </SchemaField>
+  <SchemaField name="values" type="Array[TagKey]">
+    An array of biome tags that are allowed.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Weather](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/WeatherCondition.java)
+
+Evaluates the current weather state around the player. Multiple weather flags can be combined together to create more specific scenarios, such as storms, blizzards, or sandstorms in modded environments.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:weather",
+    "is_raining": true,
+    "is_snowing": true,
+    "is_sandstorm": true,
+    "is_thundering": true
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:weather`.
+  </SchemaField>
+  <SchemaField name="is_raining" type="Boolean" optional>
+    If present, requires the weather to match the specified rain state.
+  </SchemaField>
+  <SchemaField name="is_snowing" type="Boolean" optional>
+    If present, requires the weather to match the specified snow state.
+  </SchemaField>
+  <SchemaField name="is_sandstorm" type="Boolean" optional>
+    If present, requires the weather to match the specified sandstorm state.
+  </SchemaField>
+  <SchemaField name="is_thundering" type="Boolean" optional>
+    If present, requires the weather to match the specified thunder state.
+  </SchemaField>
+</SchemaBlock>
+
+> **Note**<br />
+> `is_thundering` is typically used together with one of the precipitation flags to detect a more intensified version of a weather state (e.g., a thunderstorm instead of regular rain). If used alone, it will return true whenever a thunderstorm is active in the world, even if there is no precipitation at the player's position (for example, in deserts).
+
+
+
+## [Day Cycle](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/DayCycleCondition.java)
+
+Evaluates broad phases of the in-game day cycle such as daytime, nighttime, sunrise, or sunset. This condition is ideal when you want music to transition naturally between major periods of the day without relying on exact tick values.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:day_cycle",
+    "is_day": true,
+    "is_night": true,
+    "is_sunrise": true,
+    "is_sunset": true
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:day_cycle`.
+  </SchemaField>
+  <SchemaField name="is_day" type="Boolean" optional>
+    If present, requires the time to match daytime (ticks `0-12000`).  
+  </SchemaField>
+  <SchemaField name="is_night" type="Boolean" optional>
+    If present, requires the time to match nighttime (ticks `13000-23000`).
+  </SchemaField>
+  <SchemaField name="is_sunrise" type="Boolean" optional>
+    If present, requires the time to match sunrise transition (ticks `23000-24000`).
+  </SchemaField>
+  <SchemaField name="is_sunset" type="Boolean" optional>
+    If present, requires the time to match sunset transition (ticks `12000-13000`).
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Time](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/TimeCondition.java)
+
+Evaluates the exact in-game world time using raw Minecraft tick values (`0–24000`). Unlike day_cycle, this condition provides fine-grained control and is useful for highly specific timing windows or smooth music progression systems.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:time",
+    "above": 12000,
+    "below": 13000
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:time`.
+  </SchemaField>
+  <SchemaField name="above" type="Integer" optional>
+    If present, requires the world time to be greater than this value. 
+  </SchemaField>
+  <SchemaField name="below" type="Integer" optional>
+    If present, requires the world time to be less than this value.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Height](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/HeightCondition.java)
+
+Evaluates the player’s current Y level against configurable thresholds. This can be used for cave ambience, underground tension, mountain themes, sky-height music, or any other altitude-based transitions.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:height",
+    "above": 0,
+    "below": 60
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:height`.
+  </SchemaField>
+  <SchemaField name="above" type="Integer" optional>
+    If present, requires the player's Y level to be above this value.
+  </SchemaField>
+  <SchemaField name="below" type="Integer" optional>
+    If present, requires the player's Y level to be below this value.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Entity](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityCondition.java)
+
+Checks for nearby entities within a cubic search area centered on the player. This is useful for triggering combat music, boss encounters, ambient creature themes, or proximity-based soundtracks tied to specific mobs.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:entity",
+    "required_amount": 1,
+    "search_radius": 64,
+    "values": [
+      "minecraft:wither",
+      "minecraft:ender_dragon"
+    ]
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:entity`.
+  </SchemaField>
+  <SchemaField name="required_amount" type="Integer" optional>
+    Minimum number of matching entities required. Defaults to `1`.
+  </SchemaField>
+  <SchemaField name="search_radius" type="Integer" optional>
+    Radius of the cubic detection area centered on the player. Defaults to `64`.
+  </SchemaField>
+  <SchemaField name="values" type="Array[Identifier]">
+    An array of entity IDs that are allowed.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Entity Tag](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/EntityTagCondition.java)
+
+Checks for nearby entities using entity tags instead of individual entity IDs. This makes it easier to support multiple entities at once, including entities added by mods, without manually listing every possible variant.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:entity_tag",
+    "required_amount": 1,
+    "search_radius": 64,
+    "values": [
+      "c:bosses"
+    ]
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:entity_tag`.
+  </SchemaField>
+  <SchemaField name="required_amount" type="Integer" optional>
+    Minimum number of matching entities required. Defaults to `1`.
+  </SchemaField>
+  <SchemaField name="search_radius" type="Integer" optional>
+    Radius of the cubic detection area centered on the player. Defaults to `64`.
+  </SchemaField>
+  <SchemaField name="values" type="Array[TagKey]">
+    An array of entity tags that are allowed.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Vehicle](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/VehicleCondition.java)
+
+Checks the entity the player is currently riding. This can be used for mount themes, vehicle ambience, sailing music, or transportation-based soundtrack transitions. If the `values` array is empty, any ridden entity will match.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:vehicle",
+    "values": [
+      "minecraft:horse",
+      "minecraft:donkey"
+    ]
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:vehicle`.
+  </SchemaField>
+  <SchemaField name="values" type="Array[Identifier]">
+    An array of entity IDs that are allowed. Leave empty to allow any entity.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Screen](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/ScreenCondition.java)
+
+Checks whether a specific GUI screen is currently open. This allows music to react to menus, inventories, pause screens, credits, or even custom modded interfaces through direct class checks.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:screen",
+    "kind": "title",
+    "class_path": "net.minecraft.client.gui.screens.TitleScreen"
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:screen`.
+  </SchemaField>
+  <SchemaField name="kind" type="Enum" optional>
+    If present, checks the current screen against a predefined category: `title`, `credits`, `inventory`, or `pause`.
+  </SchemaField>
+  <SchemaField name="class_path" type="String" optional>
+    If present, checks whether the current screen is an instance of the specified class. This is an advanced option – use only if you know exactly what you are doing.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Boss Event](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/BossEventCondition.java)
+
+Checks whether any boss health overlay is currently visible on the player’s screen. This is typically used for boss battle music and works with both vanilla and compatible modded boss events.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:boss_event",
+    "value": true
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:boss_event`.
+  </SchemaField>
+  <SchemaField name="value" type="Boolean">
+    Whether a boss health overlay must currently be active. Set to `true` to require at least one active boss event, or `false` to require that no boss events are active.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Creative](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/CreativeCondition.java)
+
+Checks whether the player is currently in Creative mode. This can be useful for separating gameplay music from building-mode ambience, editor-style tracks, or resource-pack showcase environments.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:сreative",
+    "value": true
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:сreative`.
+  </SchemaField>
+  <SchemaField name="value" type="Boolean">
+    Whether the player must currently be in Creative mode. Set to `true` to require Creative mode, or `false` to require any non-Creative game mode.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [In Game](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/InGameCondition.java)
+
+Checks whether the player is currently inside an active world rather than the main menu. This is commonly used to separate menu music from gameplay music or to create title-screen ambience systems.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:in_game",
+    "value": true
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:in_game`.
+  </SchemaField>
+  <SchemaField name="value" type="Boolean">
+    Whether a world and player must currently be active. Set to `true` to require being in-game, or `false` to require being outside a world (e.g. in the main menu).
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Underwater](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/UnderwaterCondition.java)
+
+Checks whether the player is currently underwater. This is useful for aquatic ambience, underwater cave themes, diving sequences, or muffled environmental soundtrack transitions.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:underwater",
+    "value": true
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:underwater`.
+  </SchemaField>
+  <SchemaField name="value" type="Boolean">
+    Whether the player must currently be underwater. Set to `true` to require the player to be underwater, or `false` to require the player to be out of water.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Fishing](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/FishingCondition.java)
+
+Checks whether the player is actively fishing. This condition can be used for calm ambient tracks, waiting themes, or activity-based music systems centered around fishing gameplay.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:fishing",
+    "value": true
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:fishing`.
+  </SchemaField>
+  <SchemaField name="value" type="Boolean">
+    Whether the player must currently be fishing. Set to `true` to require an active fishing state, or `false` to require that the player is not fishing.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [All Of](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/AllOfCondition.java) **(AND)**
+
+Combines multiple conditions together and only passes if every contained condition evaluates to `true`. This is the primary way to create highly specific music scenarios, such as nighttime rain inside a particular biome or boss encounters in certain dimensions.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:all_of",
+    "terms": []
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:all_of`.
+  </SchemaField>
+  <SchemaField name="terms" type="Array">
+    An array of conditions that must all evaluate to `true` for this condition to pass.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [Any Of](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/AnyOfCondition.java) **(OR)**
+
+Combines multiple conditions and passes as soon as at least one of them evaluates to `true`. This is useful for grouping similar situations together under a single music definition.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:any_of",
+    "terms": []
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:any_of`.
+  </SchemaField>
+  <SchemaField name="terms" type="Array">
+    An array of conditions where at least one must evaluate to `true` for this condition to pass.
+  </SchemaField>
+</SchemaBlock>
+
+
+
+## [None Of](https://github.com/ObscuriaLithium/maestro/blob/master/common/src/main/java/dev/obscuria/maestro/client/music/condition/logic/NoneOfCondition.java) **(NOT)**
+
+Passes only if none of the contained conditions evaluate to `true`. This is useful for excluding specific scenarios, such as preventing peaceful music during combat, storms, or boss encounters.
+
+<SchemaBlock label="JSON Example" json={
+`"condition": {
+    "type": "maestro:none_of",
+    "terms": []
+}`}>
+  <SchemaField name="type" type="String">
+    Condition type identifier. Must be `maestro:none_of`.
+  </SchemaField>
+  <SchemaField name="terms" type="Array">
+    An array of conditions that must all evaluate to `false` for this condition to pass.
+  </SchemaField>
+</SchemaBlock>

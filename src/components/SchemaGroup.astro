@@ -1,0 +1,250 @@
+---
+/**
+ * SchemaGroup — a collapsible nested-object group inside a SchemaBlock.
+ *
+ * Renders a header row (the parent field) that, when clicked, expands/collapses
+ * nested SchemaField children. The header row also participates in JSON cross-highlight.
+ *
+ * Props:
+ *   name         — JSON key name for the parent object field
+ *   type         — type label for the parent, e.g. "Object", "Array[Object]"
+ *   description  — short description for the parent row
+ *   optional?    — show "(Optional)"
+ *   required?    — show "(Required)"
+ *   open?        — start expanded (default: true)
+ *   depth?       — nesting depth for indent guides (default: 0)
+ *
+ * Slot: SchemaField (or more SchemaGroup) children
+ *
+ * Example:
+ *   <SchemaGroup name="range" type="Object" optional description="Tick range filter.">
+ *     <SchemaField name="above" type="Integer" optional>
+ *       World time must be greater than this value.
+ *     </SchemaField>
+ *     <SchemaField name="below" type="Integer" optional>
+ *       World time must be less than this value.
+ *     </SchemaField>
+ *   </SchemaGroup>
+ */
+
+interface Props {
+  name: string;
+  type: string;
+  description?: string;
+  optional?: boolean;
+  required?: boolean;
+  open?: boolean;
+  depth?: number;
+}
+
+const {
+  name,
+  type,
+  description = '',
+  optional = false,
+  required = false,
+  open = true,
+  depth = 0,
+} = Astro.props;
+
+const qualifier = required ? 'Required' : optional ? 'Optional' : null;
+const groupId = `sg-${name}-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+<!-- Group header row — participates in JSON sync, acts as accordion toggle -->
+<div
+  class="sg-header"
+  data-schema-group={name}
+  data-sg-toggle={groupId}
+  role="button"
+  tabindex="0"
+  aria-expanded={open ? 'true' : 'false'}
+  aria-controls={groupId}
+  aria-label={`Field group ${name}, type ${type}${qualifier ? `, ${qualifier}` : ''}`}
+>
+  <div class="sf-cell sg-name-cell">
+    {depth > 0 && (
+      <span class="sf-indent-guide" aria-hidden="true">
+        {Array.from({ length: depth }).map(() => (
+          <span class="sf-indent-line"></span>
+        ))}
+        <span class="sf-indent-corner"></span>
+      </span>
+    )}
+    <!-- chevron -->
+    <span class="sg-chevron" aria-hidden="true">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </span>
+    <code class="sf-badge">{name}</code>
+    <span class="sg-obj-hint" aria-hidden="true">{ '{…}' }</span>
+  </div>
+
+  <div class="sf-cell sg-type-cell">
+    <span class="sf-type">{type}</span>
+    {qualifier && <span class="sf-qualifier">{qualifier}</span>}
+  </div>
+
+  <div class="sf-cell sf-desc-cell">
+    {description}
+  </div>
+</div>
+
+<!-- Collapsible children -->
+<div class="sg-children" id={groupId} data-sg-open={open ? 'true' : 'false'}>
+  <slot />
+</div>
+
+<style>
+/* ── Group header ── */
+.sg-header {
+  display: grid;
+  grid-template-columns: 38% 22% 1fr;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  background: rgba(160,110,210,0.025);
+  cursor: pointer;
+  transition: background 0.12s ease;
+  outline: none;
+}
+.sg-header:hover        { background: rgba(160,110,210,0.06); }
+.sg-header:focus-visible { background: rgba(160,110,210,0.07); box-shadow: inset 2px 0 0 var(--acc, #a87fd4); }
+.sg-header:global(.sb-highlighted) { background: rgba(160,110,210,0.09); box-shadow: inset 2px 0 0 var(--acc, #a87fd4); }
+
+/* reuse SchemaField cell styles */
+.sf-cell {
+  padding: 0.6rem 1.1rem;
+  font-family: var(--font, 'Sora', system-ui, sans-serif);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+.sg-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.sf-indent-guide {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+.sf-indent-line {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(160,110,210,0.15);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.sf-indent-corner {
+  width: 8px;
+  height: 10px;
+  border-left: 1px solid rgba(160,110,210,0.15);
+  border-bottom: 1px solid rgba(160,110,210,0.15);
+  border-radius: 0 0 0 3px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.sg-chevron {
+  display: flex;
+  align-items: center;
+  color: rgba(160,110,210,0.4);
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), color 0.15s;
+  flex-shrink: 0;
+}
+.sg-header[aria-expanded="true"] .sg-chevron {
+  transform: rotate(0deg);
+  color: var(--acc, #a87fd4);
+}
+.sg-header[aria-expanded="false"] .sg-chevron {
+  transform: rotate(-90deg);
+}
+
+.sf-badge {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  background: rgba(160,110,210,0.08);
+  border: 1px solid rgba(160,110,210,0.18);
+  border-radius: 4px;
+  padding: 0.08em 0.52em;
+  color: #b88de0;
+}
+
+.sg-obj-hint {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: rgba(160,110,210,0.3);
+  letter-spacing: -0.02em;
+}
+
+.sg-type-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.sf-type {
+  font-weight: 600;
+  color: var(--txt-head, rgba(238,233,250,0.95));
+  font-size: 0.83rem;
+}
+.sf-qualifier {
+  font-size: 0.72rem;
+  color: var(--txt-muted, rgba(200,192,218,0.48));
+}
+.sf-desc-cell {
+  color: var(--txt-muted, rgba(200,192,218,0.55));
+  font-size: 0.83rem;
+}
+
+/* ── Children accordion ── */
+.sg-children {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.25s cubic-bezier(0.16,1,0.3,1);
+  border-left: 2px solid rgba(160,110,210,0.12);
+  margin-left: 0;
+}
+.sg-children[data-sg-open="false"] {
+  grid-template-rows: 0fr;
+}
+.sg-children-inner {
+  overflow: hidden;
+}
+</style>
+
+<script>
+// Accordion toggle for all group headers
+document.querySelectorAll<HTMLElement>('[data-sg-toggle]').forEach(header => {
+  const id = header.dataset.sgToggle!;
+  const children = document.getElementById(id);
+  if (!children) return;
+
+  // Wrap children content in an inner div for the 0fr grid trick
+  if (!children.querySelector('.sg-children-inner')) {
+    const inner = document.createElement('div');
+    inner.className = 'sg-children-inner';
+    while (children.firstChild) inner.appendChild(children.firstChild);
+    children.appendChild(inner);
+  }
+
+  function toggle(expand?: boolean) {
+    const willOpen = expand ?? (header.getAttribute('aria-expanded') !== 'true');
+    header.setAttribute('aria-expanded', String(willOpen));
+    children!.setAttribute('data-sg-open', String(willOpen));
+  }
+
+  header.addEventListener('click', (e) => {
+    // Don't toggle when the click came from a JSON-sync action
+    // (the sb-highlighted state is set before this fires — just allow it)
+    toggle();
+    e.stopPropagation();
+  });
+
+  header.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    if (e.key === 'ArrowRight') toggle(true);
+    if (e.key === 'ArrowLeft')  toggle(false);
+  });
+});
+</script>

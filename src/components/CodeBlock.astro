@@ -1,0 +1,267 @@
+---
+/**
+ * CodeBlock component
+ *
+ * Wraps a fenced code block with:
+ *  - FileTree-style header (dots · format label · optional filename · copy button)
+ *  - Line numbers
+ *  - Per-line hover highlight
+ *  - Horizontal scroll (no wrap)
+ *
+ * Usage in MDX:
+ *
+ * import CodeBlock from '@/components/CodeBlock.astro';
+ *
+ * <CodeBlock label="JSON" file="assets/mymod/tooltips/panel.json">
+ * ```json
+ * { "type": "obscure_tooltips:panel" }
+ * ```
+ * </CodeBlock>
+ *
+ * Or without a filename:
+ *
+ * <CodeBlock label="Java">
+ * ```java
+ * public class Foo {}
+ * ```
+ * </CodeBlock>
+ */
+
+interface Props {
+  /** Label shown in the header when no file is specified (e.g. "JSON", "Java", "Example") */
+  label?: string;
+  /** Optional file path shown as a tab in the header */
+  file?: string;
+}
+
+const { label, file } = Astro.props;
+---
+
+<div class="cb-root">
+  <!-- ── Header bar ── -->
+  <div class="cb-bar">
+    <span class="cb-dots" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+
+    {file ? (
+      <span class="cb-file">
+        <svg class="cb-file-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        {file}
+      </span>
+    ) : label ? (
+      <span class="cb-lang">{label}</span>
+    ) : null}
+
+    <button class="cb-copy" aria-label="Copy code" data-cb-copy>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ── Code area (slot receives the shiki-rendered <pre>) ── -->
+  <div class="cb-body" data-cb-body>
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* ── Root ── */
+  .cb-root {
+    background: var(--code-bg, #09070f);
+    border: 1px solid var(--code-border, rgba(160,110,210,0.12));
+    border-radius: var(--radius, 10px);
+    overflow: hidden;
+    margin: 0.75rem 0 2rem;
+    box-shadow:
+      0 8px 40px rgba(0,0,0,0.45),
+      0 0 0 1px rgba(160,110,210,0.06) inset;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  /* ── Header bar ── */
+  .cb-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem 0.5rem 1rem;
+    background: rgba(160,110,210,0.045);
+    border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.12));
+  }
+
+  .cb-dots {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+  }
+  .cb-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(160,110,210,0.28);
+  }
+
+  /* File tab (with icon, looks like a real tab) */
+  .cb-file {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex: 1;
+    font-size: 0.72rem;
+    color: rgba(200,192,218,0.65);
+    letter-spacing: 0.01em;
+    background: rgba(160,110,210,0.07);
+    border: 1px solid rgba(160,110,210,0.16);
+    border-radius: 5px;
+    padding: 0.2rem 0.6rem;
+    max-width: max-content;
+  }
+  .cb-file-icon {
+    color: rgba(160,110,210,0.5);
+    flex-shrink: 0;
+  }
+
+  /* Plain language label (no filename) */
+  .cb-lang {
+    flex: 1;
+    font-size: 0.72rem;
+    color: rgba(200,192,218,0.38);
+    letter-spacing: 0.04em;
+  }
+
+  /* Copy button */
+  .cb-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: rgba(160,110,210,0.07);
+    border: 1px solid rgba(160,110,210,0.14);
+    border-radius: 5px;
+    color: rgba(160,110,210,0.4);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: auto;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .cb-copy:hover {
+    background: rgba(160,110,210,0.13);
+    border-color: rgba(160,110,210,0.32);
+    color: #a87fd4;
+  }
+  .cb-copy.copied {
+    background: rgba(100,200,120,0.1);
+    border-color: rgba(100,200,120,0.32);
+    color: #6dc882;
+  }
+
+  /* ── Code body ── */
+  .cb-body {
+    padding: 0.75rem 0 0.85rem;
+    overflow-x: auto;
+  }
+
+  /* Strip shiki's own pre/code padding & overflow so we control it */
+  .cb-body :global(pre) {
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    font-size: inherit;
+    line-height: 1.6;
+  }
+  .cb-body :global(pre code) {
+    display: block;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    counter-reset: line;
+    white-space: pre;
+    line-height: 0;        /* collapse whitespace text nodes between .line spans */
+    font-size: 0.88rem;
+  }
+
+  /* Each line rendered by shiki */
+  .cb-body :global(.line) {
+    display: block;
+    padding-right: 1.4rem;
+    border-radius: 3px;
+    transition: background 0.1s;
+    position: relative;
+    white-space: pre;
+    line-height: 1.6;
+    font-size: 0.88rem;   /* restore from parent code's line-height:0 */
+  }
+  /* Empty lines — prevent them from collapsing to zero height */
+  .cb-body :global(.line:empty::after),
+  .cb-body :global(.line:not(:has(*)):not(:has(span))::after) {
+    content: ' ';
+  }
+  /* Hide the trailing empty line shiki always adds */
+  .cb-body :global(.line:last-child:empty),
+  .cb-body :global(.line:last-child:not(:has(span))) {
+    display: none;
+  }
+  .cb-body :global(.line:hover) {
+    background: rgba(160,110,210,0.055);
+  }
+
+  /* Line number via counter */
+  .cb-body :global(.line::before) {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 2.8rem;
+    padding-right: 1.2rem;
+    text-align: right;
+    color: rgba(160,110,210,0.22);
+    user-select: none;
+    font-size: 0.82em;
+    line-height: calc(1.6 / 0.82);  /* compensate smaller font-size so baseline matches parent */
+    vertical-align: baseline;
+    transition: color 0.1s;
+  }
+  .cb-body :global(.line:hover::before) {
+    color: rgba(160,110,210,0.45);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-cb-copy]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const body = btn.closest('.cb-root')?.querySelector('[data-cb-body]') as HTMLElement | null;
+      if (!body) return;
+
+      // Collect text from each .line span, ignoring the ::before pseudo line numbers
+      const lines = Array.from(body.querySelectorAll<HTMLElement>('.line'))
+        .map(line => line.innerText)
+        .join('\n');
+
+      try {
+        await navigator.clipboard.writeText(lines);
+
+        btn.classList.add('copied');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+        }, 1800);
+      } catch {}
+    });
+  });
+</script>

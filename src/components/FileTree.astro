@@ -1,0 +1,455 @@
+---
+/**
+ * FileTree component
+ *
+ * Usage in MDX:
+ *
+ * <FileTree label="pack structure" tree={[
+ *   { path: 'assets/' },
+ *   { path: 'assets/<mod_id>/', desc: "your pack's namespace", indent: 1 },
+ *   { path: 'assets/<mod_id>/tooltips/', indent: 2 },
+ *   { path: 'assets/<mod_id>/tooltips/element/', desc: 'elements', indent: 3 },
+ *   { path: 'assets/<mod_id>/tooltips/element/panel/', indent: 4 },
+ * ]} />
+ */
+
+interface TreeEntry {
+  path: string;
+  desc?: string;
+  indent?: number;
+}
+
+interface Props {
+  tree: TreeEntry[];
+  label?: string;
+}
+
+const { tree, label } = Astro.props;
+
+const LINE_W = 26;
+const LINE_X = 9;
+const ROW_H  = 28;
+const HOOK_Y = 14;
+
+const LINE_THICKNESS = 2;
+const CONTENT_OFFSET = 6;
+
+function isDir(path: string) {
+  return path.endsWith('/');
+}
+
+function getName(path: string) {
+  const clean = path.replace(/\/$/, '');
+  const seg = clean.split('/');
+  const name = seg[seg.length - 1];
+  return isDir(path) ? name + '/' : name;
+}
+
+const rows = tree.map((entry, i) => {
+  const indent = entry.indent ?? 0;
+  const rest = tree.slice(i + 1);
+
+  /**
+   * Draw parent continuation guides.
+   *
+   * Example:
+   *
+   * assets/
+   * ├─ element/
+   * │  ├─ panel/
+   * │  └─ frame/
+   * └─ style/
+   *
+   * We want the │ after element/ to continue
+   * until style/ appears.
+   */
+  const guides: boolean[] = Array.from({ length: indent }, (_, lvl) => {
+    for (const e of rest) {
+      const d = e.indent ?? 0;
+
+      // branch fully closed
+      if (d < lvl + 1) {
+        return false;
+      }
+
+      // sibling/continuation exists
+      if (d === lvl + 1) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+
+  // ├ vs └
+  let hasNextSibling = false;
+
+  for (const e of rest) {
+    const d = e.indent ?? 0;
+    if (d < indent) break;
+    if (d === indent) {
+      hasNextSibling = true;
+      break;
+    }
+  }
+
+  return {
+    entry,
+    indent,
+    guides,
+    hasNextSibling,
+    dir: isDir(entry.path),
+    name: getName(entry.path)
+  };
+});
+---
+
+<div class="ft-root">
+  <div class="ft-bar">
+    <span class="ft-dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+
+    {label && <span class="ft-label">{label}</span>}
+
+    <button class="ft-copy" aria-label="Copy tree" data-ft-copy>
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="9" y="9" width="13" height="13" rx="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="ft-body" data-ft-body>
+    {rows.map(({ entry, indent, guides, hasNextSibling, dir, name }) => (
+      <div
+        class="ft-row"
+        data-depth={indent}
+        data-dir={dir ? 'true' : undefined}
+        style={`padding-left:${indent * LINE_W + CONTENT_OFFSET}px`}
+      >
+        {indent > 0 && (
+          <span class="ft-lines" aria-hidden="true">
+
+            {/* parent continuation lines */}
+            {guides.map((active, lvl) => active && (
+              <span
+                class="ft-line ft-vline"
+                style={`
+                  left:${lvl * LINE_W + LINE_X}px;
+                  top:0;
+                  bottom:0;
+                  width:${LINE_THICKNESS}px;
+                `}
+              />
+            ))}
+
+            {/* current branch vertical */}
+            <span
+              class="ft-line ft-vline"
+              style={`
+                left:${(indent - 1) * LINE_W + LINE_X}px;
+                top:0;
+                bottom:${hasNextSibling ? '0' : '50%'};
+                width:${LINE_THICKNESS}px;
+              `}
+            />
+
+            {/* horizontal connector */}
+            <span
+              class="ft-line ft-hline"
+              style={`
+                left:${(indent - 1) * LINE_W + LINE_X}px;
+                top:${HOOK_Y}px;
+                width:${LINE_W - LINE_X + 2}px;
+                height:${LINE_THICKNESS}px;
+              `}
+            />
+
+          </span>
+        )}
+
+        <span class={`ft-icon ${dir ? 'ft-icon--dir' : 'ft-icon--file'}`}>
+          {dir ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 7H11l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/>
+            </svg>
+          ) : (
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          )}
+        </span>
+
+        <span class={`ft-name ${dir ? 'ft-name--dir' : 'ft-name--file'}`}>
+          {name}
+        </span>
+
+        {entry.desc && (
+          <>
+            <span class="ft-arrow" aria-hidden="true">→</span>
+            <span class="ft-desc">{entry.desc}</span>
+          </>
+        )}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .ft-root {
+    background: var(--code-bg, #09070f);
+    border: 1px solid var(--code-border, rgba(160,110,210,0.12));
+    border-radius: var(--radius, 10px);
+    overflow: hidden;
+    margin: 0.75rem 0 2rem;
+    box-shadow:
+      0 8px 40px rgba(0,0,0,0.45),
+      0 0 0 1px rgba(160,110,210,0.06) inset;
+
+    font-family: var(--font-mono, monospace);
+    font-size: 0.855rem;
+  }
+
+  .ft-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.5rem 0.75rem 0.5rem 1rem;
+
+    background: rgba(160,110,210,0.045);
+    border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.12));
+  }
+
+  .ft-dots {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+  }
+
+  .ft-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(160,110,210,0.28);
+  }
+
+  .ft-label {
+    flex: 1;
+    font-size: 0.72rem;
+    color: rgba(200,192,218,0.38);
+    letter-spacing: 0.04em;
+  }
+
+  .ft-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 26px;
+    height: 26px;
+
+    background: rgba(160,110,210,0.07);
+    border: 1px solid rgba(160,110,210,0.14);
+    border-radius: 5px;
+
+    color: rgba(160,110,210,0.4);
+
+    cursor: pointer;
+    flex-shrink: 0;
+
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  .ft-copy:hover {
+    background: rgba(160,110,210,0.13);
+    border-color: rgba(160,110,210,0.32);
+    color: #a87fd4;
+  }
+
+  .ft-copy.copied {
+    background: rgba(100,200,120,0.1);
+    border-color: rgba(100,200,120,0.32);
+    color: #6dc882;
+  }
+
+  .ft-body {
+    padding: 0.75rem 1rem 0.9rem;
+  }
+
+  .ft-row {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    height: 28px;
+
+    padding-right: 6px;
+
+    border-radius: 5px;
+
+    transition: background 0.12s;
+  }
+
+  .ft-row:hover {
+    background: rgba(160,110,210,0.055);
+  }
+
+  .ft-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .ft-line {
+    position: absolute;
+    background: rgb(57, 38, 76);
+  }
+
+  .ft-icon {
+    display: flex;
+    align-items: center;
+
+    margin-right: 6px;
+
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .ft-icon--dir {
+    color: #a87fd4;
+  }
+
+  .ft-icon--file {
+    color: rgba(200,192,218,0.35);
+  }
+
+  .ft-name {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .ft-name--dir {
+    color: rgba(238,233,250,0.88);
+    font-weight: 500;
+  }
+
+  .ft-name--file {
+    color: rgba(222,216,240,0.72);
+  }
+
+  .ft-arrow {
+    color: rgba(160,110,210,0.35);
+
+    margin: 0 0.5rem;
+
+    font-size: 1.8em;
+
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .ft-desc {
+    color: rgba(200,192,218,0.42);
+
+    font-size: 0.9em;
+    font-style: italic;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    position: relative;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-ft-copy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const body = btn.closest('.ft-root')?.querySelector('[data-ft-body]') as HTMLElement | null;
+      if (!body) return;
+
+      const lines: string[] = [];
+
+      body.querySelectorAll<HTMLElement>('.ft-row').forEach(row => {
+        const depth = parseInt(row.dataset.depth ?? '0');
+
+        const name =
+          row.querySelector('.ft-name')?.textContent?.trim() ?? '';
+
+        const desc =
+          row.querySelector('.ft-desc')?.textContent?.trim();
+
+        lines.push(
+          '    '.repeat(depth) +
+          name +
+          (desc ? '  -> ' + desc : '')
+        );
+      });
+
+      navigator.clipboard.writeText(lines.join('\n')).then(() => {
+        btn.classList.add('copied');
+
+        btn.innerHTML = `
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        `;
+
+        setTimeout(() => {
+          btn.classList.remove('copied');
+
+          btn.innerHTML = `
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          `;
+        }, 1800);
+      });
+    });
+  });
+</script>

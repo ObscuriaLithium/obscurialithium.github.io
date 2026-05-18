@@ -1,0 +1,61 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import FileTree from '../../../components/FileTree.astro';
+import CodeBlock from '../../../components/CodeBlock.astro';
+import SchemaBlock from '../../../components/SchemaBlock.astro';
+import SchemaField from '../../../components/SchemaField.astro';
+import SchemaGroup from '../../../components/SchemaGroup.astro';
+
+export async function getStaticPaths() {
+  const all = await getCollection('docs');
+  // Exclude index pages
+  const pages = all.filter(d => !d.id.endsWith('/index.mdx') && !d.id.endsWith('/index.md'));
+  return pages.map(doc => {
+    const parts = doc.id.replace(/\.mdx?$/, '').split('/');
+    const mod  = parts[0];
+    const page = parts[1];
+    return {
+      params: { mod, page },
+      props: { doc },
+    };
+  });
+}
+
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+const parts = doc.id.replace(/\.mdx?$/, '').split('/');
+const pageSlug = parts[1];
+
+const GITHUB_BASE = 'https://github.com/ObscuriaLithium/obscurialithium.github.io/blob/main/src/content/docs/';
+const githubUrl = `${GITHUB_BASE}${doc.id}`;
+---
+
+<Layout
+  title={doc.data.title}
+  headings={headings}
+  mod={doc.data.mod}
+  modTitle={doc.data.modTitle}
+  pageSlug={pageSlug}
+>
+  <div class="doc-hero">
+    <div class="doc-eyebrow">{doc.data.modTitle}</div>
+    <h1>{doc.data.title}</h1>
+    <div class="doc-hero-meta">
+      {doc.data.lastModified && (
+        <p class="doc-updated">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Updated {doc.data.lastModified}
+        </p>
+      )}
+      <a href={githubUrl} target="_blank" rel="noopener" class="edit-on-github">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit on GitHub
+      </a>
+    </div>
+  </div>
+  <div class="doc-divider"></div>
+  <div class="content">
+    <Content components={{ FileTree, CodeBlock, SchemaBlock, SchemaField, SchemaGroup }} />
+  </div>
+</Layout>

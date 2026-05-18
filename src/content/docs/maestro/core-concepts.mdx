@@ -1,0 +1,62 @@
+---
+title: "Core Concepts"
+mod: "maestro"
+modTitle: "Maestro"
+order: 1
+lastModified: "2026-02-12"
+---
+
+Maestro is built around the idea that music should be continuous, reactive, and context-aware. Instead of treating music as isolated tracks separated by silence, Maestro treats it as an evolving soundtrack that responds to gameplay in real time.
+
+All music behavior is fully data-driven and configured either through **resource packs** or via the **config folder** using the [Fragmentum Layer](/fragmentum-layer/) system.
+
+<br />
+
+### **Resource Loading** 
+
+Maestro loads music definitions from both **resource packs** and **Fragmentum Layer**. Both sources use **exactly the same format** and are processed identically.
+
+```text
+assets/
+└── <namespace>/          -> the namespace of your pack
+    ├── sounds.json       -> sound event registration
+    ├── sounds/           -> audio files (.ogg)
+    └── music/            -> maestro music definitions
+```
+
+<br />
+
+### **Music Layers**
+
+Maestro organizes music into two logical layers, each with a clear purpose:
+- **UNDERSCORE**: The persistent background layer.
+Used for ambient and exploratory music tied to dimensions, biomes, time of day, or other slowly changing conditions.
+- **ENCOUNTER**: A dynamic foreground layer.
+Used for temporary situations such as structures, boss fights, special events, or short-lived encounters.
+
+When an Encounter track becomes active, the Underscore layer smoothly fades down in volume instead of stopping. Importantly, the background music keeps its progress while muted – so when the encounter ends, the underscore fades back in naturally, continuing from where it left off instead of restarting.
+
+<br />
+
+### **Priority System**
+
+Multiple music definitions can match the same game state at the same time. Priorities are evaluated **within each music layer independently**. When multiple definitions compete in the same layer, Maestro selects the one with the **highest priority**.
+
+<br />
+
+### **Vanilla Integration & Fallback**
+
+Maestro integrates directly with Minecraft's vanilla music system and preserves full compatibility with it. Vanilla music is always treated as part of the **Underscore** layer. If Maestro cannot find a matching music definition for the Underscore layer, it automatically falls back to vanilla music selection and lets Minecraft choose the appropriate track.
+
+This means:
+- Vanilla biome and dimension music continues to work as expected
+- Mods that rely on the vanilla music system remain fully compatible
+- Maestro only takes control where custom definitions are explicitly provided
+
+Encounter music never pulls from vanilla sources and is handled exclusively through Maestro definitions. As soon as a Maestro Underscore definition becomes applicable again, it smoothly takes over from vanilla playback without breaking musical continuity.
+
+
+
+
+
+![separator](/assets/img/mods/maestro/separator.png)

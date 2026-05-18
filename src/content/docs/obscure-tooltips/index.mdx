@@ -1,0 +1,61 @@
+---
+pageType: "index"
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Obscure Tooltips"
+icon: "/assets/img/tabs/obscure-tooltips.png"
+description: "Stylized tooltips with beautiful effects and smooth animations!"
+lastModified: "May 17, 2026"
+---
+
+import { Image } from 'astro:assets';
+
+<Image src="/assets/img/covers/obscure-tooltips.jpg" loading="eager" width="1920" height="1080" alt="Cover" style="border-radius: 12px; margin-bottom: 12px;"/>
+
+<div style="display:flex;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:32px;line-height:0;">
+    <a href="https://www.curseforge.com/minecraft/mc-mods/obscure-tooltips" style="display:inline-flex;">
+        <img alt="Fabric" src="https://img.shields.io/badge/Fabric-5c2148?style=for-the-badge" style="width:auto;max-width:none display:block;" /></a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/obscure-tooltips" style="display:inline-flex;">
+        <img alt="Forge" src="https://img.shields.io/badge/Forge-5c2148?style=for-the-badge" style="width:auto;max-width:none;display:block;" /></a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/obscure-tooltips" style="display:inline-flex;">
+        <img alt="Neo Forge" src="https://img.shields.io/badge/Neo%20Forge-5c2148?style=for-the-badge" style="width:auto;max-width:none;display:block;" /></a>
+    <a href="https://discord.gg/jSHHJSUWdY" target="_blank" rel="nofollow" style="display:inline-flex;">
+        <img alt="Discord" src="https://img.shields.io/discord/899742852681191444?style=for-the-badge&logo=discord&logoColor=white&label=&labelColor=231C25&color=5c2a21" style="width:auto;max-width:none;display:block;" /></a>
+    <a href="https://imgur.com/a/obscure-tooltips-media-kit-VPpfjxP" target="_blank" style="display:inline-flex;">
+        <img alt="Media Kit" src="https://img.shields.io/badge/Get%20Media%20Kit-5c4521?style=for-the-badge&logo=imgur&labelColor=251C20&logoColor=white" style="width:auto;max-width:none;display:block;" /></a>
+</div>
+
+**Obscure Tooltips** is a client-side mod that enhances item tooltips with animated visual and particle effects, making rarer items more vibrant and eye-catching. The information provided here is intended to help understand the core concepts of the mod and customize it to your needs.
+
+> This wiki is relevant only for **version 3.0.0 and above**.<br />Older versions are incomplete and may be unstable.
+
+## Key Concept
+
+Obscure Tooltips works like a box of LEGO. Every tooltip is made from small pieces. You can mix existing pieces or create your own. All customization is done either through a **custom resource pack**, or in a **config-like way** using [Fragmentum Layer](/docs/fragmentum-layer/) – no compiling, no manual enabling, nothing complicated.
+
+## How Everything Works
+
+- There are basic visual pieces: [Panels](/docs/obscure-tooltips/tooltip-panels), [Frames](/docs/obscure-tooltips/tooltip-frames), [Slots](/docs/obscure-tooltips/tooltip-slots), [Icons](/docs/obscure-tooltips/tooltip-icons), and [Effects](/docs/obscure-tooltips/tooltip-effects). These are simply visual JSON definitions. They don't know when or where they'll be used – only what they look like.
+
+- These pieces are combined into [Styles](/docs/obscure-tooltips/styles-and-definitions#tooltip-styles). A Style is a JSON file that says: "use this panel, this frame, these effects." Styles contain no logic – only appearance.
+
+- To actually apply a Style to items, you use [Definitions](/docs/obscure-tooltips/styles-and-definitions#tooltip-definitions). A Definition is a JSON file with a priority, a link to a Style, and filters: by item ID, tags, rarity, NBT, and so on.
+
+## Pack Structure
+
+The folder layout below shows how Obscure Tooltips organizes all its data. This structure is the same whether you are using a **resource pack** or the **root directory of Fragmentum Layer** – the mod reads both in exactly the same format.
+
+<FileTree label="Example" tree={[
+    { path: 'assets/' },
+    { path: 'assets/<mod_id>/', desc: "Your pack's namespace", indent: 1 },
+    { path: 'assets/<mod_id>/tooltips/', indent: 2 },
+    { path: 'assets/<mod_id>/tooltips/element/', desc: 'Element repository', indent: 3 },
+    { path: 'assets/<mod_id>/tooltips/element/panel/', indent: 4 },
+    { path: 'assets/<mod_id>/tooltips/element/frame/', indent: 4 },
+    { path: 'assets/<mod_id>/tooltips/element/slot/', indent: 4 },
+    { path: 'assets/<mod_id>/tooltips/element/icon/', indent: 4 },
+    { path: 'assets/<mod_id>/tooltips/element/effect/', indent: 4 },
+    { path: 'assets/<mod_id>/tooltips/style/', desc: 'Style repository', indent: 3 },
+    { path: 'assets/<mod_id>/tooltips/definition/', desc: 'Definition repository', indent: 3 },
+    { path: 'assets/<mod_id>/tooltips/label/', desc: 'Label repository', indent: 3 }
+]} />

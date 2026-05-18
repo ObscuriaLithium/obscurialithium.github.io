@@ -1,0 +1,48 @@
+---
+pageType: "index"
+mod: "pillager-caravans"
+modTitle: "Pillager Caravans"
+title: "Pillager Caravans"
+icon: "/assets/img/tabs/pillager-caravans.png"
+description: "Adds roaming pillager caravans with biome-themed loot and guarded convoys!"
+lastModified: "May 17, 2026"
+---
+
+<img src="https://media.forgecdn.net/attachments/1342/951/pillager-caravans-logo-jpg.jpg" alt="Cover" style="border-radius: 12px; margin-bottom: 12px;" />
+
+<div style="display:flex;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:32px;line-height:0;">
+    <a href="https://www.curseforge.com/minecraft/mc-mods/pillager-caravans" style="display:inline-flex;">
+        <img alt="Fabric" src="https://img.shields.io/badge/Fabric-215b37?style=for-the-badge" style="width:auto;max-width:none display:block;" /></a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/pillager-caravans" style="display:inline-flex;">
+        <img alt="Forge" src="https://img.shields.io/badge/Forge-215b37?style=for-the-badge" style="width:auto;max-width:none;display:block;" /></a>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/pillager-caravans" style="display:inline-flex;">
+        <img alt="Neo Forge" src="https://img.shields.io/badge/Neo_Forge-215b37?style=for-the-badge" style="width:auto;max-width:none;display:block;" /></a>
+    <a href="https://discord.gg/jSHHJSUWdY" target="_blank" rel="nofollow" style="display:inline-flex;">
+        <img alt="Discord" src="https://img.shields.io/discord/899742852681191444?style=for-the-badge&logo=discord&logoColor=white&label=&labelColor=231C25&color=21405b" style="width:auto;max-width:none;display:block;" /></a>
+</div>
+
+**Pillager Caravans** adds roaming, cargo-filled convoys guarded by pillagers, vindicators, and even ravagers. Instead of static treasure chests, caravans travel across biomes – sometimes near your base – with cargo that changes depending on the environment. The information provided here is intended to help understand the core concepts of the mod and customize it to your needs.
+
+## Key Concept
+
+Caravan generation is fully data-driven. All customization is done either through a **custom data pack**, or in a **config-like way** using [Fragmentum Layer](/docs/fragmentum-layer/), without needing to package or enable anything manually. It’s divided into two main parts – [Caravan Variations](/docs/pillager-caravans/caravan-variation) and [Caravan Placements](/docs/pillager-caravans/caravan-placement):
+- **Caravan Variation** defines what a caravan looks like: which mobs are part of it, what cargo it carries, and any special properties it has.
+- **Caravan Placement** defines where and when caravans appear, setting their spawn conditions and selecting one of the available variations based on weighted chances.
+
+## Pack Structure
+
+<FileTree label="Example" tree={[
+    { path: 'data/' },
+    { path: 'data/<namespace>/', desc: "Your pack's namespace", indent: 1 },
+    { path: 'data/<mod_id>/caravans/', indent: 2 },
+    { path: 'data/<mod_id>/caravans/variation/', indent: 3 },
+    { path: 'data/<mod_id>/caravans/placement/', indent: 3 }
+]} />
+
+## Examples
+
+To see all features in action, check out the built-in [Classic Caravans](https://github.com/ObscuriaLithium/pillager-caravans/tree/master/common/src/main/resources/packs/classic_caravans) data pack.
+
+## Overriding
+
+You can completely disable the built-in caravans by either turning off the **Classic Caravans** data pack or overriding its [Caravan Placement](/docs/pillager-caravans/caravan-placement) files in your data pack with an empty `biomes` array.

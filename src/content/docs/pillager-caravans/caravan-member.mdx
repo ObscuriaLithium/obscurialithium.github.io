@@ -1,0 +1,27 @@
+---
+title: "Caravan Member"
+mod: "pillager-caravans"
+modTitle: "Pillager Caravans"
+order: 2
+lastModified: "2025-10-05"
+---
+
+A nested object inside a [Caravan Variation](/docs/pillager-caravans/caravan-variation) that defines an entity with optional extra parameters. All fields except type are optional and can be omitted.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "minecraft:llama",
+  "armor": "minecraft:orange_carpet",
+  "cargo": "caravans:caravans/cargo/gold",
+  "count": 2
+}
+```
+</CodeBlock>
+
+| Field      | Type                     | Description                           |
+| ---------- | ------------------------ | ------------------------------------- |
+| `type`     | **Identifier**           | The entity ID. |
+| `armor`    | **Identifier**           | The armor item worn by the animal (such as horse armor or a carpet for llamas). |
+| `cargo`    | **Identifier**           | The loot table for the cargo this animal carries. Only llamas, donkeys, mules, or modded animals with cargo support can use this field. |
+| `count`    | **Integer**              | How many copies of this entity to spawn. If not specified, only one will appear. |

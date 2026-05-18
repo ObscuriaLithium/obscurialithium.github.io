@@ -1,0 +1,39 @@
+---
+mod: "fragmentum-layer"
+modTitle: "Fragmentum Layer"
+pageType: "index"
+icon: "/assets/img/tabs/fragmentum-layer.png"
+title: "Fragmentum Layer"
+description: "Global datapacks and resource packs without zipping."
+lastModified: "May 17, 2026"
+---
+
+import { Image } from 'astro:assets';
+
+**Fragmentum Layer** lets you create **global datapacks and resource packs** directly inside `config/fragmentum/` – **without zipping**, metadata, or pack structure. Minecraft treats everything inside this folder as a fully functional global pack, active **in every world**, automatically.
+
+<FileTree label="Folder Structure" tree={[
+    { path: 'config/' },
+    { path: 'config/fragmentum/', indent: 1 },
+    { path: 'config/fragmentum/assets/', indent: 2, desc: "Global client resources (textures, models, languages)" },
+    { path: 'config/fragmentum/data/', indent: 2, desc: "Global datapack content (recipes, loot tables, tags)" },
+]} />
+
+
+
+## How it Works
+
+On startup, Fragmentum creates two virtual packs:
+- **Fragmentum Layer Resource Pack** – built from `config/fragmentum/assets/`
+- **Fragmentum Layer Datapack** – built from `config/fragmentum/data/`
+
+<Image src="/assets/img/covers/fragmentum-layer.png" loading="eager" width="1920" height="1080" alt="Cover" style="border-radius: 12px; margin-bottom: 12px;"/>
+
+> They behave exactly like normal Minecraft packs, but are **assembled at runtime** instead of being stored as zipped packs in `resourcepacks` or `datapacks`.
+
+
+
+## Hotswap
+
+- `/reload` – updates changes in `data/`
+- `F3 + T` – updates changes in `assets/`

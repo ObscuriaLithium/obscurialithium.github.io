@@ -1,0 +1,36 @@
+---
+title: "Caravan Variation"
+mod: "pillager-caravans"
+modTitle: "Pillager Caravans"
+order: 1
+lastModified: "2025-10-05"
+---
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "tier": "small",
+  "leader": {
+    "type": "minecraft:vindicator"
+  },
+  "members": [
+    {
+      "type": "minecraft:pillager",
+      "count": 2
+    },
+    {
+      "type": "minecraft:llama",
+      "armor": "minecraft:orange_carpet",
+      "cargo": "caravans:caravans/cargo/gold",
+      "count": 2
+    }
+  ]
+}
+```
+</CodeBlock>
+
+| Field      | Type                     | Description                           |
+| ---------- | ------------------------ | ------------------------------------- |
+| `tier`     | **Enum**                 | Defines the caravan tier. Possible values are `small`, `medium`, and `large`. The selected tier determines several caravan properties configured in the mod config screen:<br/><br/>- Spawn cooldown<br/>- Spawn weight (rarity)<br/>- Despawn delay |
+| `leader`   | **CaravanMember**        | A [Caravan Member](/docs/pillager-caravans/caravan-member) object that acts as the leader of the caravan. This should be an illager-type mob (including modded ones), a ravager, or at least a witch – only these entities have the necessary AI to travel and lead others.  |
+| `members`  | **Array[CaravanMember]** | An array of [Caravan Member](/docs/pillager-caravans/caravan-member) objects that make up the caravan group.<br/><br/>- All illager-type members will follow their leader.<br/>- Animals will be leashed to random illager members (except the leader), forming one or more "trains".<br/>- If no illager members are present, animals won’t be leashed to anyone and will not follow the caravan. |

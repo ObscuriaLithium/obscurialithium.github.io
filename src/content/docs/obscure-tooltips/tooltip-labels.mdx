@@ -1,0 +1,56 @@
+---
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Tooltip Labels"
+lastModified: "May 17, 2026"
+---
+
+Label files define the additional line of text displayed beneath an item’s name. Using **providers**, labels can display the item’s rarity or custom text. If an item matches multiple label definitions, the one with the **highest priority** is applied.
+
+For example, the following file will display the **rarity label** for **all items**:
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "priority": 0,
+  "provider": {
+    "type": "obscure_tooltips:rarity"
+  },
+  "filter": {
+    "type": "obscure_tooltips:always"
+  }
+}
+```
+</CodeBlock>
+
+## [Rarity Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/label/RarityLabelProvider.java)
+
+<CodeBlock label="JSON Example">
+```json
+"provider": {
+  "type": "obscure_tooltips:rarity"
+}
+```
+</CodeBlock>
+
+## [Literal Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/label/LiteralLabelProvider.java)
+
+<CodeBlock label="JSON Example">
+```json
+"provider": {
+  "type": "obscure_tooltips:literal",
+  "text": "Some Text"
+}
+```
+</CodeBlock>
+
+## [Translatable Label Provider](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/label/TranslatableLabelProvider.java)
+
+<CodeBlock label="JSON Example">
+```json
+"provider": {
+  "type": "obscure_tooltips:translatable",
+  "key": "label.my_mod.some_text"
+}
+```
+</CodeBlock>

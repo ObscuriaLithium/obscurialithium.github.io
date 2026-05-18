@@ -1,0 +1,37 @@
+---
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Tooltip Slots"
+lastModified: "May 17, 2026"
+---
+
+## [Blank Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/slot/BlankSlot.java)
+
+Essentially, it acts as an invisible placeholder.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:blank"
+}
+```
+</CodeBlock>
+
+## [Color Rect Slot](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/slot/ColorRectSlot.java)
+
+A rectangular panel with a borders.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:color_rect",
+  "borders": "#30ffffff",
+  "palette": {
+    "top_left": "#20ffffff",
+    "top_right": "#20ffffff",
+    "bottom_left": "#20ffffff",
+    "bottom_right": "#20ffffff"
+  }
+}
+```
+</CodeBlock>

@@ -1,0 +1,33 @@
+---
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Tooltip Frames"
+lastModified: "May 17, 2026"
+---
+
+Frames are decorative layers drawn on top of panels in tooltips.
+
+## [Blank Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/frame/BlankFrame.java)
+
+Essentially, it acts as an invisible placeholder.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:blank"
+}
+```
+</CodeBlock>
+
+## [Nine Sliced Frame](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/frame/NineSlicedFrame.java)
+
+This frame uses a texture divided into 9 sections to automatically stretch and align the corners and edges of the tooltip. You can use the built-in [golden_frame.png](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/resources/packs/vibrant_tooltips/assets/vibrant_tooltips/textures/gui/golden_frame.png) as a reference for positioning your own textures.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:nine_sliced",
+  "texture_sheet": "obscure_tooltips:textures/gui/golden_frame.png"
+}
+```
+</CodeBlock>

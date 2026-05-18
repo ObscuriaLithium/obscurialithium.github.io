@@ -1,0 +1,168 @@
+---
+/**
+ * SchemaField — a single field row inside a SchemaBlock.
+ *
+ * Props:
+ *   name        — JSON key name (used for cross-highlight sync)
+ *   type        — type label, e.g. "Boolean", "String", "Integer", "Array[Identifier]"
+ *   optional?   — show "(Optional)" sub-label
+ *   required?   — show "(Required)" sub-label  [mutually exclusive with optional]
+ *   depth?      — nesting depth for visual indent (default: 0). Set automatically by SchemaGroup.
+ *
+ * Slot: field description text (markdown/HTML is fine)
+ *
+ * Example:
+ *   <SchemaField name="is_raining" type="Boolean" optional>
+ *     Requires the weather to match the specified rain state.
+ *   </SchemaField>
+ */
+
+interface Props {
+  name: string;
+  type: string;
+  optional?: boolean;
+  required?: boolean;
+  depth?: number;
+}
+
+const { name, type, optional = false, required = false, depth = 0 } = Astro.props;
+
+const qualifier = required ? 'Required' : optional ? 'Optional' : null;
+---
+
+<div
+  class="sf-row"
+  data-schema-field={name}
+  style={depth > 0 ? `--sf-depth: ${depth}` : undefined}
+  role="row"
+  tabindex="0"
+  aria-label={`Field ${name}, type ${type}${qualifier ? `, ${qualifier}` : ''}`}
+>
+  <!-- Field name -->
+  <div class="sf-cell sf-name-cell">
+    {depth > 0 && (
+      <span class="sf-indent-guide" aria-hidden="true">
+        {Array.from({ length: depth }).map(() => (
+          <span class="sf-indent-line"></span>
+        ))}
+        <span class="sf-indent-corner"></span>
+      </span>
+    )}
+    <code class="sf-badge">{name}</code>
+  </div>
+
+  <!-- Type -->
+  <div class="sf-cell sf-type-cell">
+    <span class="sf-type">{type}</span>
+    {qualifier && <span class="sf-qualifier">{qualifier}</span>}
+  </div>
+
+  <!-- Description -->
+  <div class="sf-cell sf-desc-cell">
+    <slot />
+  </div>
+</div>
+
+<style>
+.sf-row {
+  display: grid;
+  grid-template-columns: 38% 22% 1fr;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.12s ease;
+  cursor: pointer;
+  outline: none;
+  --sf-depth: 0;
+}
+.sf-row:last-child { border-bottom: none; }
+.sf-row:hover    { background: rgba(160,110,210,0.045); }
+.sf-row:focus-visible { background: rgba(160,110,210,0.06); box-shadow: inset 2px 0 0 var(--acc, #a87fd4); }
+.sf-row:global(.sb-highlighted) { background: rgba(160,110,210,0.09); box-shadow: inset 2px 0 0 var(--acc, #a87fd4); }
+
+.sf-cell {
+  padding: 0.6rem 1.1rem;
+  font-family: var(--font, 'Sora', system-ui, sans-serif);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+/* ── Field name ── */
+.sf-name-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+/* indent guides for nested fields */
+.sf-indent-guide {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+  margin-right: 0.35rem;
+  padding-top: 0.15rem;
+}
+.sf-indent-line {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(160,110,210,0.15);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.sf-indent-corner {
+  width: 8px;
+  height: 10px;
+  border-left: 1px solid rgba(160,110,210,0.15);
+  border-bottom: 1px solid rgba(160,110,210,0.15);
+  border-radius: 0 0 0 3px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.sf-badge {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  background: rgba(160,110,210,0.08);
+  border: 1px solid rgba(160,110,210,0.18);
+  border-radius: 4px;
+  padding: 0.08em 0.52em;
+  color: #b88de0;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* ── Type ── */
+.sf-type-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.sf-type {
+  font-weight: 600;
+  color: var(--txt-head, rgba(238,233,250,0.95));
+  font-size: 0.83rem;
+}
+.sf-qualifier {
+  font-size: 0.72rem;
+  color: var(--txt-muted, rgba(200,192,218,0.48));
+  font-weight: 400;
+}
+
+/* ── Description ── */
+.sf-desc-cell {
+  color: var(--txt-muted, rgba(200,192,218,0.55));
+  font-size: 0.83rem;
+}
+.sf-desc-cell :global(code) {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82em;
+  background: rgba(160,110,210,0.08);
+  color: #b88de0;
+  padding: 0.1em 0.45em;
+  border-radius: 3px;
+  border: 1px solid rgba(160,110,210,0.14);
+}
+.sf-desc-cell :global(strong) {
+  color: var(--txt-head, rgba(238,233,250,0.95));
+  font-weight: 600;
+}
+</style>

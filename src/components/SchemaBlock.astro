@@ -1,0 +1,350 @@
+---
+/**
+ * SchemaBlock component
+ *
+ * Interactive JSON showcase with synced field reference table.
+ * Uses shiki (tokyo-night) for syntax highlighting — identical to CodeBlock.
+ *
+ * Usage in MDX (no imports needed — registered globally in page templates):
+ *
+ *   <SchemaBlock label="JSON Example" json={`
+ *   "condition": {
+ *     "type": "maestro:weather",
+ *     "is_raining": true
+ *   }
+ *   `}>
+ *     <SchemaField name="type" type="String" required>
+ *       Condition type identifier.
+ *     </SchemaField>
+ *     <SchemaField name="is_raining" type="Boolean" optional>
+ *       Requires the weather to match the specified rain state.
+ *     </SchemaField>
+ *   </SchemaBlock>
+ *
+ *   With nested groups:
+ *
+ *   <SchemaBlock label="JSON Example" json={`{ ... }`}>
+ *     <SchemaGroup name="range" type="Object" optional description="Tick range.">
+ *       <SchemaField name="above" type="Integer" optional depth={1}>...</SchemaField>
+ *     </SchemaGroup>
+ *   </SchemaBlock>
+ */
+
+import { codeToHtml } from 'shiki';
+
+interface Props {
+  label?: string;
+  json: string;
+}
+
+const { label = 'JSON Example', json } = Astro.props;
+
+// Highlight via shiki with the same theme as the rest of the site
+const highlighted = await codeToHtml(json, {
+  lang: 'json',
+  theme: 'tokyo-night',
+});
+
+// shiki wraps output in <pre><code>…</code></pre> — strip the outer tags
+const innerHtml = highlighted
+  .replace(/^<pre[^>]*><code[^>]*>/, '')
+  .replace(/<\/code><\/pre>\s*$/, '');
+
+// Split into per-line HTML strings. shiki separates lines with literal \n.
+const rawLines = innerHtml.split('\n');
+// Drop the trailing empty line shiki always appends
+if (rawLines.at(-1)?.trim() === '') rawLines.pop();
+
+// Detect fieldName per source line (used for JSON ↔ schema row sync)
+const jsonSourceLines = json.split('\n');
+function getFieldName(sourceLine: string): string | undefined {
+  const m = sourceLine.match(/^\s*"([^"]+)"\s*:/);
+  return m ? m[1] : undefined;
+}
+
+interface LineData { html: string; fieldName?: string; }
+const lines: LineData[] = rawLines.map((html, i) => ({
+  html: html || '&nbsp;',
+  fieldName: getFieldName(jsonSourceLines[i] ?? ''),
+}));
+---
+
+<div class="sb-root" data-schema-block>
+
+  <!-- Top bar -->
+  <div class="sb-bar">
+    <span class="sb-dots" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </span>
+    <span class="sb-label">{label}</span>
+    <button class="sb-copy-btn" aria-label="Copy JSON" data-sb-copy>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Tab switcher -->
+  <div class="sb-switcher" role="tablist">
+    <button class="sb-switch active" role="tab" aria-selected="true" data-sb-tab="json" aria-controls="sb-panel-json">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg>
+      JSON
+    </button>
+    <button class="sb-switch" role="tab" aria-selected="false" data-sb-tab="schema" aria-controls="sb-panel-schema">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+        <line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+      Fields
+    </button>
+    <span class="sb-switch-pill" aria-hidden="true"></span>
+  </div>
+
+  <!-- JSON panel -->
+  <div class="sb-panel" id="sb-panel-json" role="tabpanel" data-sb-panel="json">
+    <div class="sb-code" data-sb-code>
+      {lines.map((line, i) => (
+        <div
+          class={`sb-line${line.fieldName ? ' has-field' : ''}`}
+          data-field={line.fieldName}
+          aria-label={line.fieldName ? `Field: ${line.fieldName}` : undefined}
+        >
+          <span class="sb-lnum">{i + 1}</span>
+          <span class="sb-line-content" set:html={line.html} />
+          {line.fieldName && (
+            <span class="sb-line-hint" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Schema panel -->
+  <div class="sb-panel hidden" id="sb-panel-schema" role="tabpanel" data-sb-panel="schema">
+    <div class="sb-schema-inner">
+      <div class="sb-schema-head" aria-hidden="true">
+        <span>Field</span>
+        <span>Type</span>
+        <span>Description</span>
+      </div>
+      <div class="sb-fields" data-sb-fields>
+        <slot />
+      </div>
+    </div>
+    <p class="sb-sync-note" aria-hidden="true">
+      <span class="sb-sync-dot"></span>
+      Click any row to highlight it in the JSON view
+    </p>
+  </div>
+
+</div>
+
+<style>
+.sb-root {
+  background: var(--code-bg, #09070f);
+  border: 1px solid var(--code-border, rgba(160,110,210,0.12));
+  border-radius: var(--radius, 10px);
+  overflow: hidden;
+  margin: 0.75rem 0 2rem;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(160,110,210,0.05) inset;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.sb-bar {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.5rem 1rem;
+  background: rgba(160,110,210,0.045);
+  border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.1));
+}
+.sb-dots { display: flex; gap: 5px; flex-shrink: 0; margin-right: 0.25rem; }
+.sb-dots span { width: 7px; height: 7px; border-radius: 50%; background: rgba(160,110,210,0.28); }
+.sb-label { flex: 1; font-size: 0.72rem; color: rgba(200,192,218,0.38); letter-spacing: 0.04em; font-family: var(--font-mono, monospace); }
+.sb-copy-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  background: rgba(160,110,210,0.07); border: 1px solid rgba(160,110,210,0.14);
+  border-radius: 5px; color: rgba(160,110,210,0.4); cursor: pointer; flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.sb-copy-btn:hover { background: rgba(160,110,210,0.13); border-color: rgba(160,110,210,0.32); color: var(--acc, #a87fd4); }
+.sb-copy-btn.copied { background: rgba(100,200,120,0.1); border-color: rgba(100,200,120,0.32); color: #6dc882; }
+
+.sb-switcher {
+  display: flex; align-items: center; gap: 2px;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.1));
+  background: rgba(0,0,0,0.18); position: relative;
+}
+.sb-switch {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--font, 'Sora', system-ui, sans-serif);
+  font-size: 0.73rem; font-weight: 500; color: rgba(200,192,218,0.38);
+  padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer;
+  background: transparent; border: none; letter-spacing: 0.02em;
+  transition: color 0.18s ease; position: relative; z-index: 1; user-select: none;
+}
+.sb-switch svg { opacity: 0.5; transition: opacity 0.18s; }
+.sb-switch:hover { color: rgba(200,192,218,0.65); }
+.sb-switch:hover svg { opacity: 0.7; }
+.sb-switch.active { color: var(--acc, #a87fd4); }
+.sb-switch.active svg { opacity: 1; }
+.sb-switch-pill {
+  position: absolute; top: 0.45rem; left: 0.85rem; height: calc(100% - 0.9rem);
+  background: rgba(160,110,210,0.1); border: 1px solid rgba(160,110,210,0.18);
+  border-radius: 6px; pointer-events: none; z-index: 0;
+  transition: left 0.22s cubic-bezier(0.16,1,0.3,1), width 0.22s cubic-bezier(0.16,1,0.3,1);
+}
+
+.sb-panel { display: block; }
+.sb-panel.hidden { display: none; }
+
+.sb-code { padding: 0.75rem 0 0.85rem; overflow-x: auto; }
+
+.sb-line {
+  display: flex; align-items: baseline; padding-right: 1.4rem;
+  transition: background 0.1s; position: relative; line-height: 1.6;
+}
+.sb-line.has-field { cursor: pointer; }
+.sb-line.has-field:hover { background: rgba(160,110,210,0.055); }
+.sb-line.sb-highlighted { background: rgba(160,110,210,0.1) !important; }
+
+.sb-lnum {
+  width: 2.8rem; text-align: right; padding-right: 1.2rem; flex-shrink: 0;
+  color: rgba(160,110,210,0.22); font-size: 0.82em;
+  line-height: calc(1.6 / 0.82); vertical-align: baseline;
+  user-select: none; transition: color 0.1s;
+}
+.sb-line.has-field:hover .sb-lnum,
+.sb-line.sb-highlighted .sb-lnum { color: rgba(160,110,210,0.5); }
+
+/* shiki outputs inline-styled spans — just let them flow */
+.sb-line-content { flex: 1; white-space: pre; }
+.sb-line-content :global(pre),
+.sb-line-content :global(code) { all: unset; white-space: pre; }
+
+.sb-line-hint {
+  position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%);
+  color: rgba(160,110,210,0.3); opacity: 0; transition: opacity 0.15s;
+  pointer-events: none; display: flex; align-items: center;
+}
+.sb-line.has-field:hover .sb-line-hint { opacity: 1; }
+
+.sb-schema-inner { font-family: var(--font, 'Sora', system-ui, sans-serif); }
+.sb-schema-head {
+  display: grid; grid-template-columns: 38% 22% 1fr;
+  padding: 0.45rem 0; border-bottom: 1px solid rgba(160,110,210,0.1);
+}
+.sb-schema-head span {
+  padding: 0 1.1rem; font-size: 0.63rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: rgba(200,192,218,0.24);
+}
+
+.sb-sync-note {
+  display: flex; align-items: center; gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  font-family: var(--font, 'Sora', system-ui, sans-serif);
+  font-size: 0.68rem; color: rgba(200,192,218,0.2);
+  border-top: 1px solid rgba(255,255,255,0.035);
+}
+.sb-sync-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--acc, #a87fd4); opacity: 0.35; flex-shrink: 0;
+}
+</style>
+
+<script>
+document.querySelectorAll<HTMLElement>('[data-schema-block]').forEach(block => {
+  const tabs    = block.querySelectorAll<HTMLButtonElement>('[data-sb-tab]');
+  const panels  = block.querySelectorAll<HTMLElement>('[data-sb-panel]');
+  const pill    = block.querySelector<HTMLElement>('.sb-switch-pill');
+  const copyBtn = block.querySelector<HTMLButtonElement>('[data-sb-copy]');
+  const codeEl  = block.querySelector<HTMLElement>('[data-sb-code]');
+
+  function switchTo(tabName: string) {
+    tabs.forEach(t => {
+      const active = t.dataset.sbTab === tabName;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', String(active));
+    });
+    panels.forEach(p => p.classList.toggle('hidden', p.dataset.sbPanel !== tabName));
+    updatePill(tabName);
+  }
+
+  function updatePill(tabName: string) {
+    if (!pill) return;
+    const activeTab = block.querySelector<HTMLElement>(`[data-sb-tab="${tabName}"]`);
+    if (!activeTab) return;
+    const switcher = activeTab.closest('.sb-switcher') as HTMLElement;
+    const sr = switcher.getBoundingClientRect();
+    const tr = activeTab.getBoundingClientRect();
+    pill.style.left  = `${tr.left - sr.left}px`;
+    pill.style.width = `${tr.width}px`;
+  }
+
+  tabs.forEach(tab => tab.addEventListener('click', () => switchTo(tab.dataset.sbTab!)));
+  requestAnimationFrame(() => {
+    const active = block.querySelector<HTMLElement>('[data-sb-tab].active');
+    if (active) updatePill(active.dataset.sbTab!);
+  });
+
+  function clearHighlights() {
+    block.querySelectorAll('.sb-highlighted').forEach(el => el.classList.remove('sb-highlighted'));
+  }
+
+  block.querySelectorAll<HTMLElement>('.sb-line.has-field').forEach(line => {
+    line.addEventListener('click', () => {
+      const field = line.dataset.field;
+      clearHighlights();
+      line.classList.add('sb-highlighted');
+      const row = block.querySelector<HTMLElement>(`[data-schema-field="${field}"], [data-schema-group="${field}"]`);
+      if (row) {
+        row.classList.add('sb-highlighted');
+        switchTo('schema');
+        requestAnimationFrame(() => row.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+      }
+    });
+  });
+
+  block.querySelectorAll<HTMLElement>('[data-schema-field], [data-schema-group]').forEach(row => {
+    row.addEventListener('click', () => {
+      const field = row.dataset.schemaField ?? row.dataset.schemaGroup;
+      clearHighlights();
+      row.classList.add('sb-highlighted');
+      const line = block.querySelector<HTMLElement>(`.sb-line[data-field="${field}"]`);
+      if (line) {
+        line.classList.add('sb-highlighted');
+        switchTo('json');
+        requestAnimationFrame(() => line.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+      }
+    });
+  });
+
+  if (copyBtn && codeEl) {
+    copyBtn.addEventListener('click', async () => {
+      const text = Array.from(codeEl.querySelectorAll<HTMLElement>('.sb-line'))
+        .map(l => l.querySelector<HTMLElement>('.sb-line-content')?.innerText ?? '')
+        .join('\n').trimEnd();
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.classList.add('copied');
+        copyBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+        }, 1800);
+      } catch {}
+    });
+  }
+});
+</script>

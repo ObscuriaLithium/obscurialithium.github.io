@@ -1,0 +1,40 @@
+---
+// Renders any Lucide icon by its PascalCase or kebab-case name.
+// Uses the `lucide` npm package — rendered at build time, zero JS, zero layout shift.
+// Browse all icons at https://lucide.dev/icons
+
+import * as lucide from 'lucide';
+
+const { name, size = 14 } = Astro.props as { name: string; size?: number };
+
+// Accept both "BookOpen" and "book-open"
+function toPascal(s: string): string {
+  return s.replace(/(^|-)([a-z])/g, (_, __, c) => c.toUpperCase());
+}
+
+const key = toPascal(name) as keyof typeof lucide;
+const iconData = (lucide[key] ?? lucide['FileText']) as [string, Record<string, string>][];
+
+// Build inner SVG markup from lucide's [tagName, attrs] tuple array
+function renderChildren(nodes: [string, Record<string, string>][]): string {
+  return nodes.map(([tag, attrs]) => {
+    const attrsStr = Object.entries(attrs)
+      .map(([k, v]) => `${k}="${v}"`)
+      .join(' ');
+    return `<${tag} ${attrsStr}/>`;
+  }).join('');
+}
+---
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  style={`width:${size}px;height:${size}px;min-width:${size}px;flex-shrink:0`}
+  set:html={renderChildren(iconData)}
+/>

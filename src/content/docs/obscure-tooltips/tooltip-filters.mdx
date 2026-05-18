@@ -1,0 +1,165 @@
+---
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Tooltip Filters"
+lastModified: "May 17, 2026"
+---
+
+Filters are not registered as separate files – instead, they are written inline wherever they are needed:
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:always"
+}
+```
+</CodeBlock>
+
+Although filter fields are not arrays, you can still combine multiple filters using the aggregate types `all_of`, `any_of`, and `none_of`:
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:all_of",
+  "terms": [
+    {
+      "type": "obscure_tooltips:<first_filter>"
+    },
+    {
+      "type": "obscure_tooltips:<second_filter>"
+    }
+  ]
+}
+```
+</CodeBlock>
+
+You can also nest aggregate filters inside one another to create more advanced filtering logic.
+
+## [Always Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/AlwaysFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:always"
+}
+```
+</CodeBlock>
+
+## [Never Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/NeverFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:never"
+}
+```
+</CodeBlock>
+
+## [All Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/AllOfFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:all_of",
+  "terms": []
+}
+```
+</CodeBlock>
+
+## [Any Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/AnyOfFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:any_of",
+  "terms": []
+}
+```
+</CodeBlock>
+
+## [None Of Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/NoneOfFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:none_of",
+  "terms": []
+}
+```
+</CodeBlock>
+
+## [Item Or Tag Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/ItemOrTagFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:item",
+  "values": [
+    "minecraft:apple",
+    "#minecraft:planks"
+  ]
+}
+```
+</CodeBlock>
+
+## [Mod Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/ModFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:mod",
+  "mods": [
+    "minecraft",
+    "aquamirae"
+  ]
+}
+```
+</CodeBlock>
+
+## [Enchantment Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/EnchantmentFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:enchantment",
+  "any_enchantment": true,
+  "any_curse": true,
+  "enchantments": [
+    "Minecraft:fire_aspect"
+  ]
+}
+```
+</CodeBlock>
+
+## [Rarity Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/RarityFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:rarity",
+  "rarity": "epic"
+}
+```
+</CodeBlock>
+
+## [NBT Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/NbtFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:nbt",
+  "nbt": "{test_tag:{sub_tag:1}}"
+}
+```
+</CodeBlock>
+
+## [Property Filter](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/filter/PropertyFilter.java)
+
+<CodeBlock label="JSON Example">
+```json
+"filter": {
+  "type": "obscure_tooltips:property",
+  "has_foil": true
+}
+```
+</CodeBlock>

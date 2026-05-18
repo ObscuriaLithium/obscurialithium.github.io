@@ -1,0 +1,81 @@
+---
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Tooltip Effects"
+lastModified: "May 17, 2026"
+---
+
+## [Rim Light Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/RimLightEffect.java)
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:rim_light",
+  "outer_palette": {
+    "top_left": "#30f00fff",
+    "top_right": "#30f00fff",
+    "bottom_left": "#30f00fff",
+    "bottom_right": "#30f00fff"
+  },
+  "inner_palette": {
+    "top_left": "#00ff00ff",
+    "top_right": "#00ff00ff",
+    "bottom_left": "#00ff00ff",
+    "bottom_right": "#00ff00ff"
+  }
+}
+```
+</CodeBlock>
+
+## [Ray Glow Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/RayGlowEffect.java)
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:ray_glow",
+  "primary_color": "#fff00fff",
+  "secondary_color": "#ffff5e0f"
+}
+```
+</CodeBlock>
+
+## [Inward Particle Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/InwardParticleEffect.java)
+
+See [Particles](#particles) for more details.
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:inward_particle",
+  "particle": {
+    "type": "obscure_tooltips:line",
+    "center_color": "#80ff80ff",
+    "edge_color": "#00aa40aa",
+    "transform": {
+      "offset": [ 0.0, 0.0, 0.0 ],
+      "scale": 1.0,
+      "rotation": 0.0
+    }
+  }
+}
+```
+</CodeBlock>
+
+## [Icon Particle Effect](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/element/effect/IconParticleEffect.java)
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "type": "obscure_tooltips:icon_particle",
+  "particle": {
+    "type": "obscure_tooltips:texture",
+    "texture": "obscure_tooltips:textures/gui/particle/star.png",
+    "transform": {
+      "offset": [ -0.5, -0.5, 0.0 ],
+      "scale": 1.5,
+      "rotation": 0.0
+    }
+  }
+}
+```
+</CodeBlock>

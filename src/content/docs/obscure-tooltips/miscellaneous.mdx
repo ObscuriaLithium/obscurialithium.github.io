@@ -1,0 +1,93 @@
+---
+mod: "obscure-tooltips"
+modTitle: "Obscure Tooltips"
+title: "Miscellaneous"
+lastModified: "May 17, 2026"
+---
+
+## Colors
+
+Whenever you need to define a color, you can use one of the following formats:
+
+<CodeBlock label="JSON Example">
+```json
+{
+  "color": "#ffffffff",
+  "color": 4294967295,
+  "color": [ 1.0, 1.0, 1.0, 1.0 ]
+}
+```
+</CodeBlock>
+
+- **Hexadecimal (ARGB)** – a string in the form #AARRGGBB
+- **Decimal (ARGB)** – a 32-bit unsigned integer value
+- **Normalized float array (ARGB)** – an array of four values in the range 0.0-1.0, representing [Alpha, Red, Green, Blue]
+
+
+
+## Transform
+
+The transform object is always optional. If omitted, default values are used. Each property inside transform is also optional and will fall back to its own default.
+
+<CodeBlock label="JSON Example">
+```json
+"transform": {
+  "offset": [ 0.0, 0.0, 0.0 ],
+  "scale": 1.0,
+  "rotation": 0.0
+}
+```
+</CodeBlock>
+
+| Field     | Type                         | Description                                              |
+| --------- | ---------------------------- | -------------------------------------------------------- |
+| `offset`  | **Array[Double]** (Optional) | A 3D vector [x, y, z] that shifts the object’s position. |
+| `scale`   | **Double** (Optional)        | A uniform scale factor (default: `1.0`)                  |
+| `rotation`| **Double** (Optional)        | A rotation angle in degrees (default: `0.0`)             |
+
+
+
+## Particles
+
+Particles are used by certain effects. There are multiple particle types available:
+
+### [Line Particle](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/particle/LineParticle.java)
+
+A horizontal line one pixel thick, with a gradient fading toward the center.
+
+<CodeBlock label="JSON Example">
+```json
+"particle": {
+  "type": "obscure_tooltips:line",
+  "center_color": "#ffffffff",
+  "edge_color": "#00ffffff",
+  "transform": {}
+}
+```
+</CodeBlock>
+
+### [Texture Particle](https://github.com/ObscuriaLithium/obscure-tooltips/blob/master/common/src/main/java/dev/obscuria/tooltips/client/tooltip/particle/TextureParticle.java)
+
+A particle rendered from a square texture. Any 1:1 resolution texture can be used, but with the default scale it is treated as having a virtual size of 16x16 pixels.
+
+<CodeBlock label="JSON Example">
+```json
+"particle": {
+  "type": "obscure_tooltips:texture",
+  "texture": "obscure_tooltips:textures/gui/particle/star.png",
+  "transform": {}
+}
+```
+</CodeBlock>
+
+
+
+## Overriding
+
+You can completely disable the built-in styles by turning off the **Vibrant Tooltips** resource pack. This lets you create your own styles and definitions on a clean slate, without needing to override the built-in resources.
+
+
+
+## Hotswap
+
+While developing a resource pack, you can quickly reload your changes in-game by pressing `F3 + T` inside a Minecraft world.
