@@ -73,7 +73,7 @@ export const MODS: ModEntry[] = [
     description:
       'Aquamirae expands your world with a frozen ocean biome – the Ice Maze above and a haunting Ship Graveyard beneath. Discover its unique ecosystem, progression, ambience, and lore as you uncover the fate of Captain Cornelia and survive the horrors lurking below the ice.',
     icon: '/assets/img/mods/icons/aquamirae.png',
-    cover: '/assets/img/covers/aquamirae.jpg',
+    cover: 'https://youtu.be/l2P5w9AkEiQ?si=R9nh7bcVmeQ9SGTZ',
     sources: [
       { platform: 'curseforge', id: '536254', url: 'https://www.curseforge.com/minecraft/mc-mods/aquamirae', label: 'Forge' },
       { platform: 'curseforge', id: '891257', url: 'https://www.curseforge.com/minecraft/mc-mods/aquamirae-fabric', label: 'Fabric' },
