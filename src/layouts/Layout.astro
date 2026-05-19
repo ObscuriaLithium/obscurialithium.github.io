@@ -59,6 +59,14 @@ function toKebab(s: string): string {
 }
 ---
 
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js');
+  });
+}
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
