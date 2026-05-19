@@ -1,0 +1,164 @@
+---
+// DownloadBadge.astro
+// Counts are fetched CLIENT-SIDE on every page load:
+//   CurseForge → api.cfwidget.com  (public CORS proxy, no key needed)
+//   Modrinth   → api.modrinth.com  (native CORS support, no key needed)
+
+import type { ModSource } from '../data/mods';
+
+interface Props {
+  sources?: ModSource[];
+  compact?: boolean;
+}
+
+const { sources = [], compact = false } = Astro.props;
+
+// Serialize sources into data attributes for the client script
+const cfIds = sources.filter(s => s.platform === 'curseforge').map(s => s.id).join(',');
+const mrIds = sources.filter(s => s.platform === 'modrinth').map(s => s.id).join(',');
+const uid   = Math.random().toString(36).slice(2); // unique per instance
+---
+
+<span
+  class={`dl-root${compact ? ' dl-root-compact' : ''}`}
+  data-cf={cfIds}
+  data-mr={mrIds}
+  data-uid={uid}
+  data-compact={compact ? 'true' : 'false'}
+></span>
+
+<script>
+(async function () {
+  function fmt(n: number): string {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1_000)     return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return n.toLocaleString();
+  }
+
+  async function fetchCF(id: string): Promise<number> {
+    try {
+      const r = await fetch(`https://api.cfwidget.com/${id}`);
+      if (!r.ok) return 0;
+      const j = await r.json();
+      // cfwidget returns { downloads: { total: number } }
+      return j?.downloads?.total ?? j?.download_count ?? 0;
+    } catch { return 0; }
+  }
+
+  async function fetchMR(id: string): Promise<number> {
+    try {
+      const r = await fetch(`https://api.modrinth.com/v2/project/${id}`, {
+        headers: { 'User-Agent': 'obscurialithium/obscuria-collection-site' }
+      });
+      if (!r.ok) return 0;
+      const j = await r.json();
+      return j?.downloads ?? 0;
+    } catch { return 0; }
+  }
+
+  function render(root: HTMLElement, cfTotal: number, mrTotal: number) {
+    const total   = cfTotal + mrTotal;
+    const compact = root.dataset.compact === 'true';
+
+    if (compact) {
+      if (total === 0) { root.innerHTML = ''; return; }
+      root.innerHTML = `
+        <span class="dl-compact" title="CurseForge: ${fmt(cfTotal)} · Modrinth: ${fmt(mrTotal)}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          ${fmt(total)}
+        </span>`;
+      return;
+    }
+
+    if (cfTotal === 0 && mrTotal === 0) { root.innerHTML = ''; return; }
+
+    const totalBadge = total > 0 ? `
+      <span class="dl-badge dl-total">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        ${fmt(total)}
+      </span>` : '';
+
+    const cfBadge = cfTotal > 0 ? `
+      <span class="dl-badge dl-cf" title="CurseForge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-.5 5.5L16 12l-4.5 4.5V14H8v-4h3.5V7.5z"/></svg>
+        CF ${fmt(cfTotal)}
+      </span>` : '';
+
+    const mrBadge = mrTotal > 0 ? `
+      <span class="dl-badge dl-mr" title="Modrinth">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3a7 7 0 0 1 6.77 5.18A5.5 5.5 0 0 0 12 7.5a5.5 5.5 0 0 0-5.5 5.5 5.5 5.5 0 0 0 5.5 5.5 5.5 5.5 0 0 0 5.17-3.58A7 7 0 0 1 12 19a7 7 0 0 1-7-7 7 7 0 0 1 7-7z"/></svg>
+        MR ${fmt(mrTotal)}
+      </span>` : '';
+
+    root.innerHTML = `<div class="dl-badges">${totalBadge}${cfBadge}${mrBadge}</div>`;
+  }
+
+  // Process every badge root on the page
+  document.querySelectorAll<HTMLElement>('.dl-root').forEach(async root => {
+    const cfIds = (root.dataset.cf || '').split(',').filter(Boolean);
+    const mrIds = (root.dataset.mr || '').split(',').filter(Boolean);
+
+    // Fetch all in parallel, render as totals come in
+    const [cfResults, mrResults] = await Promise.all([
+      Promise.all(cfIds.map(fetchCF)),
+      Promise.all(mrIds.map(fetchMR)),
+    ]);
+
+    const cfTotal = cfResults.reduce((a, b) => a + b, 0);
+    const mrTotal = mrResults.reduce((a, b) => a + b, 0);
+    render(root, cfTotal, mrTotal);
+  });
+})();
+</script>
+
+<style is:global>
+.dl-root { display: contents; }
+
+.dl-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--txt-muted);
+}
+.dl-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.dl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.18em 0.6em;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+}
+.dl-total {
+  background: rgba(168,127,212,0.12);
+  color: var(--acc);
+  border: 1px solid rgba(168,127,212,0.2);
+}
+.dl-cf {
+  background: rgba(245,130,32,0.1);
+  color: #f08030;
+  border: 1px solid rgba(245,130,32,0.2);
+}
+.dl-mr {
+  background: rgba(27,217,106,0.08);
+  color: #1bd96a;
+  border: 1px solid rgba(27,217,106,0.18);
+}
+</style>

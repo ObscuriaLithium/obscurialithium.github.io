@@ -1,0 +1,243 @@
+---
+// PlatformButton.astro
+// One "Download" button → dropdown listing all sources.
+// Each item shows platform label + optional source.label in a badge.
+
+import type { ModSource } from '../data/mods';
+
+interface Props {
+  sources: ModSource[];
+  size?: 'normal' | 'sm';
+  iconOnly?: boolean;   // minor cards: compact square icon button
+}
+
+const { sources, size = 'normal', iconOnly = false } = Astro.props;
+if (!sources.length) return;
+
+// Item label: "CurseForge (Fabric)" or just "CurseForge" / "Modrinth"
+function itemLabel(s: ModSource): string {
+  const base = s.platform === 'curseforge' ? 'CurseForge' : 'Modrinth';
+  return s.label ? `${base} (${s.label})` : base;
+}
+
+const single = sources.length === 1;
+---
+
+{single ? (
+  iconOnly ? (
+    <a href={sources[0].url} target="_blank" rel="noopener"
+       class={`sc-card-minor-action sc-ma-${sources[0].platform}`}
+       title={itemLabel(sources[0])}>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </a>
+  ) : (
+    <a href={sources[0].url} target="_blank" rel="noopener"
+       class={`sc-btn sc-btn-${size === 'sm' ? 'sm ' : ''}sc-btn-platform sc-btn-${sources[0].platform}`}>
+      {itemLabel(sources[0])}
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+  )
+) : (
+  iconOnly ? (
+    <div class="pb-drop">
+      <button class="sc-card-minor-action pb-trigger" type="button" title="Download">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <div class="pb-menu pb-menu-right">
+        {sources.map(s => (
+          <a href={s.url} target="_blank" rel="noopener" class={`pb-item pb-item-${s.platform}`}>
+            {itemLabel(s)}
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <div class="pb-drop">
+      <button class={`sc-btn${size === 'sm' ? ' sc-btn-sm' : ''} sc-btn-download pb-trigger`} type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+        <svg class="pb-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="pb-menu">
+        {sources.map(s => (
+          <a href={s.url} target="_blank" rel="noopener" class={`pb-item pb-item-${s.platform}`}>
+            {itemLabel(s)}
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+)}
+
+<script>
+document.addEventListener('click', (e) => {
+  const trigger = (e.target as Element).closest('.pb-trigger');
+  const allDrops = document.querySelectorAll<HTMLElement>('.pb-drop');
+  if (trigger) {
+    e.stopPropagation();
+    const drop = trigger.closest<HTMLElement>('.pb-drop')!;
+    const isOpen = drop.classList.contains('pb-open');
+    allDrops.forEach(d => d.classList.remove('pb-open'));
+    if (!isOpen) drop.classList.add('pb-open');
+  } else {
+    allDrops.forEach(d => d.classList.remove('pb-open'));
+  }
+});
+</script>
+
+<style is:global>
+/* ── Download button ──────────────────────────────────────────────────────── */
+.sc-btn-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+
+  padding: 0.55em 1.15em;
+  border-radius: 8px;
+
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font);
+
+  background: rgba(168,127,212,0.1);
+  color: var(--acc);
+  border: 1px solid rgba(168,127,212,0.25);
+
+  cursor: pointer;
+  white-space: nowrap;
+
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s,
+    transform 0.15s,
+    box-shadow 0.2s;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.sc-btn-download:hover {
+  background: rgba(168,127,212,0.18);
+  border-color: rgba(168,127,212,0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(168,127,212,0.18);
+}
+
+.sc-btn-download:focus-visible {
+  outline: none;
+  border-color: rgba(168,127,212,0.55);
+  box-shadow:
+    0 0 0 3px rgba(168,127,212,0.18),
+    0 4px 18px rgba(168,127,212,0.18);
+}
+
+.sc-btn-download .pb-chevron {
+  margin-left: -0.1em;
+  transition: transform 0.18s ease;
+}
+
+.sc-btn-download.sc-btn-sm {
+  padding: 0.35em 0.85em;
+  border-radius: 6px;
+  font-size: 0.78rem;
+}
+
+/* ── Dropdown wrapper ─────────────────────────────────────────────────────── */
+.pb-drop {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ── Chevron ──────────────────────────────────────────────────────────────── */
+.pb-chevron { transition: transform 0.18s ease; flex-shrink: 0; }
+.pb-drop.pb-open .pb-chevron { transform: rotate(180deg); }
+
+/* ── Menu ─────────────────────────────────────────────────────────────────── */
+.pb-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 170px;
+  background: var(--bg-sidebar, #1a1626);
+  border: 1px solid rgba(168,127,212,0.18);
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(168,127,212,0.05) inset;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.96);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.pb-menu-right { left: auto; right: 0; }
+.pb-drop.pb-open .pb-menu {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* dropdown should float above nearby cards */
+.pb-drop.pb-open {
+  z-index: 2000;
+}
+
+/* elevate parent card while menu is open */
+.sc-card:has(.pb-drop.pb-open) {
+  z-index: 3000;
+}
+
+/* ── Menu items ───────────────────────────────────────────────────────────── */
+.pb-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--txt-muted, #a0a0b8);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+.pb-item svg { opacity: 0.35; flex-shrink: 0; transition: opacity 0.12s; }
+.pb-item:hover svg { opacity: 0.65; }
+
+.pb-item-curseforge:hover {
+  background: rgba(245,130,32,0.1);
+  color: #f08030;
+}
+.pb-item-modrinth:hover {
+  background: rgba(27,217,106,0.08);
+  color: #1bd96a;
+}
+
+/* ── minor card action button (icon-only) ─────────────────────────────────── */
+.sc-card-minor-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  color: var(--txt-subtle, #606080);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.sc-card-minor-action:hover,
+.pb-drop:has(.pb-trigger:focus) .sc-card-minor-action {
+  background: var(--acc-dim, rgba(168,127,212,0.1));
+  color: var(--acc, #a87fd4);
+  border-color: var(--acc-border, rgba(168,127,212,0.25));
+}
+.sc-ma-curseforge:hover { background: rgba(245,130,32,0.12) !important; color: #f08030 !important; border-color: rgba(245,130,32,0.25) !important; }
+.sc-ma-modrinth:hover   { background: rgba(27,217,106,0.08) !important; color: #1bd96a !important; border-color: rgba(27,217,106,0.18) !important; }
+</style>
