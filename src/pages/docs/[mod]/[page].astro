@@ -27,8 +27,8 @@ const { Content, headings } = await render(doc);
 const parts = doc.id.replace(/\.mdx?$/, '').split('/');
 const pageSlug = parts[1];
 
-const GITHUB_BASE = 'https://github.com/ObscuriaLithium/obscurialithium.github.io/blob/main/src/content/docs/';
-const githubUrl = `${GITHUB_BASE}${doc.id}`;
+const GITHUB_BASE = 'https://github.com/ObscuriaLithium/obscurialithium.github.io/blob/master/src/content/docs/';
+const githubUrl = `${GITHUB_BASE}${doc.id}?plain=1`;
 ---
 
 <Layout

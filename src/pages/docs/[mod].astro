@@ -20,8 +20,8 @@ export async function getStaticPaths() {
 const { doc } = Astro.props;
 const { Content, headings } = await render(doc);
 
-const GITHUB_BASE = 'https://github.com/ObscuriaLithium/obscurialithium.github.io/blob/main/src/content/docs/';
-const githubUrl = `${GITHUB_BASE}${doc.id}`;
+const GITHUB_BASE = 'https://github.com/ObscuriaLithium/obscurialithium.github.io/blob/master/src/content/docs/';
+const githubUrl = `${GITHUB_BASE}${doc.id}?plain=1`;
 ---
 
 <Layout
