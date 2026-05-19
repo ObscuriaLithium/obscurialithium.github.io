@@ -2,44 +2,66 @@
 mod: "obscure-tooltips"
 modTitle: "Obscure Tooltips"
 title: "Styles & Definitions"
-lastModified: "May 17, 2026"
+lastModified: "May 19, 2026"
 ---
 
 ## Tooltip Styles
 
 Style files simply combine elements to define the visual appearance of a tooltip.
 
-<CodeBlock label="Json Example">
-```json
-{
-  "panel": "obscure_tooltips:default",
-  "frame": "obscure_tooltips:default",
-  "slot": "obscure_tooltips:default",
-  "icon": "obscure_tooltips:default",
-  "effects": []
-}
-```
-</CodeBlock>
+<SchemaBlock label="JSON Example" json={
+`{
+    "panel": "obscure_tooltips:default",
+    "frame": "obscure_tooltips:default",
+    "slot": "obscure_tooltips:default",
+    "icon": "obscure_tooltips:default",
+    "effects": []
+}`}>
+  <SchemaField name="panel" type="Identifier" optional>
+    Panel style reference.
+  </SchemaField>
+  <SchemaField name="frame" type="Identifier" optional>
+    Frame style reference.
+  </SchemaField>
+  <SchemaField name="slot" type="Identifier" optional>
+    Slot style reference.
+  </SchemaField>
+  <SchemaField name="icon" type="Identifier" optional>
+    Icon style reference.
+  </SchemaField>
+  <SchemaField name="effects" type="Array of Identifier">
+    An array of tooltip effect references. This field must always be present, even if empty.
+  </SchemaField>
+</SchemaBlock>
 
 > Note that all fields except `effects` are optional. The `effects` array **must always be included**, even if it is empty.
+
+
 
 ## Tooltip Definitions
 
 Definition files determine which items a style should apply to, based on the specified filter. In the example below, the style located at `assets/obscure_tooltips/tooltips/style/default.json` will be applied to **all items**:
 
-<CodeBlock label="JSON Example">
-```json
-{
-  "priority": 0,
-  "style": "obscure_tooltips:default",
-  "filter": {
-    "type": "obscure_tooltips:always"
-  }
-}
-```
-</CodeBlock>
+<SchemaBlock label="JSON Example" json={
+`{
+    "priority": 0,
+    "style": "obscure_tooltips:default",
+    "filter": {
+      "type": "obscure_tooltips:always"
+    }
+}`}>
+  <SchemaField name="priority" type="Integer">
+    Determines the order in which tooltip definitions are merged. Higher priority definitions override lower priority ones.
+  </SchemaField>
+  <SchemaField name="style" type="Identifier">
+    Tooltip style reference to apply when the filter matches.
+  </SchemaField>
+  <SchemaField name="filter" type="Filter Object">
+    [Filter definition](/docs/obscure-tooltips/tooltip-filters) that determines whether this tooltip definition applies to an item.
+  </SchemaField>
+</SchemaBlock>
 
-The `priority` field is used in the style merging system.
+
 
 ## Style Merging (Fallback)
 
