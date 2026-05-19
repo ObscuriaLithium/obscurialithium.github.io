@@ -252,6 +252,22 @@ export const MODS: ModEntry[] = [
     tier: 'minor',
     tags: ['library',]
   },
+  {
+    id: 'archivist',
+    name: 'Archivist',
+    tagline: 'A lightweight abstraction layer for codec-based data systems',
+    description:
+      'Archivist is a lightweight abstraction layer for codec-based data systems, originally designed for complex data-driven mods such as Ars Elixirum. It does not add any content on its own and only needs to be installed if required, providing structured and consistent handling of configs, world data, and serialized content.',
+    icon: '/assets/img/mods/icons/archivist.png',
+    sources: [
+      { platform: 'curseforge', id: '1513409', url: 'https://www.curseforge.com/minecraft/mc-mods/archivist' },
+      { platform: 'modrinth',   id: 'archivist-api', url: 'https://modrinth.com/mod/archivist-api' },
+    ],
+    loaders: ['forge', 'fabric'],
+    releaseDate: '2026-04-14',
+    tier: 'minor',
+    tags: ['library',]
+  }
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
