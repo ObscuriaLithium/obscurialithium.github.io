@@ -25,10 +25,10 @@ const {
 } = Astro.props;
 
 const allMods = [
-  { slug: 'fragmentum-layer', title: 'Fragmentum Layer', icon: '/assets/img/tabs/fragmentum-layer.png', description: 'Lightweight framework powering cross-platform mods.' },
-  { slug: 'obscure-tooltips',  title: 'Obscure Tooltips',  icon: '/assets/img/tabs/obscure-tooltips.png', description: 'Stylized tooltips with beautiful effects.' },
-  { slug: 'pillager-caravans', title: 'Pillager Caravans', icon: '/assets/img/tabs/pillager-caravans.png', description: 'Roaming caravans with biome-themed loot.' },
-  { slug: 'maestro',           title: 'Maestro',           icon: '/assets/img/mods/icons/maestro.png', description: 'Data-driven music orchestration framework.' },
+  { slug: 'fragmentum-layer',  title: 'Fragmentum Layer',  icon: '/assets/img/mods/fragmentum.webp',        description: 'Lightweight framework powering cross-platform mods.' },
+  { slug: 'obscure-tooltips',  title: 'Obscure Tooltips',  icon: '/assets/img/mods/obscure-tooltips.webp',  description: 'Stylized tooltips with beautiful effects.' },
+  { slug: 'pillager-caravans', title: 'Pillager Caravans', icon: '/assets/img/mods/pillager-caravans.webp', description: 'Roaming caravans with biome-themed loot.' },
+  { slug: 'maestro',           title: 'Maestro',           icon: '/assets/img/mods/maestro.webp',           description: 'Data-driven music orchestration framework.' },
 ];
 
 const currentModPages = mod ? (navData as any)[mod]?.pages ?? [] : [];
@@ -73,7 +73,7 @@ function toKebab(s: string): string {
   <meta property="og:url" content={canonicalURL.toString()} />
   <meta property="og:title" content={pageTitle} />
   {description && <meta property="og:description" content={description} />}
-  <meta property="og:image" content="https://obscurialithium.github.io/assets/img/obscuria-collection.png" />
+  <meta property="og:image" content="https://obscurialithium.github.io/assets/img/obscuria-collection.webp" />
   <meta name="twitter:card" content="summary_large_image" />
 
   <link rel="icon" href="/assets/img/favicons/favicon-96x96.png" />
@@ -114,7 +114,7 @@ function toKebab(s: string): string {
     <!-- Logo -->
     <a href="/" class="sidebar-logo-link">
       <div class="sidebar-logo">
-        <img src="/assets/img/obscuria-collection.png" alt="Obscuria Collection" class="sidebar-logo-img" />
+        <img src="/assets/img/obscuria-collection.webp" alt="Obscuria Collection" class="sidebar-logo-img" />
         <div class="sidebar-logo-glow"></div>
       </div>
       <p class="sidebar-logo-sub">All the docs you need for Obscuria Collection's data-driven mods.</p>

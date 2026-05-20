@@ -1,7 +1,7 @@
 {
   "maestro": {
     "title": "Maestro",
-    "icon": "/assets/img/mods/icons/maestro.png",
+    "icon": "/assets/img/mods/icons/maestro.webp",
     "description": "Data-driven music orchestration framework for Minecraft.",
     "pages": [
       {
@@ -56,7 +56,7 @@
   },
   "obscure-tooltips": {
     "title": "Obscure Tooltips",
-    "icon": "/assets/img/tabs/obscure-tooltips.png",
+    "icon": "/assets/img/mods/icons/obscure-tooltips.webp",
     "description": "Stylized tooltips with beautiful effects and smooth animations.",
     "pages": [
       {
@@ -135,7 +135,7 @@
   },
   "pillager-caravans": {
     "title": "Pillager Caravans",
-    "icon": "/assets/img/tabs/pillager-caravans.png",
+    "icon": "/assets/img/mods/icons/pillager-caravans.webp",
     "description": "Roaming caravans with biome-themed loot and guarded convoys.",
     "pages": [
       {
@@ -169,7 +169,7 @@
   },
   "fragmentum-layer": {
     "title": "Fragmentum Layer",
-    "icon": "/assets/img/tabs/fragmentum-layer.png",
+    "icon": "/assets/img/mods/icons/fragmentum.webp",
     "description": "Lightweight framework powering cross-platform mods.",
     "pages": [
       {

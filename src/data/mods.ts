@@ -53,7 +53,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Dyeable style accents with subtle gameplay bonuses!',
     description:
       'Accents adds stylish cosmetic accessories that subtly enhance gameplay. A variety of visual accents let you personalize your character without turning cosmetics into mandatory gear.',
-    icon: '/assets/img/mods/icons/accents.png',
+    icon: '/assets/img/mods/accents.webp',
     cover: 'https://media.forgecdn.net/attachments/1505/498/accents-logo-jpg.jpg',
     sources: [
       { platform: 'curseforge', id: '1446887', url: 'https://www.curseforge.com/minecraft/mc-mods/accents' },
@@ -72,7 +72,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Ship graveyard with terrible deep sea creatures!',
     description:
       'Aquamirae expands your world with a frozen ocean biome – the Ice Maze above and a haunting Ship Graveyard beneath. Discover its unique ecosystem, progression, ambience, and lore as you uncover the fate of Captain Cornelia and survive the horrors lurking below the ice.',
-    icon: '/assets/img/mods/icons/aquamirae.png',
+    icon: '/assets/img/mods/aquamirae.webp',
     cover: 'https://youtu.be/l2P5w9AkEiQ?si=R9nh7bcVmeQ9SGTZ',
     sources: [
       { platform: 'curseforge', id: '536254', url: 'https://www.curseforge.com/minecraft/mc-mods/aquamirae', label: 'Forge' },
@@ -91,8 +91,8 @@ export const MODS: ModEntry[] = [
     tagline: 'Stylized tooltips with beautiful effects and smooth animations!',
     description:
       'Obscure Tooltips is a client-side visual enhancement mod that transforms ordinary item tooltips into expressive, animated showcases. It adds immersive visual flair to your inventory by introducing smooth animations, dynamic particle effects, and ornamental accent frames that adapt to item rarity and context.',
-    icon: '/assets/img/tabs/obscure-tooltips.png',
-    cover: '/assets/img/covers/obscure-tooltips.jpg',
+    icon: '/assets/img/mods/obscure-tooltips.webp',
+    cover: 'https://media.forgecdn.net/attachments/1335/389/obscure-tooltips-logo-jpg.jpg',
     gallery: [
       { src: '/assets/img/snowcase/tooltips-example-style.png', alt: 'Example tooltip style' },
     ],
@@ -112,7 +112,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Roaming pillager caravans with biome-themed loot and guarded convoys!',
     description:
       'Pillager Caravans adds roaming, cargo-filled convoys guarded by pillagers, vindicators, and even ravagers. Instead of static treasure chests, caravans travel across biomes – sometimes near your base – with cargo that changes depending on the environment.',
-    icon: '/assets/img/tabs/pillager-caravans.png',
+    icon: '/assets/img/mods/pillager-caravans.webp',
     cover: 'https://media.forgecdn.net/attachments/1342/951/pillager-caravans-logo-jpg.jpg',
     sources: [
       { platform: 'curseforge', id: '1356772', url: 'https://www.curseforge.com/minecraft/mc-mods/pillager-caravans' },
@@ -130,7 +130,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Ultimate extension of potion crafting, applications, and diversity!',
     description:
       'Ars Elixirum is the ultimate extension of potion crafting, applications, and diversity. Through exploration and experimentation, you can create your own recipes to craft Elixirs - powerful replacements for potions - and save and customize them!',
-    icon: '/assets/img/mods/icons/ars-elixirum.png',
+    icon: '/assets/img/mods/ars-elixirum.webp',
     cover: 'https://media.forgecdn.net/attachments/994/291/arselixirum.png',
     sources: [
       { platform: 'curseforge', id: '620870', url: 'https://www.curseforge.com/minecraft/mc-mods/ars-elixirum-forge', label: 'Forge' },
@@ -150,7 +150,7 @@ export const MODS: ModEntry[] = [
     tagline: 'A technomagical genetics mod where your body becomes your build',
     description:
       'Archogenum lets you embrace the role of a gene-engineer. Extract, combine, and rewrite the essence of living beings to synthesize unique xenofruits – mutable genetic blueprints that shape your survival, strength, and playstyle.',
-    icon: '/assets/img/mods/icons/archogenum.png',
+    icon: '/assets/img/mods/archogenum.webp',
     cover: 'https://media.forgecdn.net/attachments/1365/384/archogenum-logo-jpg.jpg',
     sources: [
       { platform: 'curseforge', id: '1368580', url: 'https://www.curseforge.com/minecraft/mc-mods/archogenum' },
@@ -169,7 +169,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Item pick-up notifier featuring rich animations and powerful customization options!',
     description:
       'Loot Journal is a client-side mod that enhances item pickups with smooth, animated notifications, smart stacking, and full visual customization. Track your own and nearby players\' pickups in real time, tweak every detail in-game, and enjoy a clean, immersive UI.',
-    icon: '/assets/img/mods/icons/loot-journal.png',
+    icon: '/assets/img/mods/loot-journal.webp',
     sources: [
       { platform: 'curseforge', id: '700723', url: 'https://www.curseforge.com/minecraft/mc-mods/loot-journal', label: 'Forge' },
       { platform: 'curseforge', id: '1120388', url: 'https://www.curseforge.com/minecraft/mc-mods/loot-journal-fabric', label: 'Fabric' },
@@ -187,7 +187,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Reimagine vanilla music with smooth, reactive orchestration!',
     description:
       'Maestro is a data-driven music orchestration framework that extends Minecraft\'s music system, enabling reactive, seamless soundtracks through resource packs.',
-    icon: '/assets/img/mods/icons/maestro.png',
+    icon: '/assets/img/mods/maestro.webp',
     sources: [
       { platform: 'curseforge', id: '1454351', url: 'https://www.curseforge.com/minecraft/mc-mods/maestro' },
       { platform: 'modrinth',   id: 'maestro-music', url: 'https://modrinth.com/mod/maestro-music' },
@@ -205,7 +205,7 @@ export const MODS: ModEntry[] = [
     tagline: 'The lightweight framework for the Obscuria Collection multi-loader mods',
     description:
       'Fragmentum is a lightweight core library used by other Obscuria Collection mods. It does not add any content on its own and only needs to be installed if another mod requires it, as it provides shared tools and a multi-loader architecture that keeps other mods cleaner, simpler, and free from loader-specific code.',
-    icon: '/assets/img/tabs/fragmentum-layer.png',
+    icon: '/assets/img/mods/fragmentum.webp',
     sources: [
       { platform: 'curseforge', id: '1123970', url: 'https://www.curseforge.com/minecraft/mc-mods/fragmentum', label: 'Forge' },
       { platform: 'curseforge', id: '1123974', url: 'https://www.curseforge.com/minecraft/mc-mods/fragmentum-fabric', label: 'Fabric' },
@@ -224,7 +224,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Green glow when entities heal for clearer feedback',
     description:
       'Healight is a lightweight mod that adds a green glow to entities when they heal, mirroring the red flash effect when they take damage. The mod works seamlessly with all vanilla and modded entities.',
-    icon: '/assets/img/mods/icons/healight.png',
+    icon: '/assets/img/mods/healight.webp',
     sources: [
       { platform: 'curseforge', id: '1188428', url: 'https://www.curseforge.com/minecraft/mc-mods/healight' },
       { platform: 'modrinth',   id: 'healight', url: 'https://modrinth.com/mod/healight' },
@@ -240,7 +240,7 @@ export const MODS: ModEntry[] = [
     tagline: 'Auxiliary Library',
     description:
       'Obscure API is a shared library used by some mods in the Obscuria Collection. It adds common gameplay systems, an animation framework, and new entity attributes that help these mods work smoothly together.',
-    icon: '/assets/img/mods/icons/obscure-api.png',
+    icon: '/assets/img/mods/obscure-api.webp',
     cover: 'https://media.forgecdn.net/attachments/994/291/arselixirum.png',
     sources: [
       { platform: 'curseforge', id: '638417', url: 'https://www.curseforge.com/minecraft/mc-mods/obscure-api', label: 'Forge' },
@@ -258,7 +258,7 @@ export const MODS: ModEntry[] = [
     tagline: 'A lightweight abstraction layer for codec-based data systems',
     description:
       'Archivist is a lightweight abstraction layer for codec-based data systems, originally designed for complex data-driven mods such as Ars Elixirum. It does not add any content on its own and only needs to be installed if required, providing structured and consistent handling of configs, world data, and serialized content.',
-    icon: '/assets/img/mods/icons/archivist.png',
+    icon: '/assets/img/mods/archivist.webp',
     sources: [
       { platform: 'curseforge', id: '1513409', url: 'https://www.curseforge.com/minecraft/mc-mods/archivist' },
       { platform: 'modrinth',   id: 'archivist-api', url: 'https://modrinth.com/mod/archivist-api' },

@@ -10,6 +10,8 @@ lastModified: "May 17, 2026"
 
 import { Image } from 'astro:assets';
 
+
+
 **Fragmentum Layer** lets you create **global datapacks and resource packs** directly inside `config/fragmentum/` – **without zipping**, metadata, or pack structure. Minecraft treats everything inside this folder as a fully functional global pack, active **in every world**, automatically.
 
 <FileTree label="Folder Structure" tree={[
@@ -27,7 +29,7 @@ On startup, Fragmentum creates two virtual packs:
 - **Fragmentum Layer Resource Pack** – built from `config/fragmentum/assets/`
 - **Fragmentum Layer Datapack** – built from `config/fragmentum/data/`
 
-<Image src="/assets/img/covers/fragmentum-layer.png" loading="eager" width="1920" height="1080" alt="Cover" style="border-radius: 12px; margin-bottom: 12px;"/>
+<Image src="/assets/img/showcase/fragmentum-layer.webp" loading="lazy" width="1280" height="720" alt="Example" style="border-radius: 12px; margin-bottom: 12px;"/>
 
 > They behave exactly like normal Minecraft packs, but are **assembled at runtime** instead of being stored as zipped packs in `resourcepacks` or `datapacks`.
 
