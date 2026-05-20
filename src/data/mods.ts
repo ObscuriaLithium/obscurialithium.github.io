@@ -93,9 +93,9 @@ export const MODS: ModEntry[] = [
       'Obscure Tooltips is a client-side visual enhancement mod that transforms ordinary item tooltips into expressive, animated showcases. It adds immersive visual flair to your inventory by introducing smooth animations, dynamic particle effects, and ornamental accent frames that adapt to item rarity and context.',
     icon: '/assets/img/mods/obscure-tooltips.webp',
     cover: 'https://media.forgecdn.net/attachments/1335/389/obscure-tooltips-logo-jpg.jpg',
-    gallery: [
-      { src: '/assets/img/snowcase/tooltips-example-style.png', alt: 'Example tooltip style' },
-    ],
+    //gallery: [
+    //  { src: '/assets/img/snowcase/tooltips-example-style.png', alt: 'Example tooltip style' },
+    //],
     sources: [
       { platform: 'curseforge', id: '715660', url: 'https://www.curseforge.com/minecraft/mc-mods/obscure-tooltips' },
       { platform: 'modrinth',   id: 'obscure-tooltips', url: 'https://modrinth.com/mod/obscure-tooltips' },
