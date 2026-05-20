@@ -127,7 +127,6 @@ body {
   height: auto;
   aspect-ratio: 1 / 1;
   filter: drop-shadow(0 0 20px rgba(160,110,210,0.3));
-  image-rendering: pixelated;
   transition: filter 0.3s var(--ease), opacity 0.2s var(--ease);
 }
 .sidebar-logo-sub {
@@ -744,7 +743,6 @@ body {
   width: clamp(220px, 38%, 380px);
   height: auto;
   filter: drop-shadow(0 0 40px rgba(160,110,210,0.28)) drop-shadow(0 0 80px rgba(110,130,220,0.1));
-  image-rendering: pixelated;
 }
 .home-hero {
   padding: 0.5rem 0 2.5rem;
@@ -834,20 +832,13 @@ body {
 .mod-card-bg {
   position: absolute;
   inset: -10%;
-
   width: 120%;
   height: 120%;
-
   object-fit: contain;
-  image-rendering: pixelated;
-
   filter: blur(22px) saturate(1.4);
   opacity: 0.13;
-
   transform: scale(1.05);
-
   pointer-events: none;
-
   transition:
     opacity 0.3s var(--ease),
     transform 0.3s var(--ease);
@@ -856,7 +847,6 @@ body {
 /* Dark gradient overlay */
 .mod-card::after {
   content: '';
-
   position: absolute;
   inset: 0;
 
@@ -875,12 +865,9 @@ body {
 .mod-card-gloss {
   position: absolute;
   inset: 0;
-
   border-radius: inherit;
-
   --gx: 50%;
   --gy: 0%;
-
   background:
     radial-gradient(
       circle at var(--gx) var(--gy),
@@ -888,36 +875,24 @@ body {
       rgba(182, 105, 255, 0.1) 35%,
       transparent 70%
     );
-
   opacity: 0;
-
   pointer-events: none;
   z-index: 3;
-
   transition: opacity 0.25s var(--ease);
 }
 
 /* Floating top icon */
 .mod-card-icon {
   position: absolute;
-
   top: 1rem;
   left: 50%;
-
   transform: translateX(-50%);
-
   width: 128px;
   height: 128px;
-
   object-fit: contain;
-  image-rendering: pixelated;
-
   border-radius: 18px;
-
   z-index: 2;
-
   filter: none;
-
   transition:
     transform 0.25s var(--ease),
     opacity 0.25s var(--ease);
@@ -927,24 +902,17 @@ body {
 .mod-card-body {
   position: relative;
   z-index: 2;
-
   width: 100%;
-
   padding: 0.9rem 1rem 1.1rem;
-
   min-width: 0;
-
   margin-top: auto;
 }
 
 .mod-card-name {
   font-size: 0.86rem;
   font-weight: 600;
-
   color: var(--txt-head);
-
   margin-bottom: 0.25rem;
-
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -952,16 +920,11 @@ body {
 
 .mod-card-has-docs {
   font-size: 0.58rem;
-
   background: var(--acc-dim);
   color: var(--acc);
-
   border: 1px solid var(--acc-border);
-
   padding: 0.12em 0.5em;
-
   border-radius: 3px;
-
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
