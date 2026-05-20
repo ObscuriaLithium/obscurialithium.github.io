@@ -17,6 +17,21 @@ const newRelease  = MODS.find(m => m.isNewRelease);
 const featured    = MODS.filter(m => m.tier === 'featured' && !m.isNewRelease);
 const major       = MODS.filter(m => m.tier === 'major'    && !m.isNewRelease);
 const minor       = MODS.filter(m => m.tier === 'minor');
+
+const modDataJson = JSON.stringify(MODS.map(m => ({
+  id: m.id,
+  name: m.name,
+  tagline: m.tagline,
+  icon: m.icon,
+  sources: m.sources,
+  loaders: m.loaders,
+  releaseDate: m.releaseDate,
+  tier: m.tier,
+  docsSlug: m.docsSlug ?? null,
+  isBeta: m.isBeta ?? false,
+  isAlpha: m.isAlpha ?? false,
+  isNewRelease: m.isNewRelease ?? false,
+})));
 ---
 
 <Layout title="Home" isHome={true}>
@@ -270,6 +285,8 @@ const minor       = MODS.filter(m => m.tier === 'minor');
 
   </div>
 
+  <div id="sc-list" hidden></div>
+
   <div class="sc-empty" id="sc-empty" hidden>
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <p>No mods match the current filter.</p>
@@ -421,60 +438,6 @@ const minor       = MODS.filter(m => m.tier === 'minor');
   document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
 })();
 
-// ── Filter + Sort ────────────────────────────────────────────────────────────
-(function(){
-  const grid=document.getElementById('sc-grid');
-  const empty=document.getElementById('sc-empty');
-  const sortEl=document.getElementById('sc-sort');
-  const filterBtns=document.querySelectorAll('.sc-filter');
-  const resetBtns=document.querySelectorAll('.sc-reset-filter');
-  let activeFilter='all';
-
-  function applyFilter(f){
-    activeFilter=f;
-    filterBtns.forEach(b=>b.classList.toggle('active',b.dataset.filter===f));
-    const cards=Array.from(grid.querySelectorAll('.sc-card'));
-    let visible=0;
-    cards.forEach(c=>{
-      const pl=(c.dataset.platforms||'').split(',');
-      const lo=(c.dataset.loaders||'').split(',');
-      const ok=f==='all'||pl.includes(f)||lo.includes(f);
-      c.style.display=ok?'':'none';
-      if(ok)visible++;
-    });
-    if(empty) empty.hidden=visible>0;
-  }
-
-  function applySort(v){
-    const cards=Array.from(grid.querySelectorAll('.sc-card'));
-    const TIER={featured:0,major:1,minor:2};
-    cards.sort((a,b)=>{
-      if(v==='date-desc')return(b.dataset.date||'')>(a.dataset.date||'')?1:-1;
-      if(v==='date-asc') return(a.dataset.date||'')>(b.dataset.date||'')?1:-1;
-      if(v==='name'){
-        const na=a.querySelector('.sc-card-name,.sc-card-minor-name')?.textContent?.trim()||'';
-        const nb=b.querySelector('.sc-card-name,.sc-card-minor-name')?.textContent?.trim()||'';
-        return na.localeCompare(nb);
-      }
-      if(v==='downloads'){
-        const parse=el=>{
-          const t=el.querySelector('.dl-compact')?.textContent?.trim()||'0';
-          const n=parseFloat(t);
-          return t.endsWith('M')?n*1e6:t.endsWith('K')?n*1e3:n;
-        };
-        return parse(b)-parse(a);
-      }
-      const ta=TIER[a.dataset.tier]??2, tb=TIER[b.dataset.tier]??2;
-      if(ta!==tb)return ta-tb;
-      return(b.dataset.date||'')>(a.dataset.date||'')?1:-1;
-    });
-    cards.forEach(c=>grid.appendChild(c));
-  }
-
-  filterBtns.forEach(b=>b.addEventListener('click',()=>applyFilter(b.dataset.filter)));
-  resetBtns.forEach(b=>b.addEventListener('click',()=>applyFilter('all')));
-  sortEl?.addEventListener('change',()=>applySort(sortEl.value));
-})();
 
 // ── Parallax orbs ────────────────────────────────────────────────────────────
 (function(){
@@ -499,6 +462,172 @@ const minor       = MODS.filter(m => m.tier === 'minor');
       card.style.setProperty('--mx',x+'%');
       card.style.setProperty('--my',y+'%');
     });
+  });
+})();
+</script>
+
+<script define:vars={{modDataJson}}>
+// ── Mod data (embedded at build time) ───────────────────────────────────────
+const MOD_DATA = JSON.parse(modDataJson);
+
+// ── Filter + Sort ────────────────────────────────────────────────────────────
+(function(){
+  const grid  = document.getElementById('sc-grid');
+  const empty = document.getElementById('sc-empty');
+  const sortEl = document.getElementById('sc-sort');
+  const filterBtns = document.querySelectorAll('.sc-filter');
+  const resetBtns  = document.querySelectorAll('.sc-reset-filter');
+  let activeFilter = 'all';
+  let activeSort   = 'default';
+
+  const TIER = {featured:0, major:1, minor:2};
+
+  const DL_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+  const EXT_SVG = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+  const DOC_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
+
+  function itemLabel(s) {
+    const base = s.platform === 'curseforge' ? 'CurseForge' : 'Modrinth';
+    return s.label ? `${base} (${s.label})` : base;
+  }
+
+  function buildPlatformBtn(sources) {
+    if (!sources.length) return '';
+    if (sources.length === 1) {
+      const s = sources[0];
+      return `<a href="${s.url}" target="_blank" rel="noopener" class="sc-card-minor-action sc-ma-${s.platform}" title="${itemLabel(s)}">${DL_SVG}</a>`;
+    }
+    const items = sources.map(s =>
+      `<a href="${s.url}" target="_blank" rel="noopener" class="pb-item pb-item-${s.platform}">${itemLabel(s)}${EXT_SVG}</a>`
+    ).join('');
+    return `<div class="pb-drop"><button class="sc-card-minor-action pb-trigger" type="button" title="Download">${DL_SVG}</button><div class="pb-menu pb-menu-right">${items}</div></div>`;
+  }
+
+  function buildDocBtn(docsSlug) {
+    if (!docsSlug) return '';
+    return `<a href="/docs/${docsSlug}" class="sc-card-minor-action" title="Docs">${DOC_SVG}</a>`;
+  }
+
+  function getDlHtml(modId) {
+    return document.querySelector(`[data-mod-id="${modId}"] .dl-compact`)?.outerHTML ?? '';
+  }
+
+  function buildRow(mod) {
+    const statusBadges = [
+      mod.isBeta  ? '<span class="sc-status beta">beta</span>' : '',
+      mod.isAlpha ? '<span class="sc-status alpha">alpha</span>' : '',
+    ].join('');
+
+    const loaders = mod.loaders.map(l =>
+      `<span class="sc-loader sc-loader-${l}">${l}</span>`
+    ).join('');
+
+    return `
+      <article
+        class="sc-card sc-card-minor"
+        data-mod-id="${mod.id}"
+        data-loaders="${mod.loaders.join(',')}"
+        data-platforms="${mod.sources.map(s => s.platform).join(',')}"
+        data-date="${mod.releaseDate}"
+        data-tier="${mod.tier}"
+      >
+        <div class="sc-card-minor-glow"></div>
+
+        <img
+          src="${mod.icon}"
+          alt="${mod.name}"
+          class="sc-card-minor-icon"
+          loading="lazy"
+        />
+
+        <div class="sc-card-minor-body">
+          <h3 class="sc-card-minor-name">
+            ${mod.name}
+            ${statusBadges}
+          </h3>
+
+          <p class="sc-card-minor-desc">
+            ${mod.tagline}
+          </p>
+
+          <div class="sc-card-minor-foot">
+            <div class="sc-card-minor-loaders">
+              ${loaders}
+            </div>
+
+            <div class="sc-card-minor-downloads">
+              ${getDlHtml(mod.id)}
+            </div>
+          </div>
+        </div>
+
+        <div class="sc-card-minor-actions">
+          ${buildDocBtn(mod.docsSlug)}
+          ${buildPlatformBtn(mod.sources)}
+        </div>
+      </article>
+    `;
+  }
+
+  const listEl = document.getElementById('sc-list');
+
+  function matches(mod) {
+    if (activeFilter === 'all') return true;
+    return mod.loaders.includes(activeFilter) ||
+           mod.sources.some(s => s.platform === activeFilter);
+  }
+
+  function render() {
+    const isListMode = activeSort !== 'default';
+
+    let mods = MOD_DATA.filter(m => !m.isNewRelease && matches(m));
+
+    if (isListMode) {
+      mods = [...mods].sort((a, b) => {
+        if (activeSort === 'date-desc') return b.releaseDate > a.releaseDate ? 1 : -1;
+        if (activeSort === 'date-asc')  return a.releaseDate > b.releaseDate ? 1 : -1;
+        if (activeSort === 'name')      return a.name.localeCompare(b.name);
+        if (activeSort === 'downloads') {
+          const dl = id => {
+            const el = document.querySelector(`[data-mod-id="${id}"] .dl-compact`);
+            const t = el?.textContent?.trim() || '0';
+            const n = parseFloat(t);
+            return t.endsWith('M') ? n*1e6 : t.endsWith('K') ? n*1e3 : n;
+          };
+          return dl(b.id) - dl(a.id);
+        }
+        return 0;
+      });
+      grid.hidden = true;
+      listEl.hidden = false;
+      listEl.innerHTML = mods.map(buildRow).join('');
+    } else {
+      grid.hidden = false;
+      listEl.hidden = true;
+      Array.from(grid.querySelectorAll('.sc-card')).forEach(c => {
+        const pl = (c.dataset.platforms||'').split(',');
+        const lo = (c.dataset.loaders||'').split(',');
+        const ok = activeFilter==='all' || pl.includes(activeFilter) || lo.includes(activeFilter);
+        c.style.display = ok ? '' : 'none';
+      });
+    }
+
+    if (empty) empty.hidden = mods.length !== 0;
+  }
+
+  filterBtns.forEach(b => b.addEventListener('click', () => {
+    activeFilter = b.dataset.filter;
+    filterBtns.forEach(x => x.classList.toggle('active', x.dataset.filter === activeFilter));
+    render();
+  }));
+  resetBtns.forEach(b => b.addEventListener('click', () => {
+    activeFilter = 'all';
+    filterBtns.forEach(x => x.classList.toggle('active', x.dataset.filter === 'all'));
+    render();
+  }));
+  sortEl?.addEventListener('change', () => {
+    activeSort = sortEl.value;
+    render();
   });
 })();
 </script>
@@ -529,7 +658,7 @@ const minor       = MODS.filter(m => m.tier === 'minor');
 </script>
 
 
-<style>
+<style is:global>
 /* ── Shared tokens ─────────────────────────────────────────────────────────── */
 .sc-section-label{display:inline-flex;align-items:center;gap:.45rem;font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);opacity:.9;margin-bottom:.5rem}
 .sc-btn{display:inline-flex;align-items:center;gap:.45rem;padding:.55em 1.15em;border-radius:8px;font-size:.88rem;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s,box-shadow .2s;font-family:var(--font);white-space:nowrap}
@@ -633,6 +762,7 @@ const minor       = MODS.filter(m => m.tier === 'minor');
 
 /* ── Major cards ─────────────────────────────────────────────────────────── */
 .sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;align-items:start}
+.sc-grid[hidden]{display:none}
 .sc-card{position:relative;border-radius:16px;border:1px solid var(--border);background:var(--bg-card);transition:border-color .6s cubic-bezier(.22,1,.36,1),box-shadow .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);will-change:transform}
 /* cursor glow pseudo-element */
 .sc-card-major::after{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(168,127,212,.1) 0%,transparent 70%);opacity:0;transition:opacity .8s cubic-bezier(.22,1,.36,1);pointer-events:none;z-index:0}
@@ -680,8 +810,13 @@ const minor       = MODS.filter(m => m.tier === 'minor');
 .sc-card-minor-action.sc-ma-curseforge:hover{background:rgba(245,130,32,.12);color:#f08030;border-color:rgba(245,130,32,.25)}
 .sc-card-minor-action.sc-ma-modrinth:hover{background:rgba(27,217,106,.08);color:#1bd96a;border-color:rgba(27,217,106,.18)}
 
+/* ── List view (non-default sort) ────────────────────────────────────────── */
+#sc-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;align-items:start;}
+#sc-list[hidden]{display:none;}
+
 /* ── Empty ───────────────────────────────────────────────────────────────── */
 .sc-empty{display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:4rem 2rem;color:var(--txt-subtle);text-align:center}
+.sc-empty[hidden]{display:none}
 .sc-empty p{font-size:.9rem}
 
 /* ── Collab ──────────────────────────────────────────────────────────────── */
