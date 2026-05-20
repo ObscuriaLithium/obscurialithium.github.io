@@ -184,7 +184,6 @@ body {
   object-fit: contain;
   border-radius: 7px;
   flex-shrink: 0;
-  image-rendering: pixelated;
   opacity: 0.85;
   transition: opacity 0.15s;
 }
