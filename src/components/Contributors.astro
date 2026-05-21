@@ -1,0 +1,368 @@
+---
+// Contributors fetched at BUILD TIME — no client-side API calls, no rate limits.
+// Optionally set GITHUB_TOKEN in your .env for higher rate limits (5000/hr vs 60).
+import { CONTRIBUTOR_REPOS, TEAM_MEMBERS, COMMUNITY_MEMBERS } from '../data/contributors';
+import Icon from './Icon.astro';
+
+interface Contributor {
+  login: string;
+  avatar_url: string;
+  html_url: string;
+}
+
+const token = import.meta.env.GITHUB_TOKEN;
+const ghHeaders: Record<string, string> = { 'Accept': 'application/vnd.github+json' };
+if (token) ghHeaders['Authorization'] = `Bearer ${token}`;
+
+// Resolve a username → full Contributor via GitHub API
+async function fetchUser(login: string): Promise<Contributor | null> {
+  try {
+    const res = await fetch(`https://api.github.com/users/${login}`, { headers: ghHeaders });
+    if (!res.ok) return null;
+    const u = await res.json();
+    return { login: u.login, avatar_url: u.avatar_url, html_url: u.html_url };
+  } catch { return null; }
+}
+
+// Fetch all pages of contributors for a repo
+async function fetchRepoContributors(repo: string): Promise<Contributor[]> {
+  const all: Contributor[] = [];
+  let page = 1;
+  while (true) {
+    const res = await fetch(
+      `https://api.github.com/repos/${repo}/contributors?per_page=100&page=${page}`,
+      { headers: ghHeaders }
+    );
+    if (!res.ok) {
+      console.warn(`[Contributors] Failed ${repo} p${page}: ${res.status}`);
+      break;
+    }
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) break;
+    for (const u of data) {
+      if (u.type === 'Bot' || u.login?.endsWith('[bot]')) continue;
+      all.push({ login: u.login, avatar_url: u.avatar_url, html_url: u.html_url });
+    }
+    if (data.length < 100) break;
+    page++;
+  }
+  return all;
+}
+
+// ── Fetch both groups in parallel ───────────────────────────────────────────
+const [teamResolved, communityResolved, repoResults] = await Promise.all([
+  Promise.all(TEAM_MEMBERS.map(fetchUser)),
+  Promise.all(COMMUNITY_MEMBERS.map(fetchUser)),
+  Promise.all(CONTRIBUTOR_REPOS.map(fetchRepoContributors)),
+]);
+
+const team: Contributor[] = teamResolved.filter((c): c is Contributor => c !== null);
+const teamLogins = new Set(team.map(c => c.login.toLowerCase()));
+
+// Start community with explicitly listed members, then append repo contributors
+const seen = new Set<string>(teamLogins);
+const community: Contributor[] = [];
+
+for (const c of communityResolved) {
+  if (!c) continue;
+  const key = c.login.toLowerCase();
+  if (!seen.has(key)) { seen.add(key); community.push(c); }
+}
+for (const list of repoResults) {
+  for (const c of list) {
+    const key = c.login.toLowerCase();
+    if (!seen.has(key)) { seen.add(key); community.push(c); }
+  }
+}
+
+const totalCount = team.length + community.length;
+const repoCount = CONTRIBUTOR_REPOS.length;
+---
+
+<section class="sc-contributors" id="contributors">
+  <div class="sc-contributors-bg" aria-hidden="true"></div>
+  <div class="sc-contributors-inner" data-reveal>
+
+    <p class="sc-section-label">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Contributors
+    </p>
+    <h2 class="sc-contributors-title">Built by the community.</h2>
+    <p class="sc-contributors-text">
+      Every contribution — code, bug reports, translations, feedback — shapes this project.
+      Thank you to everyone who has given their time.
+    </p>
+
+    <div class="sc-contrib-groups">
+
+      {/* ── Team ─────────────────────────────────────────────────────────── */}
+      {team.length > 0 && (
+        <div class="sc-contrib-group">
+          <p class="sc-contrib-group-label">
+            <Icon name="sparkles" size={10} />
+            Team
+          </p>
+          <div class="sc-contrib-grid sc-contrib-grid--team">
+            {team.map((c, i) => (
+              <a
+                class="sc-contrib-avatar sc-contrib-avatar--team"
+                href={c.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={c.login}
+                style={`animation-delay:${i * 40}ms`}
+              >
+                <img src={`${c.avatar_url}&s=80`} alt={c.login} loading="lazy" width="52" height="52" />
+                <span class="sc-contrib-tooltip">{c.login}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Divider — only shown when both groups have members ───────────── */}
+      {team.length > 0 && community.length > 0 && (
+        <div class="sc-contrib-divider" aria-hidden="true"></div>
+      )}
+
+      {/* ── Community ────────────────────────────────────────────────────── */}
+      {community.length > 0 && (
+        <div class="sc-contrib-group">
+          <p class="sc-contrib-group-label">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Community
+          </p>
+          <div class="sc-contrib-grid">
+            {community.map((c, i) => (
+              <a
+                class="sc-contrib-avatar"
+                href={c.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={c.login}
+                style={`animation-delay:${Math.min(i, 40) * 30}ms`}
+              >
+                <img src={`${c.avatar_url}&s=80`} alt={c.login} loading="lazy" width="48" height="48" />
+                <span class="sc-contrib-tooltip">{c.login}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {totalCount === 0 && (
+        <p class="sc-contrib-empty">
+          No contributors found. Check repo names in <code>src/data/contributors.ts</code>.
+        </p>
+      )}
+
+    </div>
+
+    <p class="sc-contrib-count">
+      {totalCount} contributor{totalCount !== 1 ? 's' : ''} across {repoCount} {repoCount !== 1 ? 'repositories' : 'repository'}
+    </p>
+
+  </div>
+</section>
+
+<script define:vars={{ totalCount }}>
+(function () {
+  const el = document.getElementById('sc-contrib-stat-num');
+  if (el && totalCount > 0) el.textContent = totalCount.toString();
+})();
+</script>
+
+<style is:global>
+/* ── Contributors section ─────────────────────────────────────────────────── */
+.sc-contributors {
+  position: relative;
+  margin: 5rem -4.5rem 0 -4.5rem;
+  padding: 5rem 5rem;
+  overflow: visible;
+  border-top: 1px solid var(--border);
+}
+.sc-contributors-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 100% 30%, rgba(168,127,212,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 0% 70%,   rgba(122,142,224,.04) 0%, transparent 55%);
+  pointer-events: none;
+  overflow: hidden;
+}
+.sc-contributors-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+}
+.sc-contributors-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--txt-head);
+  letter-spacing: -.025em;
+  margin: .5rem 0 .75rem;
+}
+.sc-contributors-text {
+  font-size: .9rem;
+  color: var(--txt-muted);
+  line-height: 1.8;
+  font-weight: 300;
+  margin-bottom: 2rem;
+  max-width: 560px;
+}
+
+/* ── Groups layout ───────────────────────────────────────────────────────── */
+.sc-contrib-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 1.25rem;
+}
+.sc-contrib-group {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.sc-contrib-group-label {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--txt-subtle);
+}
+
+/* ── Divider between groups ──────────────────────────────────────────────── */
+.sc-contrib-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem 0;
+  opacity: .6;
+}
+
+/* ── Avatar grid ─────────────────────────────────────────────────────────── */
+.sc-contrib-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+.sc-contrib-avatar {
+  position: relative;
+  border-radius: 50%;
+  overflow: visible;
+  text-decoration: none;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: contribReveal .5s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes contribReveal {
+  from { opacity: 0; transform: scale(.7) translateY(6px); }
+  to   { opacity: 1; transform: scale(1)  translateY(0);   }
+}
+
+/* ── Regular avatar (community) ─────────────────────────────────────────── */
+.sc-contrib-avatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  transition: border-color .25s ease, transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s ease;
+}
+.sc-contrib-avatar:hover img {
+  border-color: var(--acc);
+  transform: scale(1.18) translateY(-3px);
+  box-shadow: 0 8px 24px rgba(168,127,212,.35), 0 0 0 1px rgba(168,127,212,.25);
+}
+
+/* ── Team avatar — larger, accent ring ──────────────────────────────────── */
+.sc-contrib-avatar--team img {
+  width: 52px;
+  height: 52px;
+  border-color: rgba(168,127,212,.45);
+  box-shadow: 0 0 0 1px rgba(168,127,212,.15);
+}
+.sc-contrib-avatar--team:hover img {
+  border-color: var(--acc);
+  box-shadow: 0 8px 28px rgba(168,127,212,.45), 0 0 0 1px rgba(168,127,212,.35);
+  transform: scale(1.15) translateY(-3px);
+}
+
+/* ── Tooltip ─────────────────────────────────────────────────────────────── */
+.sc-contrib-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  white-space: nowrap;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  padding: .22em .6em;
+  border-radius: 5px;
+  background: rgba(20,16,32,.95);
+  color: var(--txt-head);
+  border: 1px solid var(--border);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+}
+.sc-contrib-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(20,16,32,.95);
+}
+.sc-contrib-avatar:hover .sc-contrib-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Count & misc ────────────────────────────────────────────────────────── */
+.sc-contrib-count {
+  font-size: .72rem;
+  color: var(--txt-subtle);
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+.sc-contrib-empty {
+  font-size: .82rem;
+  color: var(--txt-subtle);
+  font-style: italic;
+}
+.sc-contrib-empty code {
+  font-family: var(--font-mono, monospace);
+  font-size: .78rem;
+  background: var(--bg-code);
+  padding: .1em .4em;
+  border-radius: 3px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .sc-contributors { margin: 4rem -3.5rem 0; padding: 4rem 3.5rem; }
+}
+@media (max-width: 600px) {
+  .sc-contributors { margin: 3rem -1.5rem 0; padding: 2.5rem 1.5rem; }
+}
+</style>
