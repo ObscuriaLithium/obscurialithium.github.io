@@ -1,5 +1,6 @@
 export const TEAM_MEMBERS: string[] = [
-  'ObscuriaLithium', 
+  'ObscuriaLithium',
+  'Lucius-the-Heavenly-Dragon', 
   'Mr-Cakeman', 
   'squarzyy'
 ];
