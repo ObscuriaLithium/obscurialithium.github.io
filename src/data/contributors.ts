@@ -20,6 +20,7 @@ export const COMMUNITY_MEMBERS: string[] = [
 export const CONTRIBUTOR_REPOS: string[] = [
   'ObscuriaLithium/aquamirae',
   'ObscuriaLithium/obscure-tooltips',
+  'ObscuriaLithium/loot-journal',
   'ObscuriaLithium/archogenum',
   'ObscuriaLithium/accents',
   'ObscuriaLithium/pillager-caravans',
