@@ -6,6 +6,7 @@ export const TEAM_MEMBERS: string[] = [
 ];
 
 export const COMMUNITY_MEMBERS: string[] = [
+  'jaesunn',
   'F-708', 
   'SiverDX', 
   'foiledknight', 
