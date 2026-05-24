@@ -120,19 +120,22 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
 
 {newRelease && (
 <section class="sc-new-release" id="showcase">
-  <div class="sc-nr-tag">
+  <canvas class="sc-nr-canvas" aria-hidden="true"></canvas>
+  <div class="sc-nr-rim-top" aria-hidden="true"></div>
+  <div class="sc-nr-rim-bottom" aria-hidden="true"></div>
+  <div class="sc-nr-tag" data-reveal>
     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     New Release
   </div>
   <div class="sc-nr-body">
-    <div class="sc-nr-cover">
+    <div class="sc-nr-cover" data-reveal data-reveal-dir="left" data-reveal-delay="1">
       {newRelease.cover
         ? <img src={newRelease.cover} alt={newRelease.name} loading="eager" />
         : <div class="sc-nr-cover-placeholder"><img src={newRelease.icon} alt="" class="sc-nr-cover-icon" /></div>
       }
       <div class="sc-nr-cover-shimmer"></div>
     </div>
-    <div class="sc-nr-info">
+    <div class="sc-nr-info" data-reveal data-reveal-dir="right" data-reveal-delay="2">
       <div class="sc-nr-meta">
         {newRelease.loaders.map(l => <span class={`sc-loader sc-loader-${l}`}>{l}</span>)}
         <span class="sc-nr-date">{new Date(newRelease.releaseDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
@@ -158,7 +161,7 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
 
 
 <section class="sc-showcase" id={!newRelease ? 'showcase' : undefined}>
-  <div class="sc-toolbar">
+  <div class="sc-toolbar" data-reveal>
     <div class="sc-toolbar-left">
       <p class="sc-section-label">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -440,18 +443,172 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
 
 // ── Scroll reveal ────────────────────────────────────────────────────────────
 (function(){
-  const DELAYS=['0ms','80ms','160ms','240ms','320ms'];
-  const io=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const el=e.target;
-        el.style.transitionDelay=el.dataset.revealDelay?DELAYS[+el.dataset.revealDelay]||'0ms':'0ms';
-        el.classList.add('sc-revealed');
-        io.unobserve(el);
+  // Stagger delays for grouped elements (cards in a grid)
+  const STAGGER = 90; // ms between each card in a grid row
+  const BASE_DELAYS = [0, 120, 240, 360, 480]; // for data-reveal-delay="N"
+
+  // Track card indices per grid for staggered entrance
+  const gridStagger = new Map();
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+
+      let delay = 0;
+
+      // Named delay override (for sections like nr-cover, nr-info)
+      if (el.dataset.revealDelay !== undefined) {
+        delay = BASE_DELAYS[+el.dataset.revealDelay] ?? 0;
       }
+      // Auto-stagger cards inside a grid
+      else if (el.closest('.sc-grid, #sc-list')) {
+        const grid = el.closest('.sc-grid, #sc-list');
+        const idx = (gridStagger.get(grid) ?? 0);
+        gridStagger.set(grid, idx + 1);
+        // Clamp stagger so long lists don't wait forever
+        delay = Math.min(idx * STAGGER, 420);
+      }
+
+      el.style.transitionDelay = delay + 'ms';
+      el.classList.add('sc-revealed');
+      io.unobserve(el);
     });
-  },{threshold:0.07,rootMargin:'0px 0px -30px 0px'});
-  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+  }, {
+    threshold: 0.08,
+    // Trigger when element is well inside viewport — user will actually see the animation
+    rootMargin: '0px 0px -80px 0px'
+  });
+
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+})();
+
+// ── New Release rim-light particle canvas ────────────────────────────────────
+(function(){
+  const section = document.querySelector('.sc-new-release');
+  const canvas  = section && section.querySelector('.sc-nr-canvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0;
+  const COLORS = ['#c8a8f0','#a87fd4','#7a8ee0','#e0d0ff','#9090e8'];
+  const particles = [];
+  const MAX = 90;
+
+  function resize(){
+    W = canvas.width  = section.offsetWidth;
+    H = canvas.height = section.offsetHeight;
+  }
+  resize();
+  new ResizeObserver(resize).observe(section);
+
+  // Edge zones: top, bottom, left, right each contribute rim particles
+  // They drift inward toward the center and fade out
+  function spawnEdge(){
+    const edge = Math.floor(Math.random()*4); // 0=top,1=bottom,2=left,3=right
+    let x, y, vx, vy;
+    const speed = Math.random()*0.28+0.06;
+    const inertia = 0.012 + Math.random()*0.018; // pull toward center
+    if(edge===0){ x=Math.random()*W; y=0; vy=speed; vx=(Math.random()-0.5)*0.18; }
+    else if(edge===1){ x=Math.random()*W; y=H; vy=-speed; vx=(Math.random()-0.5)*0.18; }
+    else if(edge===2){ x=0; y=Math.random()*H; vx=speed; vy=(Math.random()-0.5)*0.15; }
+    else { x=W; y=Math.random()*H; vx=-speed; vy=(Math.random()-0.5)*0.15; }
+    return {
+      x, y, vx, vy, inertia,
+      r: Math.random()*1.4+0.4,
+      alpha: 0, maxAlpha: Math.random()*0.38+0.08,
+      phase: 'in', // 'in' → 'glow' → 'out'
+      life: 0, maxLife: 160+Math.floor(Math.random()*200),
+      color: COLORS[Math.floor(Math.random()*COLORS.length)],
+      // bright ones near edges get a bit of bloom
+      bloom: Math.random() < 0.25
+    };
+  }
+
+  for(let i=0;i<MAX;i++){
+    const p = spawnEdge();
+    // scatter them across life phases so there's no initial rush
+    p.life = Math.floor(Math.random()*p.maxLife);
+    p.alpha = p.maxAlpha * Math.min(1, p.life/(p.maxLife*0.25));
+    particles.push(p);
+  }
+
+  const CX_BIAS = 0.5; // horizontal center pull bias
+  const CY_BIAS = 0.5;
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of particles){
+      p.life++;
+      // gentle center attraction — particles arc inward
+      const cx = W * CX_BIAS;
+      const cy = H * CY_BIAS;
+      p.vx += (cx - p.x) * p.inertia * 0.0006;
+      p.vy += (cy - p.y) * p.inertia * 0.0006;
+      // slight drag
+      p.vx *= 0.992;
+      p.vy *= 0.992;
+      p.x += p.vx;
+      p.y += p.vy;
+
+      const progress = p.life / p.maxLife;
+      // fade in first 20%, hold, fade out last 30%
+      if(progress < 0.2) p.alpha = p.maxAlpha * (progress/0.2);
+      else if(progress > 0.7) p.alpha = p.maxAlpha * (1-(progress-0.7)/0.3);
+      else p.alpha = p.maxAlpha;
+
+      if(p.life >= p.maxLife){
+        const np = spawnEdge();
+        Object.assign(p, np);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.alpha));
+      ctx.fillStyle = p.color;
+      if(p.bloom){
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color;
+      } else {
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = p.color;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Soft rim-edge brightening streaks along borders
+    // Top rim — shimmering highlight band
+    const topGrad = ctx.createLinearGradient(0,0,W,0);
+    topGrad.addColorStop(0,'transparent');
+    topGrad.addColorStop(0.2,`rgba(168,127,212,${0.06 + 0.04*Math.sin(Date.now()*0.0007)})`);
+    topGrad.addColorStop(0.5,`rgba(200,168,240,${0.14 + 0.06*Math.sin(Date.now()*0.0009+1)})`);
+    topGrad.addColorStop(0.8,`rgba(122,142,224,${0.06 + 0.03*Math.sin(Date.now()*0.0006+2)})`);
+    topGrad.addColorStop(1,'transparent');
+    ctx.save();
+    ctx.globalAlpha=1;
+    ctx.fillStyle=topGrad;
+    ctx.fillRect(0,0,W,2);
+    ctx.restore();
+
+    // Bottom rim
+    const botGrad = ctx.createLinearGradient(0,0,W,0);
+    botGrad.addColorStop(0,'transparent');
+    botGrad.addColorStop(0.35,`rgba(168,127,212,${0.05 + 0.03*Math.sin(Date.now()*0.0008+3)})`);
+    botGrad.addColorStop(0.55,`rgba(200,168,240,${0.1  + 0.04*Math.sin(Date.now()*0.001+1)})`);
+    botGrad.addColorStop(0.75,`rgba(122,142,224,${0.04 + 0.02*Math.sin(Date.now()*0.0007)})`);
+    botGrad.addColorStop(1,'transparent');
+    ctx.save();
+    ctx.globalAlpha=1;
+    ctx.fillStyle=botGrad;
+    ctx.fillRect(0,H-2,W,2);
+    ctx.restore();
+
+    requestAnimationFrame(draw);
+  }
+  draw();
 })();
 
 
@@ -735,8 +892,25 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-status.alpha{background:rgba(255,90,90,.1);color:#ff7070;border:1px solid rgba(255,90,90,.2)}
 
 /* ── Reveal ──────────────────────────────────────────────────────────────── */
-[data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+/* ── Scroll reveal system ──────────────────────────────────────────────────── */
+[data-reveal]{opacity:0;transform:translateY(36px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
 [data-reveal].sc-revealed{opacity:1;transform:translateY(0)}
+
+/* Variant: slide from left (cover image) */
+[data-reveal][data-reveal-dir="left"]{transform:translateX(-32px) translateY(8px)}
+[data-reveal][data-reveal-dir="left"].sc-revealed{transform:translateX(0) translateY(0)}
+
+/* Variant: slide from right (info panel) */
+[data-reveal][data-reveal-dir="right"]{transform:translateX(32px) translateY(8px)}
+[data-reveal][data-reveal-dir="right"].sc-revealed{transform:translateX(0) translateY(0)}
+
+/* Cards get a subtle upward float with scale */
+.sc-card[data-reveal]{opacity:0;transform:translateY(40px) scale(.975)}
+.sc-card[data-reveal].sc-revealed{opacity:1;transform:translateY(0) scale(1)}
+
+/* Toolbar fades in with a tiny upward nudge only */
+.sc-toolbar[data-reveal]{transform:translateY(16px)}
+.sc-toolbar[data-reveal].sc-revealed{transform:translateY(0)}
 
 /* ── HERO ────────────────────────────────────────────────────────────────── */
 .sc-hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:-4rem -4.5rem 0 -4.5rem;padding:0 5rem}
@@ -776,18 +950,46 @@ const MOD_DATA = JSON.parse(modDataJson);
 @keyframes scrollDot{0%{transform:translateX(-50%) translateY(0);opacity:.7}70%{transform:translateX(-50%) translateY(12px);opacity:0}100%{transform:translateX(-50%) translateY(0);opacity:0}}
 
 /* ── NEW RELEASE ─────────────────────────────────────────────────────────── */
-.sc-new-release{position:relative;margin:0 -4.5rem;padding:3.5rem 5rem;background:linear-gradient(135deg,rgba(168,127,212,.07) 0%,rgba(122,142,224,.04) 100%),var(--bg-content);border-top:1px solid rgba(168,127,212,.15);border-bottom:1px solid rgba(168,127,212,.1);overflow:visible}
-.sc-new-release::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 70% 40%,rgba(168,127,212,.08) 0%,transparent 60%);pointer-events:none}
-.sc-nr-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.62rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#ffc030;background:rgba(255,190,60,.1);border:1px solid rgba(255,190,60,.22);padding:.3em .8em;border-radius:4px;margin-bottom:1.75rem}
+.sc-new-release{position:relative;margin:0 -4.5rem;padding:3.5rem 5rem;background:linear-gradient(160deg,rgba(168,127,212,.055) 0%,rgba(122,142,224,.03) 50%,rgba(168,127,212,.04) 100%),var(--bg-content);border-top:1px solid transparent;border-bottom:1px solid transparent;overflow:visible}
+.sc-nr-canvas{clip-path:inset(0)}
+
+/* Animated rim borders — top & bottom glow lines */
+.sc-nr-rim-top,.sc-nr-rim-bottom{position:absolute;left:0;right:0;height:1px;z-index:2;pointer-events:none}
+.sc-nr-rim-top{top:0;background:linear-gradient(90deg,transparent 0%,rgba(168,127,212,.15) 10%,rgba(200,168,240,.55) 30%,rgba(168,127,212,.9) 50%,rgba(200,168,240,.55) 70%,rgba(122,142,224,.15) 90%,transparent 100%);animation:rimGlow 6s ease-in-out infinite alternate}
+.sc-nr-rim-bottom{bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(122,142,224,.1) 15%,rgba(168,127,212,.4) 45%,rgba(200,168,240,.6) 55%,rgba(122,142,224,.3) 75%,transparent 100%);animation:rimGlow 6s ease-in-out infinite alternate-reverse}
+@keyframes rimGlow{0%{opacity:.55;filter:blur(0px)}50%{opacity:1;filter:blur(.3px)}100%{opacity:.65;filter:blur(0px)}}
+
+/* Rim top has a soft downward halo */
+.sc-nr-rim-top::after{content:'';position:absolute;inset:0;box-shadow:0 0 22px 4px rgba(168,127,212,.18);opacity:.7}
+
+/* Particle canvas — fills the full section */
+.sc-nr-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:1}
+
+/* Ambient center pulse — subtle deep breathing glow */
+.sc-new-release::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 50% 50%,rgba(168,127,212,.055) 0%,transparent 65%),radial-gradient(ellipse 40% 50% at 68% 38%,rgba(122,142,224,.04) 0%,transparent 55%);pointer-events:none;z-index:0;animation:nrPulse 8s ease-in-out infinite alternate}
+@keyframes nrPulse{from{opacity:.7}to{opacity:1}}
+
+/* Edge vignette haze from sides */
+.sc-new-release::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(168,127,212,.06) 0%,transparent 18%,transparent 82%,rgba(122,142,224,.05) 100%);pointer-events:none;z-index:0}
+
+.sc-nr-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.62rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#ffc030;background:rgba(255,190,60,.08);border:1px solid rgba(255,190,60,.28);padding:.3em .8em;border-radius:4px;margin-bottom:1.75rem;position:relative;z-index:1;box-shadow:0 0 12px rgba(255,190,60,.08)}
 .sc-nr-body{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:1}
-.sc-nr-cover{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 32px 80px rgba(0,0,0,.5),0 0 0 1px rgba(168,127,212,.08) inset}
+
+/* Cover with enhanced rim-lit shadow */
+.sc-nr-cover{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;border:1px solid rgba(168,127,212,.18);box-shadow:0 32px 80px rgba(0,0,0,.55),0 0 0 1px rgba(168,127,212,.1) inset,0 0 40px rgba(168,127,212,.06)}
 .sc-nr-cover img{width:100%;height:100%;object-fit:cover;display:block}
-.sc-nr-cover-placeholder{width:100%;height:100%;background:radial-gradient(ellipse at center,rgba(168,127,212,.12) 0%,var(--bg-card) 70%);display:flex;align-items:center;justify-content:center}
+.sc-nr-cover-placeholder{width:100%;height:100%;background:radial-gradient(ellipse at center,rgba(168,127,212,.14) 0%,var(--bg-card) 70%);display:flex;align-items:center;justify-content:center}
 .sc-nr-cover-icon{width:100px;opacity:.6}
+
+/* Shimmer sweep over cover */
 .sc-nr-cover-shimmer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.sc-nr-cover-shimmer::after{content:'';position:absolute;top:0;left:0;width:60%;height:100%;background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.06) 40%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.06) 60%,transparent 100%);transform:translateX(-250%);animation:shimmer 4s ease-in-out infinite}
-@keyframes shimmer{0%,20%{transform:translateX(-250%)}80%,100%{transform:translateX(280%)}}
-.sc-nr-icon{width:56px;height:56px;border-radius:12px;margin-bottom:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.sc-nr-cover-shimmer::after{content:'';position:absolute;top:0;left:0;width:60%;height:100%;background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.04) 35%,rgba(200,168,240,.08) 50%,rgba(255,255,255,.04) 65%,transparent 100%);transform:translateX(-250%);animation:shimmer 5s ease-in-out infinite}
+@keyframes shimmer{0%,15%{transform:translateX(-250%)}85%,100%{transform:translateX(280%)}}
+
+/* Rim edge highlight on the cover frame */
+.sc-nr-cover::after{content:'';position:absolute;inset:0;border-radius:13px;background:linear-gradient(135deg,rgba(200,168,240,.07) 0%,transparent 40%,transparent 60%,rgba(122,142,224,.05) 100%);pointer-events:none}
+
+.sc-nr-icon{width:56px;height:56px;border-radius:12px;margin-bottom:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.3),0 0 16px rgba(168,127,212,.12)}
 .sc-nr-meta{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem}
 .sc-nr-date{font-size:.7rem;color:var(--txt-subtle);font-weight:500;margin-left:auto}
 .sc-nr-title{font-size:2.4rem;font-weight:700;color:var(--txt-head);letter-spacing:-.03em;line-height:1.1;margin-bottom:.5rem}
@@ -814,7 +1016,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 /* ── Major cards ─────────────────────────────────────────────────────────── */
 .sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;align-items:start}
 .sc-grid[hidden]{display:none}
-.sc-card{position:relative;border-radius:16px;border:1px solid var(--border);background:var(--bg-card);transition:border-color .6s cubic-bezier(.22,1,.36,1),box-shadow .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);will-change:transform}
+.sc-card{position:relative;border-radius:16px;border:1px solid var(--border);background:var(--bg-card);transition:border-color .6s cubic-bezier(.22,1,.36,1),box-shadow .6s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),opacity .9s cubic-bezier(.22,1,.36,1);will-change:transform,opacity}
 /* cursor glow pseudo-element */
 .sc-card-major::after{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(168,127,212,.1) 0%,transparent 70%);opacity:0;transition:opacity .8s cubic-bezier(.22,1,.36,1);pointer-events:none;z-index:0}
 .sc-card-major:hover::after{opacity:1}
@@ -844,7 +1046,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-card-actions{display:flex;gap:.4rem;flex-wrap:wrap}
 
 /* ── Minor cards ─────────────────────────────────────────────────────────── */
-.sc-card-minor{display:flex;align-items:center;gap:.9rem;padding:1rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);position:relative;overflow:visible;cursor:default;transition:border-color .6s cubic-bezier(.22,1,.36,1),background .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1),box-shadow .6s cubic-bezier(.22,1,.36,1);will-change:transform}
+.sc-card-minor{display:flex;align-items:center;gap:.9rem;padding:1rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);position:relative;overflow:visible;cursor:default;transition:border-color .6s cubic-bezier(.22,1,.36,1),background .6s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),box-shadow .6s cubic-bezier(.22,1,.36,1),opacity .9s cubic-bezier(.22,1,.36,1);will-change:transform,opacity}
 .sc-card-minor:hover{border-color:rgba(168,127,212,.28);background:rgba(168,127,212,.03);transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.3),0 0 0 1px rgba(168,127,212,.08) inset}
 .sc-card-minor-glow{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 0% 50%,rgba(168,127,212,.06) 0%,transparent 60%);pointer-events:none}
 .sc-card-minor-icon{width:48px;height:48px;border-radius:10px;flex-shrink:0;transition:transform .7s cubic-bezier(.22,1,.36,1)}
