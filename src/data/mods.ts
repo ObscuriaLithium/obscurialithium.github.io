@@ -5,6 +5,67 @@
 export type Platform = 'curseforge' | 'modrinth';
 export type Loader  = 'fabric' | 'forge' | 'neoforge' | 'quilt';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// ROADMAP CONFIG — edit this block to control the /roadmap page
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * ALL versions that appear as columns in the table.
+ * Order here = left-to-right column order.
+ */
+export const ALL_VERSIONS: string[] = [
+  '1.20.1',
+  '1.21.1',
+  '1.21.11',
+  '26.1',
+];
+
+/**
+ * Versions I actually plan to support / keep updated.
+ * Only missing support within this subset is highlighted red.
+ * Versions in ALL_VERSIONS but NOT here show as "not planned" (grey, no alarm).
+ */
+export const PLANNED_VERSIONS: string[] = [
+  '1.20.1',
+  '1.21.1',
+  '1.21.11',
+  '26.1',
+];
+
+/**
+ * Loaders to track, each with an optional version range.
+ * Cells outside [minVersion, maxVersion] are shown as "N/A" (not applicable).
+ * Leave min/max undefined to mean "all versions".
+ *
+ * MC version comparison uses simple semver-style string sort on the ALL_VERSIONS list,
+ * so just use the same strings as in ALL_VERSIONS.
+ */
+export interface LoaderConfig {
+  id: Loader;
+  /** First MC version this loader exists for (inclusive). undefined = no lower bound. */
+  minVersion?: string;
+  /** Last MC version this loader supports (inclusive). undefined = no upper bound. */
+  maxVersion?: string;
+}
+
+export const LOADER_CONFIGS: LoaderConfig[] = [
+  { id: 'fabric' },                          // all versions
+  { id: 'forge',    maxVersion: '1.20.1' },  // forge dropped after 1.20.1
+  { id: 'neoforge', minVersion: '1.21.1' },  // neoforge started at 1.21.1
+];
+
+// Kept for backward compat (used in index.astro download badge etc.)
+export const TARGET_VERSIONS = ALL_VERSIONS;
+export const TARGET_LOADERS: Loader[] = LOADER_CONFIGS.map(l => l.id);
+
+/**
+ * Roadmap priority level for a mod:
+ *   'active'   — in active development; updates will come
+ *   'passive'  — not actively developed but not abandoned either
+ *   'legacy'   — no new version support planned; missing versions are expected
+ */
+export type RoadmapPriority = 'active' | 'passive' | 'legacy';
+
 export interface ModSource {
   platform: Platform;
   /** CurseForge project numeric ID or Modrinth project slug / ID */
@@ -41,6 +102,19 @@ export interface ModEntry {
   isNewRelease?: boolean;
   isBeta?: boolean;
   isAlpha?: boolean;
+  /**
+   * Roadmap priority — controls ordering & how missing versions are displayed.
+   * 'active'  = in active development; missing versions flagged prominently
+   * 'passive' = maintained but not actively worked on; missing versions shown subtly
+   * 'legacy'  = no new MC version support planned; missing versions NOT flagged
+   * Defaults to 'active' if omitted.
+   */
+  roadmapPriority?: RoadmapPriority;
+}
+
+/** Returns the Modrinth project slug/id from a mod's sources array */
+export function getModrinthId(mod: ModEntry): string | null {
+  return mod.sources.find(s => s.platform === 'modrinth')?.id ?? null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -64,6 +138,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     tags: ['cosmetic'],
     isNewRelease: true,
+    roadmapPriority: 'active',
   },
 
   {
@@ -83,6 +158,7 @@ export const MODS: ModEntry[] = [
     releaseDate: '2021-10-02',
     tier: 'featured',
     tags: ['adventure', 'story'],
+    roadmapPriority: 'passive',
   },
 
   {
@@ -105,6 +181,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     docsSlug: 'obscure-tooltips',
     tags: ['UI', 'cosmetic', 'client'],
+    roadmapPriority: 'active',
   },
   {
     id: 'pillager-caravans',
@@ -123,6 +200,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     docsSlug: 'pillager-caravans',
     tags: ['adventure'],
+    roadmapPriority: 'active',
   },
   {
     id: 'ars-elixirum',
@@ -143,6 +221,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     tags: ['RPG', 'gameplay'],
     isBeta: true,
+    roadmapPriority: 'active',
   },
   {
     id: 'archogenum',
@@ -153,14 +232,14 @@ export const MODS: ModEntry[] = [
     icon: '/assets/img/mods/archogenum.webp',
     cover: 'https://media.forgecdn.net/attachments/1365/384/archogenum-logo-jpg.jpg',
     sources: [
-      { platform: 'curseforge', id: '1368580', url: 'https://www.curseforge.com/minecraft/mc-mods/archogenum' },
-      { platform: 'modrinth',   id: 'archogenum', url: 'https://modrinth.com/mod/archogenum' },
+      { platform: 'curseforge', id: '1368580', url: 'https://www.curseforge.com/minecraft/mc-mods/archogenum' }
     ],
     loaders: ['forge', 'fabric'],
     releaseDate: '2024-08-01',
     tier: 'major',
     tags: ['RPG', 'gameplay'],
     isAlpha: true,
+    roadmapPriority: 'passive',
   },
 
   {
@@ -180,6 +259,7 @@ export const MODS: ModEntry[] = [
     releaseDate: '2023-03-18',
     tier: 'minor',
     tags: ['UI', 'cosmetic'],
+    roadmapPriority: 'active',
   },
   {
     id: 'maestro',
@@ -197,7 +277,8 @@ export const MODS: ModEntry[] = [
     tier: 'minor',
     docsSlug: 'maestro',
     tags: ['library'],
-    isBeta: true
+    isBeta: true,
+    roadmapPriority: 'passive',
   },
   {
     id: 'fragmentum',
@@ -217,6 +298,7 @@ export const MODS: ModEntry[] = [
     tier: 'minor',
     docsSlug: 'fragmentum-layer',
     tags: ['library'],
+    roadmapPriority: 'active',
   },
   {
     id: 'healight',
@@ -233,6 +315,7 @@ export const MODS: ModEntry[] = [
     releaseDate: '2023-05-30',
     tier: 'minor',
     tags: ['cosmetic', 'client'],
+    roadmapPriority: 'legacy',
   },
   {
     id: 'obscure-api',
@@ -250,7 +333,8 @@ export const MODS: ModEntry[] = [
     loaders: ['forge', 'fabric'],
     releaseDate: '2024-04-10',
     tier: 'minor',
-    tags: ['library',]
+    tags: ['library'],
+    roadmapPriority: 'legacy',
   },
   {
     id: 'archivist',
@@ -266,7 +350,8 @@ export const MODS: ModEntry[] = [
     loaders: ['forge', 'fabric'],
     releaseDate: '2026-04-14',
     tier: 'minor',
-    tags: ['library',]
+    tags: ['library'],
+    roadmapPriority: 'passive',
   }
 ];
 

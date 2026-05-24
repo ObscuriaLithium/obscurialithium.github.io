@@ -1,0 +1,291 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { MODS, ALL_VERSIONS, PLANNED_VERSIONS, LOADER_CONFIGS, getModrinthId } from '../data/mods';
+
+const clientMods = MODS.map(m => ({
+  id:          m.id,
+  name:        m.name,
+  icon:        m.icon,
+  loaders:     m.loaders,
+  modrinthId:  getModrinthId(m),
+  priority:    m.roadmapPriority ?? 'active',
+  isBeta:      m.isBeta  ?? false,
+  isAlpha:     m.isAlpha ?? false,
+  modrinthUrl: m.sources.find(s => s.platform === 'modrinth')?.url ?? null,
+}));
+
+const pageData = JSON.stringify({
+  mods:           clientMods,
+  allVersions:    ALL_VERSIONS,
+  plannedVersions: PLANNED_VERSIONS,
+  loaderConfigs:  LOADER_CONFIGS,
+});
+---
+
+<Layout title="Roadmap" description="Version support status for all Obscuria Collection mods across Minecraft versions and mod loaders.">
+
+<div class="rm-page" id="rm-root" data-rm={pageData}>
+
+  <header class="rm-header">
+    <div class="rm-header-top">
+      <div>
+        <h1 class="rm-title">Roadmap</h1>
+        <p class="rm-sub">Live version support status fetched from Modrinth. Shows which MC versions and loaders each mod supports.</p>
+      </div>
+      <div class="rm-legend">
+        <span class="rm-legend-item"><span class="rm-pip rm-pip-ok"></span>Supported</span>
+        <span class="rm-legend-item"><span class="rm-pip rm-pip-missing"></span>Missing (planned)</span>
+        <span class="rm-legend-item"><span class="rm-pip rm-pip-not-planned"></span>Not planned</span>
+        <span class="rm-legend-item"><span class="rm-pip rm-pip-na"></span>N/A for this loader</span>
+      </div>
+    </div>
+    <div class="rm-priority-row">
+      <span class="rm-badge rm-badge-active">Active</span>in development —
+      <span class="rm-badge rm-badge-passive">Passive</span>maintained, not active —
+      <span class="rm-badge rm-badge-legacy-mod">Legacy</span>no new versions planned
+    </div>
+  </header>
+
+  <div id="rm-status" class="rm-status">
+    <div class="rm-spinner"></div>
+    <span>Fetching data from Modrinth…</span>
+  </div>
+
+  <div id="rm-content"></div>
+
+</div>
+
+<script>
+(function () {
+  const root      = document.getElementById('rm-root');
+  const statusEl  = document.getElementById('rm-status');
+  const contentEl = document.getElementById('rm-content');
+  const { mods, allVersions, plannedVersions, loaderConfigs } = JSON.parse(root.dataset.rm);
+
+  // index of a version in allVersions — used for range checks
+  const verIndex = {};
+  allVersions.forEach((v, i) => verIndex[v] = i);
+
+  // pre-compute per-loader which versions are in-range (loader exists for that MC version)
+  const loaderInRange = {};
+  for (const lc of loaderConfigs) {
+    const minIdx = lc.minVersion !== undefined ? verIndex[lc.minVersion] : 0;
+    const maxIdx = lc.maxVersion !== undefined ? verIndex[lc.maxVersion] : allVersions.length - 1;
+    loaderInRange[lc.id] = allVersions.map((_, i) => i >= minIdx && i <= maxIdx);
+  }
+
+  const plannedSet = new Set(plannedVersions);
+  const loaders    = loaderConfigs.map(l => l.id);
+
+  // ── helpers ────────────────────────────────────────────────────────────────
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls)  e.className   = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function a(href, cls, text) {
+    const e = el('a', cls, text);
+    e.href = href; e.target = '_blank'; e.rel = 'noopener';
+    return e;
+  }
+
+  // ── fetch ─────────────────────────────────────────────────────────────────
+  async function fetchVersions(slug) {
+    const r = await fetch(
+      `https://api.modrinth.com/v2/project/${encodeURIComponent(slug)}/version`,
+      { headers: { 'User-Agent': 'ObscuriaCollection-website/1.0 (contact@obscuria.dev)' } }
+    );
+    if (!r.ok) throw new Error(`HTTP ${r.status} for ${slug}`);
+    return r.json();
+  }
+
+  function buildCoverage(versionList) {
+    const map = {};
+    for (const v of versionList) {
+      for (const gv of v.game_versions) {
+        if (!map[gv]) map[gv] = {};
+        for (const loader of v.loaders) map[gv][loader] = true;
+      }
+    }
+    return map;
+  }
+
+  // ── cell state resolver ───────────────────────────────────────────────────
+  // Returns one of: 'ok' | 'missing' | 'not-planned' | 'loader-na' | 'mod-na' | 'legacy-gap'
+  function cellState(mod, coverage, ver, loader, verIdx, isLegacy) {
+    // 1. This loader doesn't cover this MC version at all (e.g. Forge > 1.20.1)
+    if (!loaderInRange[loader]?.[verIdx]) return 'loader-na';
+    // 2. This mod doesn't target this loader
+    if (!mod.loaders.includes(loader)) return 'mod-na';
+    // 3. Has the version
+    if (coverage[ver]?.[loader]) return 'ok';
+    // 4. Legacy mod — missing is expected
+    if (isLegacy) return 'legacy-gap';
+    // 5. Not in my planned-support list — missing but not alarming
+    if (!plannedSet.has(ver)) return 'not-planned';
+    // 6. In planned list and missing — red!
+    return 'missing';
+  }
+
+  // ── card renderer ─────────────────────────────────────────────────────────
+  function renderCard(mod, coverage) {
+    const isLegacy = mod.priority === 'legacy';
+
+    // count alarming missing cells
+    let missing = 0;
+    allVersions.forEach((ver, vi) => {
+      for (const loader of loaders) {
+        if (cellState(mod, coverage, ver, loader, vi, isLegacy) === 'missing') missing++;
+      }
+    });
+
+    const card = el('article', `rm-card rm-card-${mod.priority}`);
+
+    // — header —
+    const hdr = el('div', 'rm-card-hdr');
+
+    const iconWrap = a(mod.modrinthUrl || '#', 'rm-card-icon-wrap');
+    const img = document.createElement('img');
+    img.src = mod.icon; img.alt = ''; img.className = 'rm-card-icon'; img.loading = 'lazy';
+    iconWrap.appendChild(img);
+
+    const info = el('div', 'rm-card-info');
+    const nameRow = el('div', 'rm-card-name-row');
+    nameRow.appendChild(a(mod.modrinthUrl || '#', 'rm-card-name', mod.name));
+    if (mod.isBeta)  nameRow.appendChild(el('span', 'rm-tag rm-tag-beta',  'Beta'));
+    if (mod.isAlpha) nameRow.appendChild(el('span', 'rm-tag rm-tag-alpha', 'Alpha'));
+
+    const ldRow = el('div', 'rm-card-loaders');
+    for (const l of mod.loaders) {
+      const label = l === 'neoforge' ? 'NeoForge' : l[0].toUpperCase() + l.slice(1);
+      ldRow.appendChild(el('span', `rm-loader-chip rm-lc-${l}`, label));
+    }
+    info.appendChild(nameRow);
+    info.appendChild(ldRow);
+
+    const stat = el('div', 'rm-card-stat');
+    if (isLegacy) {
+      stat.appendChild(el('span', 'rm-stat rm-stat-legacy', 'legacy'));
+    } else if (missing === 0) {
+      stat.appendChild(el('span', 'rm-stat rm-stat-ok', '✓ planned covered'));
+    } else {
+      stat.appendChild(el('span', 'rm-stat rm-stat-missing', `${missing} missing`));
+    }
+
+    hdr.appendChild(iconWrap);
+    hdr.appendChild(info);
+    hdr.appendChild(stat);
+    card.appendChild(hdr);
+
+    // — grid —
+    const grid = el('div', 'rm-grid');
+    grid.style.setProperty('--rm-cols', String(allVersions.length));
+
+    grid.appendChild(el('div', 'rm-g-corner'));
+
+    // version headers — mark planned ones
+    for (const ver of allVersions) {
+      const th = el('div', plannedSet.has(ver) ? 'rm-g-ver rm-g-ver-planned' : 'rm-g-ver', ver);
+      grid.appendChild(th);
+    }
+
+    // rows
+    for (const loader of loaders) {
+      const loaderLabel = loader === 'neoforge' ? 'Neo' : loader[0].toUpperCase() + loader.slice(1);
+      grid.appendChild(el('div', `rm-g-loader rm-g-loader-${loader}`, loaderLabel));
+
+      allVersions.forEach((ver, vi) => {
+        const state = cellState(mod, coverage, ver, loader, vi, isLegacy);
+        const cell  = el('div', 'rm-cell');
+
+        const tooltips = {
+          'ok':          `${ver} + ${loader}: ✓ supported`,
+          'missing':     `${ver} + ${loader}: ✗ missing (planned)`,
+          'not-planned': `${ver} + ${loader}: not in planned versions`,
+          'loader-na':   `${loader}: not available for ${ver}`,
+          'mod-na':      `${mod.name} doesn't target ${loader}`,
+          'legacy-gap':  `${ver} + ${loader}: not available (legacy mod)`,
+        };
+        cell.title = tooltips[state] || '';
+
+        switch (state) {
+          case 'ok':          cell.classList.add('rm-cell-ok');          cell.textContent = '✦'; break;
+          case 'missing':     cell.classList.add('rm-cell-missing');     break;
+          case 'not-planned': cell.classList.add('rm-cell-not-planned'); break;
+          case 'loader-na':   cell.classList.add('rm-cell-loader-na');   break;
+          case 'mod-na':      cell.classList.add('rm-cell-na');          break;
+          case 'legacy-gap':  cell.classList.add('rm-cell-legacy');      break;
+        }
+        grid.appendChild(cell);
+      });
+    }
+
+    card.appendChild(grid);
+    return card;
+  }
+
+  // ── section renderer ──────────────────────────────────────────────────────
+  function renderSection(priority, items) {
+    if (!items.length) return null;
+    const labels = {
+      active:  ['Active',  'In Development',             'Actively worked on. Missing versions within planned range will be addressed.'],
+      passive: ['Passive', 'Maintained',                  'Not actively developed but not abandoned. Updates may eventually come.'],
+      legacy:  ['Legacy',  'No New MC Versions Planned',  'No support for new Minecraft versions is planned.'],
+    };
+    const [badge, title, desc] = labels[priority];
+    const section = el('section', 'rm-section');
+    const h2 = el('h2', 'rm-section-title');
+    h2.appendChild(el('span', `rm-badge rm-badge-${priority === 'legacy' ? 'legacy-mod' : priority}`, badge));
+    h2.appendChild(document.createTextNode(' ' + title));
+    h2.appendChild(el('span', 'rm-section-count', `(${items.length})`));
+    section.appendChild(h2);
+    section.appendChild(el('p', 'rm-section-desc', desc));
+    const cards = el('div', 'rm-cards');
+    for (const { mod, coverage } of items) cards.appendChild(renderCard(mod, coverage));
+    section.appendChild(cards);
+    return section;
+  }
+
+  // ── main ──────────────────────────────────────────────────────────────────
+  Promise.allSettled(
+    mods.map(mod =>
+      mod.modrinthId
+        ? fetchVersions(mod.modrinthId).then(v => ({ mod, coverage: buildCoverage(v) }))
+        : Promise.resolve({ mod, coverage: {} })
+    )
+  ).then(results => {
+    statusEl.hidden = true;
+    const groups = { active: [], passive: [], legacy: [] };
+    let anyFailed = false;
+    for (const r of results) {
+      if (r.status === 'fulfilled') {
+        const { mod, coverage } = r.value;
+        groups[mod.priority].push({ mod, coverage });
+      } else {
+        anyFailed = true;
+        console.error('Modrinth fetch error:', r.reason);
+      }
+    }
+    if (anyFailed) {
+      const warn = el('div', 'rm-warn');
+      warn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Some mods failed to load from Modrinth — data may be incomplete.`;
+      contentEl.appendChild(warn);
+    }
+    for (const priority of ['active', 'passive', 'legacy']) {
+      const section = renderSection(priority, groups[priority]);
+      if (section) contentEl.appendChild(section);
+    }
+    const note = el('p', 'rm-footnote');
+    note.innerHTML = `Data from <a href="https://modrinth.com/user/Obscuria" target="_blank" rel="noopener">Modrinth</a>. Underlined version columns = planned support range. ✦ = supported. Hover cells for details.`;
+    contentEl.appendChild(note);
+  }).catch(err => {
+    statusEl.hidden = true;
+    const errEl = el('div', 'rm-error-box');
+    errEl.textContent = `Failed to load Modrinth data: ${err.message}`;
+    contentEl.appendChild(errEl);
+  });
+})();
+</script>
+
+</Layout>
