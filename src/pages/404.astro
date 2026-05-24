@@ -22,6 +22,24 @@ import Layout from '../layouts/Layout.astro';
   </div>
 </Layout>
 
+<script is:inline>
+// Track 404 errors: what URL the user tried to access + referrer
+(function () {
+  if (typeof gtag !== 'function') return;
+
+  var attemptedUrl = window.location.pathname + window.location.search + window.location.hash;
+  var referrer = document.referrer || '(direct)';
+
+  gtag('event', 'page_not_found', {
+    event_category: '404_errors',
+    event_label: attemptedUrl,
+    // Also log where the user came from — broken internal link or external?
+    page_referrer: referrer,
+    non_interaction: true
+  });
+})();
+</script>
+
 <style>
 .not-found {
   display: flex;

@@ -84,7 +84,10 @@ function toKebab(s: string): string {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-T7H9HXNP52');
+    gtag('config', 'G-T7H9HXNP52', {
+      // Enhanced measurement: send page_view on navigation
+      send_page_view: true,
+    });
   </script>
 </head>
 <body>
@@ -818,5 +821,233 @@ body.search-open {
   overflow-y: scroll;
 }
 </style>
+
+<!-- ── Enhanced Analytics ── -->
+<script is:inline>
+(function () {
+  if (typeof gtag !== 'function') return;
+
+  // ── 1. Reading depth milestones ──────────────────────────────────────────
+  // Fires once at 25%, 50%, 75%, 100% of the main content scrolled.
+  var mainContent = document.getElementById('main-content');
+  if (mainContent) {
+    var milestones = [25, 50, 75, 100];
+    var fired = {};
+    window.addEventListener('scroll', function () {
+      var scrolled = window.scrollY;
+      var total = mainContent.scrollHeight - window.innerHeight;
+      if (total <= 0) return;
+      var pct = Math.min(100, Math.round((scrolled / total) * 100));
+      milestones.forEach(function (m) {
+        if (pct >= m && !fired[m]) {
+          fired[m] = true;
+          gtag('event', 'scroll_depth', {
+            event_category: 'engagement',
+            event_label: m + '%',
+            value: m
+          });
+        }
+      });
+    }, { passive: true });
+  }
+
+  // ── 2. Time on page ──────────────────────────────────────────────────────
+  // Fires at 30s, 60s, 120s, 300s of active time on page.
+  var timeThresholds = [30, 60, 120, 300];
+  var timeIdx = 0;
+  var startTime = Date.now();
+  var isHidden = false;
+  var elapsed = 0;
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      elapsed += Math.round((Date.now() - startTime) / 1000);
+      isHidden = true;
+      startTime = null;
+    } else {
+      isHidden = false;
+      startTime = Date.now();
+    }
+  });
+  var timer = setInterval(function () {
+    if (isHidden || startTime === null) return;
+    var currentElapsed = elapsed + Math.round((Date.now() - startTime) / 1000);
+    while (timeIdx < timeThresholds.length && currentElapsed >= timeThresholds[timeIdx]) {
+      gtag('event', 'time_on_page', {
+        event_category: 'engagement',
+        event_label: timeThresholds[timeIdx] + 's',
+        value: timeThresholds[timeIdx]
+      });
+      timeIdx++;
+    }
+    if (timeIdx >= timeThresholds.length) clearInterval(timer);
+  }, 5000);
+
+  // ── 3. Outbound link clicks ──────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href^="http"]');
+    if (!link) return;
+    if (link.hostname === window.location.hostname) return;
+    gtag('event', 'click', {
+      event_category: 'outbound_link',
+      event_label: link.href,
+      transport_type: 'beacon'
+    });
+  });
+
+  // ── 4. Download badge clicks ─────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    var badge = e.target.closest('[data-platform]');
+    if (!badge) return;
+    gtag('event', 'download_click', {
+      event_category: 'downloads',
+      event_label: badge.dataset.platform || badge.href || ''
+    });
+  });
+
+  // ── 5. Sidebar mod navigation expand ────────────────────────────────────
+  document.querySelectorAll('.mod-card-nav-header').forEach(function (header) {
+    header.addEventListener('click', function () {
+      var card = header.closest('.mod-card-nav');
+      var mod = card && card.dataset.mod;
+      if (!mod) return;
+      gtag('event', 'mod_expand', {
+        event_category: 'navigation',
+        event_label: mod
+      });
+    });
+  });
+
+  // ── 6. Sidebar page link clicks ──────────────────────────────────────────
+  document.querySelectorAll('.page-nav-item').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (link.classList.contains('active')) return;
+      gtag('event', 'nav_page_click', {
+        event_category: 'navigation',
+        event_label: link.getAttribute('href') || ''
+      });
+    });
+  });
+
+  // ── 7. Prev / Next navigation clicks ────────────────────────────────────
+  document.querySelectorAll('.page-nav-link').forEach(function (link) {
+    link.addEventListener('click', function () {
+      var dir = link.classList.contains('prev') ? 'previous' : 'next';
+      gtag('event', 'pagination_click', {
+        event_category: 'navigation',
+        event_label: dir + ' to ' + (link.getAttribute('href') || '')
+      });
+    });
+  });
+
+  // ── 8. TOC link clicks ───────────────────────────────────────────────────
+  document.querySelectorAll('.toc-link[data-toc]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      gtag('event', 'toc_click', {
+        event_category: 'engagement',
+        event_label: link.dataset.toc || ''
+      });
+    });
+  });
+
+  // ── 9. Code block copy ───────────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.copy-btn, .cb-copy');
+    if (!btn) return;
+    var pre = btn.closest('pre, .cb-root');
+    var codeEl = pre && (pre.querySelector('code') || pre);
+    var langMatch = codeEl && codeEl.className.match(/language-(\w+)/);
+    gtag('event', 'code_copy', {
+      event_category: 'engagement',
+      event_label: langMatch ? langMatch[1] : 'unknown'
+    });
+  });
+
+  // ── 10. Search: query & result selection ────────────────────────────────
+  var searchInput = document.getElementById('search-input');
+  var searchResults = document.getElementById('search-results');
+  var searchDebounce;
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      clearTimeout(searchDebounce);
+      var q = searchInput.value.trim();
+      if (!q) return;
+      searchDebounce = setTimeout(function () {
+        gtag('event', 'search', {
+          search_term: q
+        });
+        var noResults = searchResults && searchResults.querySelector('.search-empty');
+        gtag('event', 'search_with_results', {
+          event_category: 'search',
+          event_label: q,
+          value: noResults ? 0 : 1
+        });
+      }, 800);
+    });
+  }
+
+  if (searchResults) {
+    searchResults.addEventListener('click', function (e) {
+      var item = e.target.closest('.search-result-item');
+      if (!item) return;
+      var query = searchInput ? searchInput.value.trim() : '';
+      var href = item.getAttribute('href') || '';
+      gtag('event', 'search_result_click', {
+        event_category: 'search',
+        event_label: query + ' -> ' + href
+      });
+    });
+  }
+
+  // Track when search modal opens
+  var searchModal = document.getElementById('search-modal');
+  if (searchModal) {
+    var modalObserver = new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        if (m.attributeName === 'hidden' && !searchModal.hidden) {
+          gtag('event', 'search_open', {
+            event_category: 'search',
+            event_label: window.location.pathname
+          });
+        }
+      });
+    });
+    modalObserver.observe(searchModal, { attributes: true });
+  }
+
+  // ── 11. Social / footer link clicks ─────────────────────────────────────
+  document.querySelectorAll('.sidebar-footer a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      var label = link.getAttribute('aria-label') || link.getAttribute('data-tooltip') || link.href;
+      gtag('event', 'social_click', {
+        event_category: 'social',
+        event_label: label
+      });
+    });
+  });
+
+  // ── 12. Back-to-top button usage ─────────────────────────────────────────
+  var backToTop = document.getElementById('back-to-top');
+  if (backToTop) {
+    backToTop.addEventListener('click', function () {
+      gtag('event', 'back_to_top', {
+        event_category: 'engagement',
+        event_label: window.location.pathname
+      });
+    });
+  }
+
+  // ── 13. Anchor heading link copies ───────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    var anchor = e.target.closest('.heading-anchor');
+    if (!anchor) return;
+    gtag('event', 'anchor_copy', {
+      event_category: 'engagement',
+      event_label: anchor.getAttribute('href') || ''
+    });
+  });
+
+})();
+</script>
 </body>
 </html>
