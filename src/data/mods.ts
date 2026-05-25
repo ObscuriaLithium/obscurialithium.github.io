@@ -14,7 +14,6 @@ export const ALL_VERSIONS: string[] = [
 
 // missing support within this subset shows as red; others show as "not planned"
 export const PLANNED_VERSIONS: string[] = [
-  '1.20.1',
   '1.21.1',
   '1.21.11',
   '26.1',

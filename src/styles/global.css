@@ -1453,6 +1453,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
   justify-content: space-between;
   gap: 1.25rem 2rem;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .rm-legend {
@@ -1476,9 +1477,10 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
   font-size: 0.8rem;
   color: var(--txt-muted);
   display: flex;
-  align-items: center;
+  align-items: left;
   gap: 0.45rem;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 
 /* Badges */
@@ -1566,10 +1568,10 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
   overflow: hidden;
   transition: border-color 0.18s, box-shadow 0.18s;
 }
-.rm-card:hover { border-color: var(--border-acc); box-shadow: 0 2px 16px rgba(0,0,0,0.18); }
-.rm-card-active  { border-left: 3px solid rgba(90,180,100,0.45); }
-.rm-card-passive { border-left: 3px solid rgba(165,140,70,0.38); }
-.rm-card-legacy  { border-left: 3px solid rgba(255,255,255,0.09); opacity: 0.72; }
+
+.rm-card-active  { border-left: 6px solid rgba(90,180,100,0.45); }
+.rm-card-passive { border-left: 6px solid rgba(165,140,70,0.38); }
+.rm-card-legacy  { border-left: 6px solid rgba(255,255,255,0.09); opacity: 0.72; }
 
 .rm-card-hdr {
   display: flex;
@@ -1706,7 +1708,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 
 .rm-g-ver-planned {
   color: var(--txt);
-  border-bottom: 2px solid rgba(168,127,212,0.5);
+  border-bottom: 4px solid rgba(168,127,212,0.5);
 }
 
 /* Custom tooltip */
