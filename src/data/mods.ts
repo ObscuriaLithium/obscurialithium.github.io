@@ -1,18 +1,10 @@
-// ── Mods Showcase Data ──────────────────────────────────────────────────────
-// Edit this file to update the showcase. All download counts are fetched live
-// from CurseForge / Modrinth APIs; the IDs below drive those requests.
+// download counts are fetched live from CurseForge/Modrinth APIs
 
 export type Platform = 'curseforge' | 'modrinth';
 export type Loader  = 'fabric' | 'forge' | 'neoforge' | 'quilt';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ROADMAP CONFIG — edit this block to control the /roadmap page
-// ─────────────────────────────────────────────────────────────────────────────
+// roadmap config
 
-/**
- * ALL versions that appear as columns in the table.
- * Order here = left-to-right column order.
- */
 export const ALL_VERSIONS: string[] = [
   '1.20.1',
   '1.21.1',
@@ -20,11 +12,7 @@ export const ALL_VERSIONS: string[] = [
   '26.1',
 ];
 
-/**
- * Versions I actually plan to support / keep updated.
- * Only missing support within this subset is highlighted red.
- * Versions in ALL_VERSIONS but NOT here show as "not planned" (grey, no alarm).
- */
+// missing support within this subset shows as red; others show as "not planned"
 export const PLANNED_VERSIONS: string[] = [
   '1.20.1',
   '1.21.1',
@@ -32,46 +20,27 @@ export const PLANNED_VERSIONS: string[] = [
   '26.1',
 ];
 
-/**
- * Loaders to track, each with an optional version range.
- * Cells outside [minVersion, maxVersion] are shown as "N/A" (not applicable).
- * Leave min/max undefined to mean "all versions".
- *
- * MC version comparison uses simple semver-style string sort on the ALL_VERSIONS list,
- * so just use the same strings as in ALL_VERSIONS.
- */
 export interface LoaderConfig {
   id: Loader;
-  /** First MC version this loader exists for (inclusive). undefined = no lower bound. */
   minVersion?: string;
-  /** Last MC version this loader supports (inclusive). undefined = no upper bound. */
   maxVersion?: string;
 }
 
 export const LOADER_CONFIGS: LoaderConfig[] = [
-  { id: 'fabric' },                          // all versions
-  { id: 'forge',    maxVersion: '1.20.1' },  // forge dropped after 1.20.1
-  { id: 'neoforge', minVersion: '1.21.1' },  // neoforge started at 1.21.1
+  { id: 'fabric' },
+  { id: 'forge',    maxVersion: '1.20.1' },  // dropped after 1.20.1
+  { id: 'neoforge', minVersion: '1.21.1' },  // started at 1.21.1
 ];
 
-// Kept for backward compat (used in index.astro download badge etc.)
 export const TARGET_VERSIONS = ALL_VERSIONS;
 export const TARGET_LOADERS: Loader[] = LOADER_CONFIGS.map(l => l.id);
 
-/**
- * Roadmap priority level for a mod:
- *   'active'   — in active development; updates will come
- *   'passive'  — not actively developed but not abandoned either
- *   'legacy'   — no new version support planned; missing versions are expected
- */
 export type RoadmapPriority = 'active' | 'passive' | 'legacy';
 
 export interface ModSource {
   platform: Platform;
-  /** CurseForge project numeric ID or Modrinth project slug / ID */
   id: string;
   url: string;
-  /** Optional label shown in dropdown when platform has multiple entries e.g. 'Fabric', 'Forge' */
   label?: string;
 }
 
@@ -87,46 +56,30 @@ export interface ModEntry {
   tagline: string;
   description: string;
   icon: string;
-  cover?: string;          // hero cover image (optional – show placeholder if absent)
+  cover?: string;
   gallery?: ModGalleryImage[];
   sources: ModSource[];
   loaders: Loader[];
-  /** ISO date string */
   releaseDate: string;
-  /** Higher = show bigger card; 'featured' = fullwidth hero card */
   tier: 'featured' | 'major' | 'minor';
-  /** Docs page slug, if any */
   docsSlug?: string;
   tags?: string[];
-  /** Mark as newest release – floated to very top */
   isNewRelease?: boolean;
   isBeta?: boolean;
   isAlpha?: boolean;
-  /**
-   * Roadmap priority — controls ordering & how missing versions are displayed.
-   * 'active'  = in active development; missing versions flagged prominently
-   * 'passive' = maintained but not actively worked on; missing versions shown subtly
-   * 'legacy'  = no new MC version support planned; missing versions NOT flagged
-   * Defaults to 'active' if omitted.
-   */
   roadmapPriority?: RoadmapPriority;
 }
 
-/** Returns the Modrinth project slug/id from a mod's sources array */
 export function getModrinthId(mod: ModEntry): string | null {
   return mod.sources.find(s => s.platform === 'modrinth')?.id ?? null;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FEATURED / NEW RELEASES  (set isNewRelease: true on the latest one)
-// ─────────────────────────────────────────────────────────────────────────────
 export const MODS: ModEntry[] = [
   {
     id: 'accents',
     name: 'Accents',
     tagline: 'Dyeable style accents with subtle gameplay bonuses!',
-    description:
-      'Accents adds stylish cosmetic accessories that subtly enhance gameplay. A variety of visual accents let you personalize your character without turning cosmetics into mandatory gear.',
+    description: 'Accents adds stylish cosmetic accessories that subtly enhance gameplay. A variety of visual accents let you personalize your character without turning cosmetics into mandatory gear.',
     icon: '/assets/img/mods/accents.webp',
     cover: 'https://media.forgecdn.net/attachments/1505/498/accents-logo-jpg.jpg',
     sources: [
@@ -145,8 +98,7 @@ export const MODS: ModEntry[] = [
     id: 'aquamirae',
     name: 'Aquamirae',
     tagline: 'Ship graveyard with terrible deep sea creatures!',
-    description:
-      'Aquamirae expands your world with a frozen ocean biome – the Ice Maze above and a haunting Ship Graveyard beneath. Discover its unique ecosystem, progression, ambience, and lore as you uncover the fate of Captain Cornelia and survive the horrors lurking below the ice.',
+    description: 'Aquamirae expands your world with a frozen ocean biome – the Ice Maze above and a haunting Ship Graveyard beneath. Discover its unique ecosystem, progression, ambience, and lore as you uncover the fate of Captain Cornelia and survive the horrors lurking below the ice.',
     icon: '/assets/img/mods/aquamirae.webp',
     cover: 'https://youtu.be/l2P5w9AkEiQ?si=R9nh7bcVmeQ9SGTZ',
     sources: [
@@ -165,8 +117,7 @@ export const MODS: ModEntry[] = [
     id: 'obscure-tooltips',
     name: 'Obscure Tooltips',
     tagline: 'Stylized tooltips with beautiful effects and smooth animations!',
-    description:
-      'Obscure Tooltips is a client-side visual enhancement mod that transforms ordinary item tooltips into expressive, animated showcases. It adds immersive visual flair to your inventory by introducing smooth animations, dynamic particle effects, and ornamental accent frames that adapt to item rarity and context.',
+    description: 'Obscure Tooltips is a client-side visual enhancement mod that transforms ordinary item tooltips into expressive, animated showcases. It adds immersive visual flair to your inventory by introducing smooth animations, dynamic particle effects, and ornamental accent frames that adapt to item rarity and context.',
     icon: '/assets/img/mods/obscure-tooltips.webp',
     cover: 'https://media.forgecdn.net/attachments/1335/389/obscure-tooltips-logo-jpg.jpg',
     //gallery: [
@@ -187,8 +138,7 @@ export const MODS: ModEntry[] = [
     id: 'pillager-caravans',
     name: 'Pillager Caravans',
     tagline: 'Roaming pillager caravans with biome-themed loot and guarded convoys!',
-    description:
-      'Pillager Caravans adds roaming, cargo-filled convoys guarded by pillagers, vindicators, and even ravagers. Instead of static treasure chests, caravans travel across biomes – sometimes near your base – with cargo that changes depending on the environment.',
+    description: 'Pillager Caravans adds roaming, cargo-filled convoys guarded by pillagers, vindicators, and even ravagers. Instead of static treasure chests, caravans travel across biomes – sometimes near your base – with cargo that changes depending on the environment.',
     icon: '/assets/img/mods/pillager-caravans.webp',
     cover: 'https://media.forgecdn.net/attachments/1342/951/pillager-caravans-logo-jpg.jpg',
     sources: [
@@ -206,8 +156,7 @@ export const MODS: ModEntry[] = [
     id: 'ars-elixirum',
     name: 'Ars Elixirum',
     tagline: 'Ultimate extension of potion crafting, applications, and diversity!',
-    description:
-      'Ars Elixirum is the ultimate extension of potion crafting, applications, and diversity. Through exploration and experimentation, you can create your own recipes to craft Elixirs - powerful replacements for potions - and save and customize them!',
+    description: 'Ars Elixirum is the ultimate extension of potion crafting, applications, and diversity. Through exploration and experimentation, you can create your own recipes to craft Elixirs - powerful replacements for potions - and save and customize them!',
     icon: '/assets/img/mods/ars-elixirum.webp',
     cover: 'https://media.forgecdn.net/attachments/994/291/arselixirum.png',
     sources: [
@@ -227,8 +176,7 @@ export const MODS: ModEntry[] = [
     id: 'archogenum',
     name: 'Archogenum',
     tagline: 'A technomagical genetics mod where your body becomes your build',
-    description:
-      'Archogenum lets you embrace the role of a gene-engineer. Extract, combine, and rewrite the essence of living beings to synthesize unique xenofruits – mutable genetic blueprints that shape your survival, strength, and playstyle.',
+    description: 'Archogenum lets you embrace the role of a gene-engineer. Extract, combine, and rewrite the essence of living beings to synthesize unique xenofruits – mutable genetic blueprints that shape your survival, strength, and playstyle.',
     icon: '/assets/img/mods/archogenum.webp',
     cover: 'https://media.forgecdn.net/attachments/1365/384/archogenum-logo-jpg.jpg',
     sources: [
@@ -246,8 +194,7 @@ export const MODS: ModEntry[] = [
     id: 'loot-journal',
     name: 'Loot Journal: Pickup Notifier',
     tagline: 'Item pick-up notifier featuring rich animations and powerful customization options!',
-    description:
-      'Loot Journal is a client-side mod that enhances item pickups with smooth, animated notifications, smart stacking, and full visual customization. Track your own and nearby players\' pickups in real time, tweak every detail in-game, and enjoy a clean, immersive UI.',
+    description: 'Loot Journal is a client-side mod that enhances item pickups with smooth, animated notifications, smart stacking, and full visual customization. Track your own and nearby players\' pickups in real time, tweak every detail in-game, and enjoy a clean, immersive UI.',
     icon: '/assets/img/mods/loot-journal.webp',
     sources: [
       { platform: 'curseforge', id: '700723', url: 'https://www.curseforge.com/minecraft/mc-mods/loot-journal', label: 'Forge' },
@@ -265,8 +212,7 @@ export const MODS: ModEntry[] = [
     id: 'maestro',
     name: 'Maestro',
     tagline: 'Reimagine vanilla music with smooth, reactive orchestration!',
-    description:
-      'Maestro is a data-driven music orchestration framework that extends Minecraft\'s music system, enabling reactive, seamless soundtracks through resource packs.',
+    description: 'Maestro is a data-driven music orchestration framework that extends Minecraft\'s music system, enabling reactive, seamless soundtracks through resource packs.',
     icon: '/assets/img/mods/maestro.webp',
     sources: [
       { platform: 'curseforge', id: '1454351', url: 'https://www.curseforge.com/minecraft/mc-mods/maestro' },
@@ -284,8 +230,7 @@ export const MODS: ModEntry[] = [
     id: 'fragmentum',
     name: 'Fragmentum',
     tagline: 'The lightweight framework for the Obscuria Collection multi-loader mods',
-    description:
-      'Fragmentum is a lightweight core library used by other Obscuria Collection mods. It does not add any content on its own and only needs to be installed if another mod requires it, as it provides shared tools and a multi-loader architecture that keeps other mods cleaner, simpler, and free from loader-specific code.',
+    description: 'Fragmentum is a lightweight core library used by other Obscuria Collection mods. It does not add any content on its own and only needs to be installed if another mod requires it, as it provides shared tools and a multi-loader architecture that keeps other mods cleaner, simpler, and free from loader-specific code.',
     icon: '/assets/img/mods/fragmentum.webp',
     sources: [
       { platform: 'curseforge', id: '1123970', url: 'https://www.curseforge.com/minecraft/mc-mods/fragmentum', label: 'Forge' },
@@ -304,8 +249,7 @@ export const MODS: ModEntry[] = [
     id: 'healight',
     name: 'Healight',
     tagline: 'Green glow when entities heal for clearer feedback',
-    description:
-      'Healight is a lightweight mod that adds a green glow to entities when they heal, mirroring the red flash effect when they take damage. The mod works seamlessly with all vanilla and modded entities.',
+    description: 'Healight is a lightweight mod that adds a green glow to entities when they heal, mirroring the red flash effect when they take damage. The mod works seamlessly with all vanilla and modded entities.',
     icon: '/assets/img/mods/healight.webp',
     sources: [
       { platform: 'curseforge', id: '1188428', url: 'https://www.curseforge.com/minecraft/mc-mods/healight' },
@@ -321,8 +265,7 @@ export const MODS: ModEntry[] = [
     id: 'obscure-api',
     name: 'Obscure API',
     tagline: 'Auxiliary Library',
-    description:
-      'Obscure API is a shared library used by some mods in the Obscuria Collection. It adds common gameplay systems, an animation framework, and new entity attributes that help these mods work smoothly together.',
+    description: 'Obscure API is a shared library used by some mods in the Obscuria Collection. It adds common gameplay systems, an animation framework, and new entity attributes that help these mods work smoothly together.',
     icon: '/assets/img/mods/obscure-api.webp',
     cover: 'https://media.forgecdn.net/attachments/994/291/arselixirum.png',
     sources: [
@@ -340,8 +283,7 @@ export const MODS: ModEntry[] = [
     id: 'archivist',
     name: 'Archivist',
     tagline: 'A lightweight abstraction layer for codec-based data systems',
-    description:
-      'Archivist is a lightweight abstraction layer for codec-based data systems, originally designed for complex data-driven mods such as Ars Elixirum. It does not add any content on its own and only needs to be installed if required, providing structured and consistent handling of configs, world data, and serialized content.',
+    description: 'Archivist is a lightweight abstraction layer for codec-based data systems, originally designed for complex data-driven mods such as Ars Elixirum. It does not add any content on its own and only needs to be installed if required, providing structured and consistent handling of configs, world data, and serialized content.',
     icon: '/assets/img/mods/archivist.webp',
     sources: [
       { platform: 'curseforge', id: '1513409', url: 'https://www.curseforge.com/minecraft/mc-mods/archivist' },
@@ -355,9 +297,6 @@ export const MODS: ModEntry[] = [
   }
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Social / site links used in footer
-// ─────────────────────────────────────────────────────────────────────────────
 export const SOCIAL_LINKS = {
   discord:    'https://discord.gg/jSHHJSUWdY',
   curseforge: 'https://www.curseforge.com/members/obscuria/projects',

@@ -1,35 +1,4 @@
 ---
-/**
- * SchemaBlock component
- *
- * Interactive JSON showcase with synced field reference table.
- * Uses shiki (tokyo-night) for syntax highlighting — identical to CodeBlock.
- *
- * Usage in MDX (no imports needed — registered globally in page templates):
- *
- *   <SchemaBlock label="JSON Example" json={`
- *   "condition": {
- *     "type": "maestro:weather",
- *     "is_raining": true
- *   }
- *   `}>
- *     <SchemaField name="type" type="String" required>
- *       Condition type identifier.
- *     </SchemaField>
- *     <SchemaField name="is_raining" type="Boolean" optional>
- *       Requires the weather to match the specified rain state.
- *     </SchemaField>
- *   </SchemaBlock>
- *
- *   With nested groups:
- *
- *   <SchemaBlock label="JSON Example" json={`{ ... }`}>
- *     <SchemaGroup name="range" type="Object" optional description="Tick range.">
- *       <SchemaField name="above" type="Integer" optional depth={1}>...</SchemaField>
- *     </SchemaGroup>
- *   </SchemaBlock>
- */
-
 import { codeToHtml } from 'shiki';
 
 interface Props {
@@ -39,23 +8,18 @@ interface Props {
 
 const { label = 'JSON Example', json } = Astro.props;
 
-// Highlight via shiki with the same theme as the rest of the site
 const highlighted = await codeToHtml(json, {
   lang: 'json',
   theme: 'tokyo-night',
 });
 
-// shiki wraps output in <pre><code>…</code></pre> — strip the outer tags
 const innerHtml = highlighted
   .replace(/^<pre[^>]*><code[^>]*>/, '')
   .replace(/<\/code><\/pre>\s*$/, '');
 
-// Split into per-line HTML strings. shiki separates lines with literal \n.
 const rawLines = innerHtml.split('\n');
-// Drop the trailing empty line shiki always appends
 if (rawLines.at(-1)?.trim() === '') rawLines.pop();
 
-// Detect fieldName per source line (used for JSON ↔ schema row sync)
 const jsonSourceLines = json.split('\n');
 function getFieldName(sourceLine: string): string | undefined {
   const m = sourceLine.match(/^\s*"([^"]+)"\s*:/);
@@ -228,7 +192,6 @@ const lines: LineData[] = rawLines.map((html, i) => ({
 .sb-line.has-field:hover .sb-lnum,
 .sb-line.sb-highlighted .sb-lnum { color: rgba(160,110,210,0.5); }
 
-/* shiki outputs inline-styled spans — just let them flow */
 .sb-line-content { flex: 1; white-space: pre; }
 .sb-line-content :global(pre),
 .sb-line-content :global(code) { all: unset; white-space: pre; }

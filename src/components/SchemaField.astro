@@ -1,22 +1,4 @@
 ---
-/**
- * SchemaField — a single field row inside a SchemaBlock.
- *
- * Props:
- *   name        — JSON key name (used for cross-highlight sync)
- *   type        — type label, e.g. "Boolean", "String", "Integer", "Array[Identifier]"
- *   optional?   — show "(Optional)" sub-label
- *   required?   — show "(Required)" sub-label  [mutually exclusive with optional]
- *   depth?      — nesting depth for visual indent (default: 0). Set automatically by SchemaGroup.
- *
- * Slot: field description text (markdown/HTML is fine)
- *
- * Example:
- *   <SchemaField name="is_raining" type="Boolean" optional>
- *     Requires the weather to match the specified rain state.
- *   </SchemaField>
- */
-
 interface Props {
   name: string;
   type: string;
@@ -38,7 +20,6 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
   tabindex="0"
   aria-label={`Field ${name}, type ${type}${qualifier ? `, ${qualifier}` : ''}`}
 >
-  <!-- Field name -->
   <div class="sf-cell sf-name-cell">
     {depth > 0 && (
       <span class="sf-indent-guide" aria-hidden="true">
@@ -51,13 +32,11 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
     <code class="sf-badge">{name}</code>
   </div>
 
-  <!-- Type -->
   <div class="sf-cell sf-type-cell">
     <span class="sf-type">{type}</span>
     {qualifier && <span class="sf-qualifier">{qualifier}</span>}
   </div>
 
-  <!-- Description -->
   <div class="sf-cell sf-desc-cell">
     <slot />
   </div>
@@ -85,7 +64,7 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
   line-height: 1.55;
 }
 
-/* ── Field name ── */
+/* Field name */
 .sf-name-cell {
   display: flex;
   align-items: flex-start;
@@ -130,7 +109,7 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
   line-height: 1.5;
 }
 
-/* ── Type ── */
+/* Type */
 .sf-type-cell {
   display: flex;
   flex-direction: column;
@@ -147,7 +126,7 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
   font-weight: 400;
 }
 
-/* ── Description ── */
+/* Description */
 .sf-desc-cell {
   color: var(--txt-muted, rgba(200,192,218,0.55));
   font-size: 0.83rem;

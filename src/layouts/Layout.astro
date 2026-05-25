@@ -85,7 +85,6 @@ function toKebab(s: string): string {
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-T7H9HXNP52', {
-      // Enhanced measurement: send page_view on navigation
       send_page_view: true,
     });
   </script>
@@ -111,7 +110,6 @@ function toKebab(s: string): string {
 
 <div class={`page-layout${isHome ? ' home-layout' : ''}${!hasToc ? ' no-toc' : ''}`}>
 
-  <!-- ── Sidebar ── -->
   <aside id="sidebar">
 
     <!-- Logo -->
@@ -212,7 +210,6 @@ function toKebab(s: string): string {
     </div>
   </aside>
 
-  <!-- ── Main ── -->
   <main id="main-content">
 
     <!-- Breadcrumbs (only on doc pages) -->
@@ -265,7 +262,6 @@ function toKebab(s: string): string {
     )}
   </main>
 
-  <!-- ── Right TOC ── -->
   {hasToc && (
     <aside id="toc-panel" aria-label="On this page">
       <p class="toc-label">On this page</p>
@@ -295,7 +291,6 @@ function toKebab(s: string): string {
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
-<!-- ── Search modal (at body level to escape sidebar overflow clipping) ── -->
 <div id="search-modal" class="search-modal" aria-modal="true" role="dialog" aria-label="Search documentation" hidden>
   <div class="search-backdrop" id="search-backdrop"></div>
   <div class="search-panel">
@@ -324,7 +319,6 @@ function toKebab(s: string): string {
 (function () {
   const SIDEBAR_STATE_KEY = 'sidebar-state';
 
-  // ── Restore sidebar state (open tabs + scroll) before first paint ──
   const sidebar = document.getElementById('sidebar');
 
   function saveState() {
@@ -335,7 +329,6 @@ function toKebab(s: string): string {
     sessionStorage.setItem(SIDEBAR_STATE_KEY, JSON.stringify(state));
   }
 
-  // If no saved state exists yet, scroll the active page into view in the sidebar
   function scrollActiveIntoView() {
     if (!sidebar) return;
     const active = sidebar.querySelector('.page-nav-item.active') as HTMLElement | null;
@@ -347,24 +340,18 @@ function toKebab(s: string): string {
     sidebar.scrollTop = Math.max(0, center);
   }
 
-  // Determine which mod is active according to the server-rendered HTML
   const serverActiveMod = (document.querySelector('.mod-card-nav.is-open') as HTMLElement | null)
     ?.dataset.mod ?? null;
 
   const hadSavedState = !!sessionStorage.getItem(SIDEBAR_STATE_KEY);
 
   if (hadSavedState && serverActiveMod) {
-    // Only restore from sessionStorage if the active mod matches what's saved.
-    // If the server says a different mod should be open (e.g. after search navigation),
-    // trust the server and discard the saved state.
     try {
       const raw = sessionStorage.getItem(SIDEBAR_STATE_KEY)!;
       const state = JSON.parse(raw) as { openMods: string[]; scrollTop: number };
       if (state.openMods.includes(serverActiveMod)) {
-        // Same mod — safe to restore scroll position only, tabs are already correct server-side
         sidebar!.scrollTop = state.scrollTop ?? 0;
       } else {
-        // Different mod — server wins, clear stale state and scroll active into view
         sessionStorage.removeItem(SIDEBAR_STATE_KEY);
         setTimeout(scrollActiveIntoView, 320);
       }
@@ -378,12 +365,11 @@ function toKebab(s: string): string {
   // Save state on every scroll
   sidebar?.addEventListener('scroll', saveState, { passive: true });
 
-  // ── Sidebar accordion ──
   // Clicking the mod header always just toggles the accordion — no navigation.
   // To navigate into a mod, the user clicks a page link inside the expanded list.
   document.querySelectorAll('.mod-card-nav-header').forEach(header => {
     header.addEventListener('click', (e) => {
-      e.preventDefault(); // never navigate from the header itself
+      e.preventDefault();
 
       const card = header.closest('.mod-card-nav') as HTMLElement;
       if (!card) return;
@@ -391,10 +377,8 @@ function toKebab(s: string): string {
       const isOpen = card.classList.contains('is-open');
 
       if (isOpen) {
-        // Close this card
         card.classList.remove('is-open');
       } else {
-        // Close all other open cards, open this one
         document.querySelectorAll('.mod-card-nav.is-open').forEach(c => {
           c.classList.remove('is-open');
         });
@@ -405,13 +389,10 @@ function toKebab(s: string): string {
     });
   });
 
-  // Logo click → clear saved state so sidebar opens fresh on the home page
   document.querySelector('.sidebar-logo-link')?.addEventListener('click', () => {
     sessionStorage.removeItem(SIDEBAR_STATE_KEY);
   });
 
-  // Save state whenever a page link is clicked (before navigation)
-  // If the link is already the active page — do nothing (prevents sidebar jitter)
   document.querySelectorAll('.page-nav-item').forEach(link => {
     link.addEventListener('click', (e) => {
       if (link.classList.contains('active')) {
@@ -422,7 +403,6 @@ function toKebab(s: string): string {
     });
   });
 
-  // ── TOC smooth scroll & active tracker ──
   document.querySelectorAll('.toc-link[data-toc]').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
@@ -464,7 +444,6 @@ function toKebab(s: string): string {
     else track();
   }
 
-  // ── Copy buttons on code blocks ──
   document.querySelectorAll('.content pre').forEach(pre => {
     if (pre.closest('.cb-root')) return; // skip CodeBlock — has its own copy button
     const code = pre.querySelector('code');
@@ -492,7 +471,6 @@ function toKebab(s: string): string {
     pre.appendChild(btn);
   });
 
-  // ── Steam-style 3D card tilt ──
   document.querySelectorAll<HTMLElement>('.mod-card').forEach(card => {
     const gloss = card.querySelector<HTMLElement>('.mod-card-gloss');
     let raf = 0;
@@ -529,7 +507,6 @@ function toKebab(s: string): string {
     });
   });
 
-  // ── Scroll active sidebar item into view on load ──
   const sidebarEl2 = document.getElementById('sidebar');
   const activeNavItem = sidebarEl2?.querySelector<HTMLElement>('.page-nav-item.active');
   if (sidebarEl2 && activeNavItem) {
@@ -542,7 +519,6 @@ function toKebab(s: string): string {
     }, 320);
   }
 
-  // ── Anchor links on headings ──
   document.querySelectorAll<HTMLElement>('.content h2[id], .content h3[id], .content h4[id]').forEach(heading => {
     const id = heading.id;
     const anchor = document.createElement('a');
@@ -554,14 +530,12 @@ function toKebab(s: string): string {
       e.preventDefault();
       window.scrollTo({ top: heading.getBoundingClientRect().top + window.scrollY - 32, behavior: 'smooth' });
       history.replaceState(null, '', `#${id}`);
-      // Brief visual feedback
       anchor.classList.add('copied');
       setTimeout(() => anchor.classList.remove('copied'), 1200);
     });
     heading.appendChild(anchor);
   });
 
-  // ── External link icons ──
   document.querySelectorAll<HTMLAnchorElement>('.content a[href^="http"]').forEach(link => {
     if (link.hostname === window.location.hostname) return;
     const icon = document.createElement('svg');
@@ -581,7 +555,6 @@ function toKebab(s: string): string {
     if (!link.hasAttribute('rel')) link.setAttribute('rel', 'noopener');
   });
 
-  // ── Reading progress bar ──
   const progressBar = document.getElementById('reading-progress');
   const mainContent = document.getElementById('main-content');
   if (progressBar && mainContent) {
@@ -596,7 +569,6 @@ function toKebab(s: string): string {
     updateProgress();
   }
 
-  // ── Back to top ──
   const backToTop = document.getElementById('back-to-top');
   if (backToTop) {
     window.addEventListener('scroll', () => {
@@ -607,7 +579,6 @@ function toKebab(s: string): string {
     });
   }
 
-  // ── Mobile sidebar ──
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileSearchBtn = document.getElementById('mobile-search-btn');
   const mobileOverlay = document.getElementById('mobile-overlay');
@@ -633,7 +604,6 @@ function toKebab(s: string): string {
     document.getElementById('search-trigger')?.click();
   });
 
-  // ── Search modal ──
   (function () {
     const PAGE_SIZE = 12;
 
@@ -652,16 +622,13 @@ function toKebab(s: string): string {
     let currentQuery = '';
     let allFiltered: typeof searchIndex = [];
 
-    // ── Block background scroll while modal is open ──
-    function blockScroll(e: Event) { e.preventDefault(); e.stopPropagation(); }
+      function blockScroll(e: Event) { e.preventDefault(); e.stopPropagation(); }
 
     function openSearch() {
       modal.hidden = false;
-      // Lock page scroll without shifting layout
       const scrollY = window.scrollY;
       document.body.style.top = `-${scrollY}px`;
       document.body.classList.add('search-open');
-      // Block wheel/touch on backdrop (not on the panel itself)
       backdrop?.addEventListener('wheel', blockScroll, { passive: false });
       backdrop?.addEventListener('touchmove', blockScroll, { passive: false });
       requestAnimationFrame(() => {
@@ -815,7 +782,6 @@ function toKebab(s: string): string {
       document.getElementById('search-load-more')?.addEventListener('click', () => {
         currentPage++;
         renderResults(currentQuery, true);
-        // Scroll to bottom of results to reveal new items
         resultsEl.scrollTop = resultsEl.scrollHeight;
       });
     }
@@ -825,7 +791,6 @@ function toKebab(s: string): string {
 </script>
 
 <style>
-/* Body scroll lock while search is open — prevents layout shift */
 body.search-open {
   position: fixed;
   left: 0;
@@ -834,13 +799,11 @@ body.search-open {
 }
 </style>
 
-<!-- ── Enhanced Analytics ── -->
 <script is:inline>
 (function () {
   if (typeof gtag !== 'function') return;
 
-  // ── 1. Reading depth milestones ──────────────────────────────────────────
-  // Fires once at 25%, 50%, 75%, 100% of the main content scrolled.
+  // reading depth (25/50/75/100%)
   var mainContent = document.getElementById('main-content');
   if (mainContent) {
     var milestones = [25, 50, 75, 100];
@@ -863,8 +826,7 @@ body.search-open {
     }, { passive: true });
   }
 
-  // ── 2. Time on page ──────────────────────────────────────────────────────
-  // Fires at 30s, 60s, 120s, 300s of active time on page.
+  // time on page milestones
   var timeThresholds = [30, 60, 120, 300];
   var timeIdx = 0;
   var startTime = Date.now();
@@ -894,7 +856,6 @@ body.search-open {
     if (timeIdx >= timeThresholds.length) clearInterval(timer);
   }, 5000);
 
-  // ── 3. Outbound link clicks ──────────────────────────────────────────────
   document.addEventListener('click', function (e) {
     var link = e.target.closest('a[href^="http"]');
     if (!link) return;
@@ -906,7 +867,6 @@ body.search-open {
     });
   });
 
-  // ── 4. Download badge clicks ─────────────────────────────────────────────
   document.addEventListener('click', function (e) {
     var badge = e.target.closest('[data-platform]');
     if (!badge) return;
@@ -916,7 +876,6 @@ body.search-open {
     });
   });
 
-  // ── 5. Sidebar mod navigation expand ────────────────────────────────────
   document.querySelectorAll('.mod-card-nav-header').forEach(function (header) {
     header.addEventListener('click', function () {
       var card = header.closest('.mod-card-nav');
@@ -929,7 +888,6 @@ body.search-open {
     });
   });
 
-  // ── 6. Sidebar page link clicks ──────────────────────────────────────────
   document.querySelectorAll('.page-nav-item').forEach(function (link) {
     link.addEventListener('click', function () {
       if (link.classList.contains('active')) return;
@@ -940,7 +898,6 @@ body.search-open {
     });
   });
 
-  // ── 7. Prev / Next navigation clicks ────────────────────────────────────
   document.querySelectorAll('.page-nav-link').forEach(function (link) {
     link.addEventListener('click', function () {
       var dir = link.classList.contains('prev') ? 'previous' : 'next';
@@ -951,7 +908,6 @@ body.search-open {
     });
   });
 
-  // ── 8. TOC link clicks ───────────────────────────────────────────────────
   document.querySelectorAll('.toc-link[data-toc]').forEach(function (link) {
     link.addEventListener('click', function () {
       gtag('event', 'toc_click', {
@@ -961,7 +917,6 @@ body.search-open {
     });
   });
 
-  // ── 9. Code block copy ───────────────────────────────────────────────────
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.copy-btn, .cb-copy');
     if (!btn) return;
@@ -974,7 +929,6 @@ body.search-open {
     });
   });
 
-  // ── 10. Search: query & result selection ────────────────────────────────
   var searchInput = document.getElementById('search-input');
   var searchResults = document.getElementById('search-results');
   var searchDebounce;
@@ -1027,7 +981,6 @@ body.search-open {
     modalObserver.observe(searchModal, { attributes: true });
   }
 
-  // ── 11. Social / footer link clicks ─────────────────────────────────────
   document.querySelectorAll('.sidebar-footer a').forEach(function (link) {
     link.addEventListener('click', function () {
       var label = link.getAttribute('aria-label') || link.getAttribute('data-tooltip') || link.href;
@@ -1038,7 +991,6 @@ body.search-open {
     });
   });
 
-  // ── 12. Back-to-top button usage ─────────────────────────────────────────
   var backToTop = document.getElementById('back-to-top');
   if (backToTop) {
     backToTop.addEventListener('click', function () {
@@ -1049,7 +1001,6 @@ body.search-open {
     });
   }
 
-  // ── 13. Anchor heading link copies ───────────────────────────────────────
   document.addEventListener('click', function (e) {
     var anchor = e.target.closest('.heading-anchor');
     if (!anchor) return;

@@ -1,32 +1,4 @@
 ---
-/**
- * SchemaGroup — a collapsible nested-object group inside a SchemaBlock.
- *
- * Renders a header row (the parent field) that, when clicked, expands/collapses
- * nested SchemaField children. The header row also participates in JSON cross-highlight.
- *
- * Props:
- *   name         — JSON key name for the parent object field
- *   type         — type label for the parent, e.g. "Object", "Array[Object]"
- *   description  — short description for the parent row
- *   optional?    — show "(Optional)"
- *   required?    — show "(Required)"
- *   open?        — start expanded (default: true)
- *   depth?       — nesting depth for indent guides (default: 0)
- *
- * Slot: SchemaField (or more SchemaGroup) children
- *
- * Example:
- *   <SchemaGroup name="range" type="Object" optional description="Tick range filter.">
- *     <SchemaField name="above" type="Integer" optional>
- *       World time must be greater than this value.
- *     </SchemaField>
- *     <SchemaField name="below" type="Integer" optional>
- *       World time must be less than this value.
- *     </SchemaField>
- *   </SchemaGroup>
- */
-
 interface Props {
   name: string;
   type: string;
@@ -97,7 +69,7 @@ const groupId = `sg-${name}-${Math.random().toString(36).slice(2, 7)}`;
 </div>
 
 <style>
-/* ── Group header ── */
+/* Group header */
 .sg-header {
   display: grid;
   grid-template-columns: 38% 22% 1fr;
@@ -197,7 +169,7 @@ const groupId = `sg-${name}-${Math.random().toString(36).slice(2, 7)}`;
   font-size: 0.83rem;
 }
 
-/* ── Children accordion ── */
+/* Children accordion */
 .sg-children {
   display: grid;
   grid-template-rows: 1fr;

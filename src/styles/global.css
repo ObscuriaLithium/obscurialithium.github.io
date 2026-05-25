@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
 
-/* ── Design tokens ── */
+/* Design tokens */
 :root {
   --sidebar-w:    300px;
   --toc-w:        220px;
@@ -54,7 +54,7 @@
   --ease:         cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Reset ── */
+/* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; scroll-behavior: smooth; overflow-y: scroll; }
 body {
@@ -66,7 +66,7 @@ body {
   min-height: 100vh;
 }
 
-/* ── Layout: no header row ── */
+/* Layout: no header row */
 .page-layout {
   display: grid;
   grid-template-columns: var(--sidebar-w) 1fr var(--toc-w);
@@ -77,7 +77,7 @@ body {
   grid-template-columns: var(--sidebar-w) 1fr;
 }
 
-/* ── Sidebar ── */
+/* Sidebar */
 #sidebar {
   grid-column: 1;
   grid-row: 1;
@@ -95,7 +95,7 @@ body {
 #sidebar::-webkit-scrollbar { display: none; }
 
 
-/* ── Logo area ── */
+/* Logo area */
 .sidebar-logo-link {
   display: block;
   text-decoration: none;
@@ -137,7 +137,7 @@ body {
   text-align: center;
 }
 
-/* ── Sidebar nav ── */
+/* Sidebar nav */
 .sidebar-nav {
   flex: 1;
   padding: 1rem 0.85rem;
@@ -146,7 +146,7 @@ body {
   gap: 0.5rem;
 }
 
-/* ── Mod card nav item ── */
+/* Mod card nav item */
 .mod-card-nav {
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -229,13 +229,12 @@ body {
   color: var(--acc);
 }
 
-/* Pages list — smooth accordion via grid-template-rows */
+/* accordion */
 .mod-card-nav-pages {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.28s var(--ease);
   background: rgba(0,0,0,0.15);
-  /* border-top appears only when open, via opacity */
   border-top: 1px solid transparent;
   transition: grid-template-rows 0.28s var(--ease), border-color 0.28s var(--ease);
 }
@@ -244,20 +243,17 @@ body {
   border-top-color: var(--border);
 }
 
-/* Inner wrapper — required for grid 0fr trick */
 .mod-card-nav-pages-inner {
   overflow: hidden;
   display: flex;
   flex-direction: column;
   padding: 0;
-  /* Animate padding separately for a nicer feel */
   transition: padding 0.28s var(--ease);
 }
 .mod-card-nav.is-open .mod-card-nav-pages-inner {
   padding: 0.4rem 0 0.6rem;
 }
 
-/* Category label */
 .pages-category-label {
   font-size: 0.6rem;
   font-weight: 600;
@@ -268,7 +264,6 @@ body {
   display: block;
 }
 
-/* Page nav item */
 .page-nav-item {
   display: flex;
   align-items: center;
@@ -303,7 +298,7 @@ body {
   color: var(--acc);
 }
 
-/* ── Sidebar page links (Home / Roadmap) ── */
+/* Sidebar page links (Home / Roadmap) */
 .sidebar-page-links {
   display: flex;
   flex-direction: column;
@@ -328,7 +323,7 @@ body {
 .sidebar-page-link.active { background: var(--acc-dim); color: var(--acc); }
 .sidebar-page-link svg { flex-shrink: 0; opacity: 0.7; }
 
-/* ── Sidebar footer ── */
+/* Sidebar footer */
 .sidebar-footer {
   padding: 1rem 1.5rem 1.25rem;
   border-top: 1px solid var(--border);
@@ -364,7 +359,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Sidebar footer tooltips */
 .sidebar-footer a[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -389,7 +383,7 @@ body {
   opacity: 1;
 }
 
-/* ── Main ── */
+/* Main */
 #main-content {
   grid-column: 2;
   grid-row: 1;
@@ -399,7 +393,7 @@ body {
   background: var(--bg-content);
 }
 
-/* ── Right TOC ── */
+/* Right TOC */
 #toc-panel {
   grid-column: 3;
   grid-row: 1;
@@ -438,7 +432,7 @@ body {
 .toc-link:hover { color: var(--txt); }
 .toc-link.is-active { color: var(--acc); border-left-color: var(--acc); font-weight: 500; }
 
-/* ── Doc hero ── */
+/* Doc hero */
 .doc-hero { margin-bottom: 3rem; }
 .doc-eyebrow {
   display: inline-flex;
@@ -525,7 +519,7 @@ body {
   margin-bottom: 2.75rem;
 }
 
-/* ── Prose ── */
+/* Prose */
 .content { font-size: 1rem; line-height: 1.85; }
 .content h2 {
   font-size: 1.5rem;
@@ -602,7 +596,6 @@ body {
   position: relative;
   box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(160,110,210,0.06) inset;
 }
-/* Dots header for bare blocks */
 .content pre::before {
   content: '';
   display: block;
@@ -633,7 +626,7 @@ body {
 }
 .content pre .line { display: block; }
 
-/* ── Reset all .content pre overrides inside CodeBlock wrapper ── */
+/* Reset all .content pre overrides inside CodeBlock wrapper */
 .cb-root pre,
 .cb-root pre::before {
   all: unset;
@@ -708,7 +701,7 @@ body {
   filter: saturate(0.6) hue-rotate(260deg);
 }
 
-/* ── Prev / Next ── */
+/* Prev / Next */
 .page-nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -748,7 +741,7 @@ body {
 .page-nav-link.next .page-nav-label { justify-content: flex-end; }
 .page-nav-title { font-size: 0.92rem; font-weight: 500; color: var(--txt); }
 
-/* ── Home ── */
+/* Home */
 .home-hero-logo {
   position: relative;
   display: flex;
@@ -816,7 +809,6 @@ body {
   opacity: 0.5;
 }
 
-/* Mod cards on home page */
 .mod-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -824,7 +816,7 @@ body {
   margin-bottom: 1rem;
 }
 
-/* ── Steam-style 3D gloss card ── */
+/* Steam-style 3D gloss card */
 .mod-card {
   position: relative;
   display: flex;
@@ -854,7 +846,6 @@ body {
   will-change: transform;
 }
 
-/* Blurred background icon */
 .mod-card-bg {
   position: absolute;
   inset: -10%;
@@ -870,7 +861,6 @@ body {
     transform 0.3s var(--ease);
 }
 
-/* Dark gradient overlay */
 .mod-card::after {
   content: '';
   position: absolute;
@@ -887,7 +877,6 @@ body {
   z-index: 1;
 }
 
-/* Gloss shine layer */
 .mod-card-gloss {
   position: absolute;
   inset: 0;
@@ -907,7 +896,6 @@ body {
   transition: opacity 0.25s var(--ease);
 }
 
-/* Floating top icon */
 .mod-card-icon {
   position: absolute;
   top: 1rem;
@@ -924,7 +912,6 @@ body {
     opacity 0.25s var(--ease);
 }
 
-/* Bottom text body */
 .mod-card-body {
   position: relative;
   z-index: 2;
@@ -962,7 +949,6 @@ body {
   line-height: 1.45;
 }
 
-/* Hover state */
 .mod-card:hover {
   border-color: rgba(160,110,210,0.35);
 
@@ -984,7 +970,6 @@ body {
   opacity: 1;
 }
 
-/* Collab box */
 .collab-box {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1003,13 +988,13 @@ body {
 .collab-box p:last-child { margin-bottom: 0; }
 .collab-box strong { color: var(--txt-head); font-weight: 600; }
 
-/* ── Scrollbar ── */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(160,110,210,0.25); }
 
-/* ── Copy button (bare pre blocks without CodeBlock wrapper) ── */
+/* Copy button (bare pre blocks without CodeBlock wrapper) */
 .copy-btn {
   position: absolute;
   top: 5px;      /* vertically centred in the 36px header */
@@ -1038,7 +1023,7 @@ body {
   color: #6dc882;
 }
 
-/* ── Responsive ── */
+/* Responsive */
 @media (max-width: 1200px) {
   .page-layout { grid-template-columns: var(--sidebar-w) 1fr; }
   #toc-panel { display: none; }
@@ -1051,7 +1036,7 @@ body {
   #main-content { padding: 2.5rem 1.5rem 5rem; }
 }
 
-/* ── Reading progress bar ── */
+/* Reading progress bar */
 .reading-progress {
   position: fixed;
   top: 0;
@@ -1065,7 +1050,7 @@ body {
   opacity: 0.85;
 }
 
-/* ── Mobile header ── */
+/* Mobile header */
 .mobile-header {
   display: none;
   position: fixed;
@@ -1132,7 +1117,7 @@ body {
   }
 }
 
-/* ── Mobile overlay ── */
+/* Mobile overlay */
 .mobile-overlay {
   display: none;
   position: fixed;
@@ -1147,13 +1132,13 @@ body {
   .mobile-overlay.is-visible { opacity: 1; pointer-events: auto; }
 }
 
-/* ── Sidebar search slot ── */
+/* Sidebar search slot */
 .sidebar-search {
   padding: 0rem 0.75rem;
   flex-shrink: 0;
 }
 
-/* ── Search trigger button ── */
+/* Search trigger button */
 .search-trigger {
   display: flex;
   align-items: center;
@@ -1186,7 +1171,7 @@ body {
   font-family: var(--font-mono);
 }
 
-/* ── Search modal ── */
+/* Search modal */
 .search-modal {
   position: fixed;
   inset: 0;
@@ -1355,7 +1340,7 @@ body {
   margin-right: 3px;
 }
 
-/* ── Breadcrumbs ── */
+/* Breadcrumbs */
 .breadcrumbs {
   display: flex;
   align-items: center;
@@ -1380,7 +1365,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
   user-select: none;
 }
 
-/* ── Heading anchor links ── */
+/* Heading anchor links */
 .heading-anchor {
   display: inline-flex;
   align-items: center;
@@ -1398,7 +1383,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 .heading-anchor:hover { color: var(--acc); }
 .heading-anchor.copied { color: var(--acc); opacity: 1; }
 
-/* ── Back to top ── */
+/* Back to top */
 .back-to-top {
   position: fixed;
   bottom: 2rem;
@@ -1430,9 +1415,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
   background: var(--acc-dim);
   border-color: var(--acc-border);
 }
-/* ═══════════════════════════════════════════════════════════════
-   ROADMAP PAGE  (/roadmap)
-   ═══════════════════════════════════════════════════════════════ */
+/* roadmap */
 
 .rm-page {
   max-width: 1060px;
@@ -1441,7 +1424,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
   position: relative; /* for tooltip positioning */
 }
 
-/* ── Header — matches doc-hero style ── */
+/* Header — matches doc-hero style */
 .rm-header {
   margin-bottom: 3rem;
   padding-bottom: 2rem;
@@ -1498,7 +1481,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
   flex-wrap: wrap;
 }
 
-/* ── Badges ── */
+/* Badges */
 .rm-badge {
   display: inline-flex;
   align-items: center;
@@ -1514,7 +1497,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 .rm-badge-passive    { background: rgba(165,140,70,0.13); color: #d4b96a; border: 1px solid rgba(165,140,70,0.25); }
 .rm-badge-legacy-mod { background: rgba(130,130,130,0.1); color: var(--txt-muted); border: 1px solid rgba(255,255,255,0.1); }
 
-/* ── Status / loading ── */
+/* Status / loading */
 .rm-status {
   display: flex;
   align-items: center;
@@ -1557,7 +1540,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 }
 .rm-warn svg { flex-shrink: 0; }
 
-/* ── Sections ── */
+/* Sections */
 .rm-section { margin-bottom: 3rem; }
 .rm-section-title {
   display: flex;
@@ -1573,7 +1556,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 .rm-section-count { color: var(--txt-subtle); font-size: 0.82rem; font-weight: 400; margin-left: 0.1rem; }
 .rm-section-desc  { color: var(--txt-muted); font-size: 0.81rem; margin-bottom: 1.1rem; line-height: 1.55; }
 
-/* ── Cards ── */
+/* Cards */
 .rm-cards { display: flex; flex-direction: column; gap: 1rem; }
 
 .rm-card {
@@ -1588,7 +1571,6 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 .rm-card-passive { border-left: 3px solid rgba(165,140,70,0.38); }
 .rm-card-legacy  { border-left: 3px solid rgba(255,255,255,0.09); opacity: 0.72; }
 
-/* Card header */
 .rm-card-hdr {
   display: flex;
   align-items: center;
@@ -1637,7 +1619,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 .rm-stat-missing { color: #e08080; }
 .rm-stat-legacy  { color: var(--txt-subtle); font-weight: 400; }
 
-/* ── Version grid ── */
+/* Version grid */
 .rm-grid {
   display: grid;
   grid-template-columns: 62px repeat(var(--rm-cols, 7), minmax(42px, 1fr));
@@ -1674,7 +1656,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 .rm-g-loader-forge    { color: #d4905a; }
 .rm-g-loader-neoforge { color: #80d890; }
 
-/* ── Grid cells ── */
+/* Grid cells */
 .rm-cell {
   display: flex;
   align-items: center;
@@ -1709,29 +1691,25 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 }
 .rm-cell-missing:hover { background: rgba(195,55,55,0.18); }
 
-/* Not in planned versions */
 .rm-cell-not-planned {
   background: rgba(255,255,255,0.025);
   border: 1px dashed rgba(255,255,255,0.07);
 }
-/* Loader doesn't exist for this MC version */
 .rm-cell-loader-na  {
   background: rgba(0,0,0,0.12);
   border: none;
 }
-/* Legacy mod gap */
 .rm-cell-legacy {
   background: rgba(255,255,255,0.03);
   border: 1px dashed rgba(255,255,255,0.08);
 }
 
-/* Planned version columns get a subtle underline in the header */
 .rm-g-ver-planned {
   color: var(--txt);
   border-bottom: 2px solid rgba(168,127,212,0.5);
 }
 
-/* ── Custom tooltip ── */
+/* Custom tooltip */
 .rm-tooltip {
   position: absolute;
   pointer-events: none;
@@ -1753,7 +1731,7 @@ a.breadcrumb-item:hover { color: var(--txt-muted); }
 }
 .rm-tooltip-visible { opacity: 1; }
 
-/* ── Footer note ── */
+/* Footer note */
 .rm-footnote {
   color: var(--txt-subtle);
   font-size: 0.77rem;

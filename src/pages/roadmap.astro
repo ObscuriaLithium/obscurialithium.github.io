@@ -81,7 +81,7 @@ const pageData = JSON.stringify({
   const plannedSet = new Set(plannedVersions);
   const loaders    = loaderConfigs.map(l => l.id);
 
-  // ── tooltip ───────────────────────────────────────────────────────────────
+  // tooltip
   let tooltipTarget = null;
   function showTooltip(target, text) {
     tooltipEl.textContent = text;
@@ -123,7 +123,7 @@ const pageData = JSON.stringify({
   }, { passive: false });
   window.addEventListener('scroll', hideTooltip, { passive: true });
 
-  // ── helpers ────────────────────────────────────────────────────────────────
+  // helpers
   function el(tag, cls, text) {
     const e = document.createElement(tag);
     if (cls)  e.className   = cls;
@@ -136,7 +136,7 @@ const pageData = JSON.stringify({
     return e;
   }
 
-  // ── fetch ─────────────────────────────────────────────────────────────────
+  // fetch
   async function fetchVersions(slug) {
     const r = await fetch(
       `https://api.modrinth.com/v2/project/${encodeURIComponent(slug)}/version`,
@@ -157,7 +157,7 @@ const pageData = JSON.stringify({
     return map;
   }
 
-  // ── cell state resolver ───────────────────────────────────────────────────
+  // cell state resolver
   // Returns one of: 'ok' | 'missing' | 'not-planned' | 'loader-na' | 'legacy-gap'
   // NOTE: "mod-na" has been removed — target loaders are global (from LOADER_CONFIGS),
   // not tied to which loaders a mod currently has releases for on Modrinth.
@@ -174,7 +174,7 @@ const pageData = JSON.stringify({
     return 'missing';
   }
 
-  // ── card renderer ─────────────────────────────────────────────────────────
+  // card renderer
   function renderCard(mod, coverage) {
     const isLegacy = mod.priority === 'legacy';
 
@@ -273,7 +273,7 @@ const pageData = JSON.stringify({
     return card;
   }
 
-  // ── section renderer ──────────────────────────────────────────────────────
+  // section renderer
   function renderSection(priority, items) {
     if (!items.length) return null;
     const labels = {
@@ -295,7 +295,7 @@ const pageData = JSON.stringify({
     return section;
   }
 
-  // ── main ──────────────────────────────────────────────────────────────────
+  // main
   Promise.allSettled(
     mods.map(mod =>
       mod.modrinthId

@@ -395,7 +395,7 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
 
 <script>
 (function () {
-  // ── Particle canvas ──────────────────────────────────────────────────────
+  // Particle canvas
   const canvas = document.getElementById('hero-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -441,7 +441,7 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
   draw();
 })();
 
-// ── Scroll reveal ────────────────────────────────────────────────────────────
+// Scroll reveal
 (function(){
   // Stagger delays for grouped elements (cards in a grid)
   const STAGGER = 90; // ms between each card in a grid row
@@ -483,7 +483,7 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
   document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
 })();
 
-// ── New Release rim-light particle canvas ────────────────────────────────────
+// New Release rim-light particle canvas
 (function(){
   const section = document.querySelector('.sc-new-release');
   const canvas  = section && section.querySelector('.sc-nr-canvas');
@@ -612,7 +612,7 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
 })();
 
 
-// ── Parallax orbs ────────────────────────────────────────────────────────────
+// Parallax orbs
 (function(){
   let raf=0;
   const orbs=document.querySelectorAll('.sc-orb');
@@ -625,7 +625,7 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
   },{passive:true});
 })();
 
-// ── Card cursor glow ─────────────────────────────────────────────────────────
+// Card cursor glow
 (function(){
   document.querySelectorAll('.sc-card-major').forEach(card=>{
     card.addEventListener('mousemove',e=>{
@@ -640,10 +640,10 @@ const modDataJson = JSON.stringify(MODS.map(m => ({
 </script>
 
 <script define:vars={{modDataJson}}>
-// ── Mod data (embedded at build time) ───────────────────────────────────────
+// Mod data (embedded at build time)
 const MOD_DATA = JSON.parse(modDataJson);
 
-// ── Filter + Sort ────────────────────────────────────────────────────────────
+// Filter + Sort
 (function(){
   const grid  = document.getElementById('sc-grid');
   const empty = document.getElementById('sc-empty');
@@ -867,7 +867,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 </style>
 
 <style is:global>
-/* ── Shared tokens ─────────────────────────────────────────────────────────── */
+/* Shared tokens */
 .sc-section-label{display:inline-flex;align-items:center;gap:.45rem;font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);opacity:.9;margin-bottom:.5rem}
 .sc-btn{display:inline-flex;align-items:center;gap:.45rem;padding:.55em 1.15em;border-radius:8px;font-size:.88rem;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s,box-shadow .2s;font-family:var(--font);white-space:nowrap}
 .sc-btn-primary{background:var(--acc);color:#fff;box-shadow:0 4px 18px rgba(168,127,212,.35)}
@@ -891,8 +891,8 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-status.beta{background:rgba(255,190,60,.1);color:#ffc030;border:1px solid rgba(255,190,60,.2)}
 .sc-status.alpha{background:rgba(255,90,90,.1);color:#ff7070;border:1px solid rgba(255,90,90,.2)}
 
-/* ── Reveal ──────────────────────────────────────────────────────────────── */
-/* ── Scroll reveal system ──────────────────────────────────────────────────── */
+/* Reveal */
+/* Scroll reveal system */
 [data-reveal]{opacity:0;transform:translateY(36px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
 [data-reveal].sc-revealed{opacity:1;transform:translateY(0)}
 
@@ -912,7 +912,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-toolbar[data-reveal]{transform:translateY(16px)}
 .sc-toolbar[data-reveal].sc-revealed{transform:translateY(0)}
 
-/* ── HERO ────────────────────────────────────────────────────────────────── */
+/* HERO */
 .sc-hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:-4rem -4.5rem 0 -4.5rem;padding:0 5rem}
 #hero-canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
 .sc-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(168,127,212,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(168,127,212,.04) 1px,transparent 1px);background-size:60px 60px;animation:gridDrift 30s linear infinite;pointer-events:none;z-index:0}
@@ -949,7 +949,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-scroll-hint span::after{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:4px;height:8px;background:var(--acc);border-radius:2px;opacity:.7;animation:scrollDot 1.8s ease-in-out infinite}
 @keyframes scrollDot{0%{transform:translateX(-50%) translateY(0);opacity:.7}70%{transform:translateX(-50%) translateY(12px);opacity:0}100%{transform:translateX(-50%) translateY(0);opacity:0}}
 
-/* ── NEW RELEASE ─────────────────────────────────────────────────────────── */
+/* NEW RELEASE */
 .sc-new-release{position:relative;margin:0 -4.5rem;padding:3.5rem 5rem;background:linear-gradient(160deg,rgba(168,127,212,.055) 0%,rgba(122,142,224,.03) 50%,rgba(168,127,212,.04) 100%),var(--bg-content);border-top:1px solid transparent;border-bottom:1px solid transparent;overflow:visible}
 .sc-nr-canvas{clip-path:inset(0)}
 
@@ -998,7 +998,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-nr-downloads{margin-bottom:1.5rem}
 .sc-nr-actions{display:flex;gap:.5rem;flex-wrap:wrap}
 
-/* ── SHOWCASE ────────────────────────────────────────────────────────────── */
+/* SHOWCASE */
 .sc-showcase{padding-top:4rem}
 .sc-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem}
 .sc-toolbar-left{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem}
@@ -1013,7 +1013,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-sort{background:var(--bg-card);border:1px solid var(--border);color:var(--txt-muted);font-family:var(--font);font-size:.8rem;padding:.35em 1.6em .35em .75em;border-radius:7px;cursor:pointer;transition:border-color .15s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23a87fd4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .55em center}
 .sc-sort:hover{border-color:var(--acc-border)}.sc-sort:focus{outline:none;border-color:var(--acc)}
 
-/* ── Major cards ─────────────────────────────────────────────────────────── */
+/* Major cards */
 .sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;align-items:start}
 .sc-grid[hidden]{display:none}
 .sc-card{position:relative;border-radius:16px;border:1px solid var(--border);background:var(--bg-card);transition:border-color .6s cubic-bezier(.22,1,.36,1),box-shadow .6s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),opacity .9s cubic-bezier(.22,1,.36,1);will-change:transform,opacity}
@@ -1045,7 +1045,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-card-downloads{margin-bottom:1rem}
 .sc-card-actions{display:flex;gap:.4rem;flex-wrap:wrap}
 
-/* ── Minor cards ─────────────────────────────────────────────────────────── */
+/* Minor cards */
 .sc-card-minor{display:flex;align-items:center;gap:.9rem;padding:1rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);position:relative;overflow:visible;cursor:default;transition:border-color .6s cubic-bezier(.22,1,.36,1),background .6s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),box-shadow .6s cubic-bezier(.22,1,.36,1),opacity .9s cubic-bezier(.22,1,.36,1);will-change:transform,opacity}
 .sc-card-minor:hover{border-color:rgba(168,127,212,.28);background:rgba(168,127,212,.03);transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.3),0 0 0 1px rgba(168,127,212,.08) inset}
 .sc-card-minor-glow{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 0% 50%,rgba(168,127,212,.06) 0%,transparent 60%);pointer-events:none}
@@ -1063,16 +1063,16 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-card-minor-action.sc-ma-curseforge:hover{background:rgba(245,130,32,.12);color:#f08030;border-color:rgba(245,130,32,.25)}
 .sc-card-minor-action.sc-ma-modrinth:hover{background:rgba(27,217,106,.08);color:#1bd96a;border-color:rgba(27,217,106,.18)}
 
-/* ── List view (non-default sort) ────────────────────────────────────────── */
+/* List view (non-default sort) */
 #sc-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;align-items:start;}
 #sc-list[hidden]{display:none;}
 
-/* ── Empty ───────────────────────────────────────────────────────────────── */
+/* Empty */
 .sc-empty{display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:4rem 2rem;color:var(--txt-subtle);text-align:center}
 .sc-empty[hidden]{display:none}
 .sc-empty p{font-size:.9rem}
 
-/* ── Collab ──────────────────────────────────────────────────────────────── */
+/* Collab */
 .sc-collab{position:relative;margin:1rem -4.5rem 0 -4.5rem;padding:5rem;overflow:hidden;border-top:1px solid var(--border)}
 .sc-collab-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 0% 50%,rgba(122,142,224,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 100% 50%,rgba(168,127,212,.05) 0%,transparent 55%);pointer-events:none}
 .sc-collab-inner{position:relative;z-index:1;max-width:640px}
@@ -1081,7 +1081,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-collab-text strong{color:var(--txt-head);font-weight:600}
 .sc-collab-text:last-of-type{margin-bottom:1.75rem}
 
-/* ── Footer ──────────────────────────────────────────────────────────────── */
+/* Footer */
 .sc-footer{margin:0 -4.5rem -8rem -4.5rem;padding:4rem 5rem 0;background:var(--bg-sidebar);border-top:1px solid var(--border)}
 .sc-footer-inner{display:grid;grid-template-columns:1fr auto;gap:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border)}
 .sc-footer-name{font-size:.95rem;font-weight:700;color:var(--txt-head);margin-bottom:.4rem}
@@ -1100,7 +1100,7 @@ const MOD_DATA = JSON.parse(modDataJson);
 .sc-footer-bottom{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 0;font-size:.75rem;color:var(--txt-subtle)}
 .sc-footer-made{opacity:.5}
 
-/* ── Responsive ──────────────────────────────────────────────────────────── */
+/* Responsive */
 @media(max-width:1100px){
   .sc-hero{margin:-4rem -3.5rem 0 -3.5rem;padding:0 3.5rem}
   .sc-new-release{margin:0 -3.5rem;padding:3rem 3.5rem}

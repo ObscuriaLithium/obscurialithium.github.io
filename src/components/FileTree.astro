@@ -1,18 +1,4 @@
 ---
-/**
- * FileTree component
- *
- * Usage in MDX:
- *
- * <FileTree label="pack structure" tree={[
- *   { path: 'assets/' },
- *   { path: 'assets/<mod_id>/', desc: "your pack's namespace", indent: 1 },
- *   { path: 'assets/<mod_id>/tooltips/', indent: 2 },
- *   { path: 'assets/<mod_id>/tooltips/element/', desc: 'elements', indent: 3 },
- *   { path: 'assets/<mod_id>/tooltips/element/panel/', indent: 4 },
- * ]} />
- */
-
 interface TreeEntry {
   path: string;
   desc?: string;
@@ -49,30 +35,14 @@ const rows = tree.map((entry, i) => {
   const indent = entry.indent ?? 0;
   const rest = tree.slice(i + 1);
 
-  /**
-   * Draw parent continuation guides.
-   *
-   * Example:
-   *
-   * assets/
-   * ├─ element/
-   * │  ├─ panel/
-   * │  └─ frame/
-   * └─ style/
-   *
-   * We want the │ after element/ to continue
-   * until style/ appears.
-   */
   const guides: boolean[] = Array.from({ length: indent }, (_, lvl) => {
     for (const e of rest) {
       const d = e.indent ?? 0;
 
-      // branch fully closed
       if (d < lvl + 1) {
         return false;
       }
 
-      // sibling/continuation exists
       if (d === lvl + 1) {
         return true;
       }

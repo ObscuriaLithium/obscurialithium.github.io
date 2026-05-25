@@ -1,36 +1,6 @@
 ---
-/**
- * CodeBlock component
- *
- * Wraps a fenced code block with:
- *  - FileTree-style header (dots · format label · optional filename · copy button)
- *  - Line numbers
- *  - Per-line hover highlight
- *  - Horizontal scroll (no wrap)
- *
- * Usage in MDX:
- *
- * import CodeBlock from '@/components/CodeBlock.astro';
- *
- * <CodeBlock label="JSON" file="assets/mymod/tooltips/panel.json">
- * ```json
- * { "type": "obscure_tooltips:panel" }
- * ```
- * </CodeBlock>
- *
- * Or without a filename:
- *
- * <CodeBlock label="Java">
- * ```java
- * public class Foo {}
- * ```
- * </CodeBlock>
- */
-
 interface Props {
-  /** Label shown in the header when no file is specified (e.g. "JSON", "Java", "Example") */
   label?: string;
-  /** Optional file path shown as a tab in the header */
   file?: string;
 }
 
@@ -38,7 +8,6 @@ const { label, file } = Astro.props;
 ---
 
 <div class="cb-root">
-  <!-- ── Header bar ── -->
   <div class="cb-bar">
     <span class="cb-dots" aria-hidden="true">
       <span></span>
@@ -66,14 +35,13 @@ const { label, file } = Astro.props;
     </button>
   </div>
 
-  <!-- ── Code area (slot receives the shiki-rendered <pre>) ── -->
   <div class="cb-body" data-cb-body>
     <slot />
   </div>
 </div>
 
 <style>
-  /* ── Root ── */
+  /* Root */
   .cb-root {
     background: var(--code-bg, #09070f);
     border: 1px solid var(--code-border, rgba(160,110,210,0.12));
@@ -88,7 +56,7 @@ const { label, file } = Astro.props;
     line-height: 1.6;
   }
 
-  /* ── Header bar ── */
+  /* Header bar */
   .cb-bar {
     display: flex;
     align-items: center;
@@ -166,13 +134,12 @@ const { label, file } = Astro.props;
     color: #6dc882;
   }
 
-  /* ── Code body ── */
+  /* Code body */
   .cb-body {
     padding: 0.75rem 0 0.85rem;
     overflow-x: auto;
   }
 
-  /* Strip shiki's own pre/code padding & overflow so we control it */
   .cb-body :global(pre) {
     background: none !important;
     border: none !important;
@@ -195,7 +162,6 @@ const { label, file } = Astro.props;
     font-size: 0.88rem;
   }
 
-  /* Each line rendered by shiki */
   .cb-body :global(.line) {
     display: block;
     padding-right: 1.4rem;
@@ -206,12 +172,10 @@ const { label, file } = Astro.props;
     line-height: 1.6;
     font-size: 0.88rem;   /* restore from parent code's line-height:0 */
   }
-  /* Empty lines — prevent them from collapsing to zero height */
   .cb-body :global(.line:empty::after),
   .cb-body :global(.line:not(:has(*)):not(:has(span))::after) {
     content: ' ';
   }
-  /* Hide the trailing empty line shiki always adds */
   .cb-body :global(.line:last-child:empty),
   .cb-body :global(.line:last-child:not(:has(span))) {
     display: none;
@@ -220,7 +184,6 @@ const { label, file } = Astro.props;
     background: rgba(160,110,210,0.055);
   }
 
-  /* Line number via counter */
   .cb-body :global(.line::before) {
     counter-increment: line;
     content: counter(line);
@@ -246,7 +209,6 @@ const { label, file } = Astro.props;
       const body = btn.closest('.cb-root')?.querySelector('[data-cb-body]') as HTMLElement | null;
       if (!body) return;
 
-      // Collect text from each .line span, ignoring the ::before pseudo line numbers
       const lines = Array.from(body.querySelectorAll<HTMLElement>('.line'))
         .map(line => line.innerText)
         .join('\n');

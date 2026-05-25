@@ -399,10 +399,10 @@ import Layout from '../layouts/Layout.astro';
 </article>
 
 <style>
-/* ── License page root ───────────────────────────────────────── */
+/* License page root */
 .lic-root {max-width: 860px;margin: 0 auto;padding: 3rem 0 6rem;position: relative;}
 
-/* ── Header ──────────────────────────────────────────────────── */
+/* Header */
 .lic-header {margin-bottom: 2.5rem;padding-bottom: 2.5rem;border-bottom: 1px solid var(--border);}
 .lic-eyebrow {position: relative;z-index: 1;display: inline-flex;align-items: center;gap: .4rem;font-size: .67rem;font-weight: 700;letter-spacing: .14em;text-transform: uppercase;color: var(--acc);margin-bottom: 1rem;}
 .lic-title {position: relative;z-index: 1;font-size: clamp(1.8rem, 4vw, 2.8rem);font-weight: 700;color: var(--txt-head);letter-spacing: -.03em;line-height: 1.1;margin-bottom: .9rem;}
@@ -414,13 +414,13 @@ import Layout from '../layouts/Layout.astro';
 .lic-collab-note {font-size: .82rem;color: var(--txt-subtle);}
 .lic-collab-note em { color: var(--txt-muted); font-style: italic; }
 
-/* ── Summary chips ──────────────────────────────────────────── */
+/* Summary chips */
 .lic-summary-grid {display: flex;flex-wrap: wrap;gap: .4rem;margin-bottom: 3rem;}
 .lic-chip {display: inline-flex;align-items: center;gap: .35rem;font-size: .71rem;font-weight: 600;letter-spacing: .03em;padding: .3em .8em;border-radius: 999px;border: 1px solid;}
 .lic-chip-yes {background: rgba(27,217,106,.06);color: #1bd96a;border-color: rgba(27,217,106,.18);}
 .lic-chip-no {background: rgba(255,90,80,.06);color: #ff7060;border-color: rgba(255,90,80,.18);}
 
-/* ── Sections ────────────────────────────────────────────────── */
+/* Sections */
 .lic-sections {display: flex;flex-direction: column;gap: 3rem;}
 .lic-section {position: relative;}
 .lic-section-label {display: flex;align-items: center;gap: .85rem;margin-bottom: 1.25rem;}
@@ -433,7 +433,7 @@ import Layout from '../layouts/Layout.astro';
 .lic-section > p,
 .lic-sub > p {font-size: .88rem;color: var(--txt-muted);line-height: 1.78;font-weight: 300;}
 
-/* ── Subsections ─────────────────────────────────────────────── */
+/* Subsections */
 .lic-subsections {display: flex;flex-direction: column;gap: 1.5rem;}
 .lic-sub {padding: 1.1rem 1.25rem;border-radius: var(--radius);border: 1px solid var(--border);background: rgba(255,255,255,.018);transition: border-color .3s var(--ease), background .3s var(--ease);}
 .lic-sub:hover {border-color: var(--border-acc);background: rgba(160,110,210,.03);}
@@ -441,7 +441,7 @@ import Layout from '../layouts/Layout.astro';
 .lic-sub-title svg {color: var(--acc);flex-shrink: 0;opacity: .75;}
 .lic-sub > p {font-size: .86rem;color: var(--txt-muted);line-height: 1.75;font-weight: 300;}
 
-/* ── Lists ───────────────────────────────────────────────────── */
+/* Lists */
 .lic-list, .lic-ordered-list {margin-top: .65rem;padding-left: 0;list-style: none;display: flex;flex-direction: column;gap: .35rem;}
 .lic-list li, .lic-ordered-list li {font-size: .85rem;color: var(--txt-muted);line-height: 1.65;padding-left: 1.35rem;position: relative;font-weight: 300;}
 .lic-list li::before {content: '—';position: absolute;left: 0;color: var(--acc);opacity: .5;font-size: .7rem;top: .08em;}
@@ -451,18 +451,18 @@ import Layout from '../layouts/Layout.astro';
 .lic-list strong, .lic-ordered-list strong {color: var(--txt-head);font-weight: 600;}
 .lic-list em, .lic-ordered-list em {color: var(--txt);font-style: italic;}
 
-/* ── Restrictions list ───────────────────────────────────────── */
+/* Restrictions list */
 .lic-restriction-list {list-style: none;padding: 0;margin: 0 0 1rem;display: flex;flex-direction: column;gap: .5rem;}
 .lic-restriction-list li {display: flex;flex-direction: column;gap: .15rem;padding: .7rem .9rem;border-radius: 8px;border: 1px solid rgba(255,90,80,.1);background: rgba(255,90,80,.03);}
 .lic-r-term {font-size: .8rem;font-weight: 700;color: #ff7060;letter-spacing: .01em;}
 .lic-r-desc {font-size: .82rem;color: var(--txt-muted);font-weight: 300;line-height: 1.55;}
 
-/* ── Note callout ────────────────────────────────────────────── */
+/* Note callout */
 .lic-note {display: flex;align-items: flex-start;gap: .6rem;padding: .75rem 1rem;border-radius: 8px;background: rgba(168,127,212,.06);border: 1px solid rgba(168,127,212,.15);border-left: 3px solid var(--acc);font-size: .83rem;color: var(--txt-muted);line-height: 1.65;}
 .lic-note svg {color: var(--acc);flex-shrink: 0;margin-top: .12em;}
 .lic-note em {color: var(--txt);font-style: italic;}
 
-/* ── Tier cards ──────────────────────────────────────────────── */
+/* Tier cards */
 .lic-tier-cards {display: grid;grid-template-columns: 1fr 1fr;gap: 1rem;margin-top: 1rem;}
 .lic-tier {padding: 1.1rem;border-radius: 10px;border: 1px solid var(--border);}
 .lic-tier-1 {border-color: rgba(168,127,212,.2);background: rgba(168,127,212,.04);}
@@ -473,19 +473,19 @@ import Layout from '../layouts/Layout.astro';
 .lic-tier-duration {font-size: .75rem;font-weight: 600;color: var(--txt-muted);}
 .lic-tier > p {font-size: .83rem;color: var(--txt-muted);line-height: 1.7;font-weight: 300;margin-bottom: .5rem;}
 
-/* ── Links ───────────────────────────────────────────────────── */
+/* Links */
 .lic-root a {color: var(--link);text-decoration: none;border-bottom: 1px solid rgba(155,116,200,.25);transition: color .15s, border-color .15s;}
 .lic-root a:hover {color: var(--link-hover);border-color: rgba(181,144,224,.5);}
 
-/* ── Section divider on restricted section ───────────────────── */
+/* Section divider on restricted section */
 .lic-section-restricted {padding: 1.5rem;border-radius: var(--radius-lg);background: rgba(255,60,50,.025);border: 1px solid rgba(255,90,80,.1);}
 .lic-section-restricted .lic-section-label {margin-bottom: 1rem;}
 
-/* ── Footer ──────────────────────────────────────────────────── */
+/* Footer */
 .lic-footer {margin-top: 3.5rem;padding-top: 2rem;border-top: 1px solid var(--border);}
 .lic-footer-inner p {font-size: .83rem;color: var(--txt-subtle);line-height: 1.7;}
 
-/* ── Responsive ──────────────────────────────────────────────── */
+/* Responsive */
 @media (max-width: 700px) {
   .lic-tier-cards {grid-template-columns: 1fr;}
   .lic-title {font-size: 1.8rem;}
