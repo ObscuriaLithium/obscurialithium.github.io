@@ -27,22 +27,22 @@ const pageData = JSON.stringify({
 <div class="rm-page" id="rm-root" data-rm={pageData}>
 
   <header class="rm-header">
-    <div class="rm-header-top">
-      <div>
-        <h1 class="rm-title">Roadmap</h1>
-        <p class="rm-sub">Live version support status fetched from Modrinth. Shows which MC versions and loaders each mod supports.</p>
-      </div>
+    <div class="doc-eyebrow">Obscuria Collection</div>
+    <h1 class="rm-title">Roadmap</h1>
+    <p class="rm-sub">Live version support status fetched from Modrinth. Shows which MC versions and loaders each mod supports.</p>
+
+    <div class="rm-header-meta">
       <div class="rm-legend">
         <span class="rm-legend-item"><span class="rm-pip rm-pip-ok"></span>Supported</span>
         <span class="rm-legend-item"><span class="rm-pip rm-pip-missing"></span>Missing (planned)</span>
         <span class="rm-legend-item"><span class="rm-pip rm-pip-not-planned"></span>Not planned</span>
         <span class="rm-legend-item"><span class="rm-pip rm-pip-na"></span>N/A for this loader</span>
       </div>
-    </div>
-    <div class="rm-priority-row">
-      <span class="rm-badge rm-badge-active">Active</span>in development —
-      <span class="rm-badge rm-badge-passive">Passive</span>maintained, not active —
-      <span class="rm-badge rm-badge-legacy-mod">Legacy</span>no new versions planned
+      <div class="rm-priority-row">
+        <span class="rm-badge rm-badge-active">Active</span>in development <span>   </span>
+        <span class="rm-badge rm-badge-passive">Passive</span>maintained, not active <span>   </span>
+        <span class="rm-badge rm-badge-legacy-mod">Legacy</span>no new versions planned
+      </div>
     </div>
   </header>
 
@@ -53,6 +53,9 @@ const pageData = JSON.stringify({
 
   <div id="rm-content"></div>
 
+  <!-- Custom tooltip -->
+  <div id="rm-tooltip" class="rm-tooltip" aria-hidden="true"></div>
+
 </div>
 
 <script>
@@ -60,6 +63,7 @@ const pageData = JSON.stringify({
   const root      = document.getElementById('rm-root');
   const statusEl  = document.getElementById('rm-status');
   const contentEl = document.getElementById('rm-content');
+  const tooltipEl = document.getElementById('rm-tooltip');
   const { mods, allVersions, plannedVersions, loaderConfigs } = JSON.parse(root.dataset.rm);
 
   // index of a version in allVersions — used for range checks
@@ -76,6 +80,48 @@ const pageData = JSON.stringify({
 
   const plannedSet = new Set(plannedVersions);
   const loaders    = loaderConfigs.map(l => l.id);
+
+  // ── tooltip ───────────────────────────────────────────────────────────────
+  let tooltipTarget = null;
+  function showTooltip(target, text) {
+    tooltipEl.textContent = text;
+    tooltipEl.classList.add('rm-tooltip-visible');
+    positionTooltip(target);
+    tooltipTarget = target;
+  }
+  function hideTooltip() {
+    tooltipEl.classList.remove('rm-tooltip-visible');
+    tooltipTarget = null;
+  }
+  function positionTooltip(target) {
+    const rect = target.getBoundingClientRect();
+    const pageRect = root.getBoundingClientRect();
+    const ttW = tooltipEl.offsetWidth || 120;
+    let left = rect.left - pageRect.left + rect.width / 2 - ttW / 2;
+    let top  = rect.top  - pageRect.top  - tooltipEl.offsetHeight - 8;
+    // clamp horizontally
+    left = Math.max(4, Math.min(left, pageRect.width - ttW - 4));
+    tooltipEl.style.left = left + 'px';
+    tooltipEl.style.top  = top  + 'px';
+  }
+
+  contentEl.addEventListener('mouseover', e => {
+    const cell = e.target.closest('[data-tip]');
+    if (cell) showTooltip(cell, cell.dataset.tip);
+  });
+  contentEl.addEventListener('mouseout', e => {
+    const cell = e.target.closest('[data-tip]');
+    if (cell) hideTooltip();
+  });
+  // touch support — show on tap, hide on next tap or scroll
+  contentEl.addEventListener('touchstart', e => {
+    const cell = e.target.closest('[data-tip]');
+    if (!cell) { hideTooltip(); return; }
+    if (tooltipTarget === cell) { hideTooltip(); return; }
+    e.preventDefault();
+    showTooltip(cell, cell.dataset.tip);
+  }, { passive: false });
+  window.addEventListener('scroll', hideTooltip, { passive: true });
 
   // ── helpers ────────────────────────────────────────────────────────────────
   function el(tag, cls, text) {
@@ -112,19 +158,19 @@ const pageData = JSON.stringify({
   }
 
   // ── cell state resolver ───────────────────────────────────────────────────
-  // Returns one of: 'ok' | 'missing' | 'not-planned' | 'loader-na' | 'mod-na' | 'legacy-gap'
+  // Returns one of: 'ok' | 'missing' | 'not-planned' | 'loader-na' | 'legacy-gap'
+  // NOTE: "mod-na" has been removed — target loaders are global (from LOADER_CONFIGS),
+  // not tied to which loaders a mod currently has releases for on Modrinth.
   function cellState(mod, coverage, ver, loader, verIdx, isLegacy) {
     // 1. This loader doesn't cover this MC version at all (e.g. Forge > 1.20.1)
     if (!loaderInRange[loader]?.[verIdx]) return 'loader-na';
-    // 2. This mod doesn't target this loader
-    if (!mod.loaders.includes(loader)) return 'mod-na';
-    // 3. Has the version
+    // 2. Has the version
     if (coverage[ver]?.[loader]) return 'ok';
-    // 4. Legacy mod — missing is expected
+    // 3. Legacy mod — missing is expected
     if (isLegacy) return 'legacy-gap';
-    // 5. Not in my planned-support list — missing but not alarming
+    // 4. Not in my planned-support list — missing but not alarming
     if (!plannedSet.has(ver)) return 'not-planned';
-    // 6. In planned list and missing — red!
+    // 5. In planned list and missing — red!
     return 'missing';
   }
 
@@ -199,22 +245,24 @@ const pageData = JSON.stringify({
         const state = cellState(mod, coverage, ver, loader, vi, isLegacy);
         const cell  = el('div', 'rm-cell');
 
+        const loaderName = loader === 'neoforge' ? 'NeoForge' : loader[0].toUpperCase() + loader.slice(1);
         const tooltips = {
-          'ok':          `${ver} + ${loader}: ✓ supported`,
-          'missing':     `${ver} + ${loader}: ✗ missing (planned)`,
-          'not-planned': `${ver} + ${loader}: not in planned versions`,
-          'loader-na':   `${loader}: not available for ${ver}`,
-          'mod-na':      `${mod.name} doesn't target ${loader}`,
-          'legacy-gap':  `${ver} + ${loader}: not available (legacy mod)`,
+          'ok':          `${ver} · ${loaderName} ✦ supported`,
+          'missing':     `${ver} · ${loaderName} — missing (planned)`,
+          'not-planned': `${ver} · ${loaderName} — not in target versions`,
+          'loader-na':   `${loaderName} not available for ${ver}`,
+          'legacy-gap':  `${ver} · ${loaderName} — legacy mod`,
         };
-        cell.title = tooltips[state] || '';
+        cell.dataset.tip = tooltips[state] || '';
 
         switch (state) {
-          case 'ok':          cell.classList.add('rm-cell-ok');          cell.textContent = '✦'; break;
+          case 'ok':
+            cell.classList.add('rm-cell-ok');
+            cell.innerHTML = '<svg class="rm-cell-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>';
+            break;
           case 'missing':     cell.classList.add('rm-cell-missing');     break;
           case 'not-planned': cell.classList.add('rm-cell-not-planned'); break;
           case 'loader-na':   cell.classList.add('rm-cell-loader-na');   break;
-          case 'mod-na':      cell.classList.add('rm-cell-na');          break;
           case 'legacy-gap':  cell.classList.add('rm-cell-legacy');      break;
         }
         grid.appendChild(cell);
@@ -277,7 +325,7 @@ const pageData = JSON.stringify({
       if (section) contentEl.appendChild(section);
     }
     const note = el('p', 'rm-footnote');
-    note.innerHTML = `Data from <a href="https://modrinth.com/user/Obscuria" target="_blank" rel="noopener">Modrinth</a>. Underlined version columns = planned support range. ✦ = supported. Hover cells for details.`;
+    note.innerHTML = `Data from <a href="https://modrinth.com/user/Obscuria" target="_blank" rel="noopener">Modrinth</a>. Tap or hover cells for details.`;
     contentEl.appendChild(note);
   }).catch(err => {
     statusEl.hidden = true;

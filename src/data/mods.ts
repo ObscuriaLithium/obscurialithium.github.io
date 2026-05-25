@@ -154,7 +154,7 @@ export const MODS: ModEntry[] = [
       { platform: 'curseforge', id: '891257', url: 'https://www.curseforge.com/minecraft/mc-mods/aquamirae-fabric', label: 'Fabric' },
       { platform: 'modrinth',   id: 'aquamirae', url: 'https://modrinth.com/mod/aquamirae' },
     ],
-    loaders: ['forge', 'neoforge', 'fabric'],
+    loaders: ['forge', 'fabric'],
     releaseDate: '2021-10-02',
     tier: 'featured',
     tags: ['adventure', 'story'],
