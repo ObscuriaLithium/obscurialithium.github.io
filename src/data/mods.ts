@@ -90,7 +90,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     tags: ['cosmetic'],
     isNewRelease: true,
-    roadmapPriority: 'active',
+    roadmapPriority: 'passive',
   },
 
   {
@@ -109,7 +109,7 @@ export const MODS: ModEntry[] = [
     releaseDate: '2021-10-02',
     tier: 'featured',
     tags: ['adventure', 'story'],
-    roadmapPriority: 'passive',
+    roadmapPriority: 'active',
   },
 
   {
@@ -131,7 +131,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     docsSlug: 'obscure-tooltips',
     tags: ['UI', 'cosmetic', 'client'],
-    roadmapPriority: 'active',
+    roadmapPriority: 'passive',
   },
   {
     id: 'pillager-caravans',
@@ -149,7 +149,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     docsSlug: 'pillager-caravans',
     tags: ['adventure'],
-    roadmapPriority: 'active',
+    roadmapPriority: 'passive',
   },
   {
     id: 'ars-elixirum',
@@ -169,7 +169,7 @@ export const MODS: ModEntry[] = [
     tier: 'major',
     tags: ['RPG', 'gameplay'],
     isBeta: true,
-    roadmapPriority: 'active',
+    roadmapPriority: 'passive',
   },
   {
     id: 'archogenum',
@@ -205,7 +205,7 @@ export const MODS: ModEntry[] = [
     releaseDate: '2023-03-18',
     tier: 'minor',
     tags: ['UI', 'cosmetic'],
-    roadmapPriority: 'active',
+    roadmapPriority: 'passive',
   },
   {
     id: 'maestro',
@@ -242,7 +242,7 @@ export const MODS: ModEntry[] = [
     tier: 'minor',
     docsSlug: 'fragmentum-layer',
     tags: ['library'],
-    roadmapPriority: 'active',
+    roadmapPriority: 'passive',
   },
   {
     id: 'healight',
