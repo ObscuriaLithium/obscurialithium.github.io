@@ -1,0 +1,124 @@
+---
+// Large mod block: icon, name, badges, description, stats, actions, gallery band.
+// variant: 'new' = accent-highlighted newest release, 'featured' = pinned popular mod, 'plain' = regular mod.
+// Gallery falls back to the mod's cover (image, or YouTube thumbnail linking to the video).
+import DownloadBadge from './DownloadBadge.astro';
+import PlatformButton from './PlatformButton.astro';
+import ModGallery from './ModGallery.astro';
+import type { ModEntry, ModGalleryImage } from '../data/mods';
+
+interface Props {
+  mod: ModEntry;
+  variant?: 'new' | 'featured' | 'plain';
+}
+const { mod, variant = 'plain' } = Astro.props;
+
+const eyebrow = { new: 'New release', featured: 'Featured', plain: '' }[variant];
+const released = new Date(mod.releaseDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+const yt = mod.cover?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/))([\w-]{11})/)?.[1];
+const coverItem: ModGalleryImage[] = !mod.cover ? [] : yt
+  ? [{ src: `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`, alt: `${mod.name} trailer`, href: `https://youtu.be/${yt}` }]
+  : [{ src: mod.cover, alt: `${mod.name} cover` }];
+const gallery = mod.gallery?.length ? mod.gallery : coverItem;
+---
+
+<article class={`ob-block mod-spot mod-spot--${variant}`}>
+  {variant !== 'plain' && <img src={mod.icon} alt="" class="mod-spot-ghost" aria-hidden="true" />}
+
+  <div class="mod-spot-main">
+    <header class="mod-spot-head" data-reveal data-reveal-dir="fade">
+      <img src={mod.icon} alt="" class="mod-spot-icon" />
+      <div class="mod-spot-id">
+        {eyebrow && (
+          <p class="mod-spot-eyebrow">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            {eyebrow}
+          </p>
+        )}
+        <h2 class="mod-spot-name">{mod.name}</h2>
+        <div class="mod-spot-badges">
+          {mod.isBeta && <span class="chip chip-accent">Beta</span>}
+          {mod.isAlpha && <span class="chip chip-warn">Alpha</span>}
+          {mod.loaders.map(l => <span class={`sc-loader sc-loader-${l}`}>{l}</span>)}
+          {mod.tags?.map(t => <span class="chip">{t}</span>)}
+        </div>
+      </div>
+    </header>
+
+    <div class="mod-spot-body" data-reveal data-reveal-dir="fade" data-reveal-delay="1">
+      <p class="mod-spot-tagline">{mod.tagline}</p>
+      <p class="mod-spot-desc">{mod.description}</p>
+
+      <div class="mod-spot-stats">
+        <div class="mod-spot-stat">
+          <span class="mod-spot-stat-value"><DownloadBadge sources={mod.sources} /></span>
+          <span class="mod-spot-stat-label">Downloads</span>
+        </div>
+        <span class="mod-spot-stat-sep"></span>
+        <div class="mod-spot-stat">
+          <span class="mod-spot-stat-value">{released}</span>
+          <span class="mod-spot-stat-label">Released</span>
+        </div>
+      </div>
+
+      <div class="ob-block-actions">
+        {mod.docsSlug && (
+          <a href={`/docs/${mod.docsSlug}`} class="btn btn-primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            View Docs
+          </a>
+        )}
+        <PlatformButton sources={mod.sources} size="normal" />
+      </div>
+    </div>
+  </div>
+
+  {gallery.length > 0 && (
+    <div class="mod-spot-media" data-reveal data-reveal-dir="fade" data-reveal-delay="2">
+      <ModGallery images={gallery} />
+    </div>
+  )}
+</article>
+
+<style is:global>
+.ob-block.mod-spot{--sx:var(--space-7);--sy:var(--space-8);padding:var(--sy) var(--sx) 0}
+.mod-spot-main{position:relative;z-index:1;padding-bottom:var(--sy)}
+
+.mod-spot-ghost{position:absolute;top:calc(var(--space-6) * -1);right:calc(var(--space-6) * -1);width:380px;height:380px;opacity:.07;filter:blur(1px);image-rendering:pixelated;transform:rotate(12deg);pointer-events:none}
+
+.mod-spot-head{display:flex;align-items:center;gap:var(--space-6);margin-bottom:var(--space-6)}
+.mod-spot-icon{flex:none;width:112px;height:112px;border-radius:var(--radius-lg);background:var(--surface-2)}
+.mod-spot-eyebrow{display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-2);font-size:var(--fs-2xs);font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc-text)}
+.mod-spot-name{margin:0 0 var(--space-3);font-size:var(--fs-title);font-weight:700;line-height:var(--lh-tight);letter-spacing:-.02em;color:var(--txt-head)}
+.mod-spot-badges{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2)}
+
+.mod-spot-body{max-width:620px}
+.mod-spot-tagline{margin-bottom:var(--space-3);font-size:var(--fs-lg);font-weight:600;line-height:var(--lh-snug);color:var(--txt-head)}
+.mod-spot-desc{font-size:var(--fs-base);font-weight:300;line-height:var(--lh-body);color:var(--txt-muted)}
+
+.mod-spot-stats{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-5);margin-top:var(--space-6)}
+.mod-spot-stat{display:flex;flex-direction:column;gap:var(--space-1)}
+.mod-spot-stat-value{display:flex;align-items:center;min-height:1.4em;font-size:var(--fs-lg);font-weight:700;line-height:1;color:var(--txt-head)}
+.mod-spot-stat-label{font-size:var(--fs-2xs);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-subtle)}
+.mod-spot-stat-sep{width:1px;height:32px;background:var(--border)}
+.mod-spot .ob-block-actions{margin-top:var(--space-6)}
+
+.mod-spot-media{position:relative;z-index:1;margin:0 calc(var(--sx) * -1);padding:var(--space-5) var(--sx) var(--space-6);background:var(--surface-2)}
+
+.ob-block.mod-spot--featured{background:radial-gradient(ellipse 60% 70% at 100% 0%,var(--acc-soft) 0%,transparent 65%),var(--surface)}
+.ob-block.mod-spot--new{background:radial-gradient(ellipse 80% 90% at 0% 0%,var(--acc-soft) 0%,transparent 70%),var(--surface);box-shadow:inset 0 0 0 1px var(--acc-soft),0 0 56px var(--acc-soft)}
+.mod-spot--new .mod-spot-icon{box-shadow:0 0 0 1px var(--acc-soft),0 0 32px var(--acc-soft)}
+.mod-spot--new .mod-spot-name{background:linear-gradient(100deg,var(--txt-head) 30%,var(--acc-text));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media (max-width:1100px){
+  .ob-block.mod-spot{--sx:var(--space-6);--sy:var(--space-7)}
+  .mod-spot-ghost{width:300px;height:300px}
+}
+@media (max-width:600px){
+  .ob-block.mod-spot{--sx:var(--space-5);--sy:var(--space-6)}
+  .mod-spot-head{gap:var(--space-4);margin-bottom:var(--space-5)}
+  .mod-spot-icon{width:72px;height:72px;border-radius:var(--radius)}
+  .mod-spot-ghost{width:220px;height:220px}
+}
+</style>

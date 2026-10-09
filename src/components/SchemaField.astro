@@ -46,22 +46,22 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
 .sf-row {
   display: grid;
   grid-template-columns: 38% 22% 1fr;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--border);
   transition: background 0.12s ease;
   cursor: pointer;
   outline: none;
   --sf-depth: 0;
 }
 .sf-row:last-child { border-bottom: none; }
-.sf-row:hover    { background: rgba(160,110,210,0.045); }
-.sf-row:focus-visible { background: rgba(160,110,210,0.06); box-shadow: inset 2px 0 0 var(--acc, #a87fd4); }
-.sf-row:global(.sb-highlighted) { background: rgba(160,110,210,0.09); box-shadow: inset 2px 0 0 var(--acc, #a87fd4); }
+.sf-row:hover    { background: var(--hover); }
+.sf-row:focus-visible { background: var(--hover); box-shadow: inset 2px 0 0 var(--acc); }
+.sf-row:global(.sb-highlighted) { background: var(--acc-soft); box-shadow: inset 2px 0 0 var(--acc); }
 
 .sf-cell {
   padding: 0.6rem 1.1rem;
-  font-family: var(--font, 'Sora', system-ui, sans-serif);
-  font-size: 0.84rem;
-  line-height: 1.55;
+  font-family: var(--font);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
 }
 
 /* Field name */
@@ -82,15 +82,15 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
 .sf-indent-line {
   width: 1px;
   align-self: stretch;
-  background: rgba(160,110,210,0.15);
+  background: var(--surface-3);
   margin-right: 12px;
   flex-shrink: 0;
 }
 .sf-indent-corner {
   width: 8px;
   height: 10px;
-  border-left: 1px solid rgba(160,110,210,0.15);
-  border-bottom: 1px solid rgba(160,110,210,0.15);
+  border-left: 1px solid var(--surface-3);
+  border-bottom: 1px solid var(--surface-3);
   border-radius: 0 0 0 3px;
   margin-right: 6px;
   flex-shrink: 0;
@@ -98,15 +98,14 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
 
 .sf-badge {
   display: inline-block;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.78rem;
-  background: rgba(160,110,210,0.08);
-  border: 1px solid rgba(160,110,210,0.18);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  background: var(--surface-2);
   border-radius: 4px;
   padding: 0.08em 0.52em;
-  color: #b88de0;
+  color: var(--txt-head);
   word-break: break-all;
-  line-height: 1.5;
+  line-height: var(--lh-snug);
 }
 
 /* Type */
@@ -117,31 +116,30 @@ const qualifier = required ? 'Required' : optional ? 'Optional' : null;
 }
 .sf-type {
   font-weight: 600;
-  color: var(--txt-head, rgba(238,233,250,0.95));
-  font-size: 0.83rem;
+  color: var(--txt-head);
+  font-size: var(--fs-sm);
 }
 .sf-qualifier {
-  font-size: 0.72rem;
-  color: var(--txt-muted, rgba(200,192,218,0.48));
+  font-size: var(--fs-xs);
+  color: var(--txt-muted);
   font-weight: 400;
 }
 
 /* Description */
 .sf-desc-cell {
-  color: var(--txt-muted, rgba(200,192,218,0.55));
-  font-size: 0.83rem;
+  color: var(--txt-muted);
+  font-size: var(--fs-sm);
 }
 .sf-desc-cell :global(code) {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   font-size: 0.82em;
-  background: rgba(160,110,210,0.08);
-  color: #b88de0;
+  background: var(--surface-2);
+  color: var(--txt-head);
   padding: 0.1em 0.45em;
-  border-radius: 3px;
-  border: 1px solid rgba(160,110,210,0.14);
+  border-radius: 4px;
 }
 .sf-desc-cell :global(strong) {
-  color: var(--txt-head, rgba(238,233,250,0.95));
+  color: var(--txt-head);
   font-weight: 600;
 }
 </style>

@@ -188,17 +188,13 @@ const rows = tree.map((entry, i) => {
 
 <style>
   .ft-root {
-    background: var(--code-bg, #09070f);
-    border: 1px solid var(--code-border, rgba(160,110,210,0.12));
-    border-radius: var(--radius, 10px);
+    background: var(--code-bg);
+    border-radius: var(--radius);
     overflow: hidden;
     margin: 0.75rem 0 2rem;
-    box-shadow:
-      0 8px 40px rgba(0,0,0,0.45),
-      0 0 0 1px rgba(160,110,210,0.06) inset;
 
-    font-family: var(--font-mono, monospace);
-    font-size: 0.855rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
   }
 
   .ft-bar {
@@ -208,8 +204,7 @@ const rows = tree.map((entry, i) => {
 
     padding: 0.5rem 0.75rem 0.5rem 1rem;
 
-    background: rgba(160,110,210,0.045);
-    border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.12));
+    background: var(--surface-2);
   }
 
   .ft-dots {
@@ -223,13 +218,13 @@ const rows = tree.map((entry, i) => {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: rgba(160,110,210,0.28);
+    background: var(--txt-subtle);
   }
 
   .ft-label {
     flex: 1;
-    font-size: 0.72rem;
-    color: rgba(200,192,218,0.38);
+    font-size: var(--fs-xs);
+    color: var(--txt-subtle);
     letter-spacing: 0.04em;
   }
 
@@ -241,11 +236,9 @@ const rows = tree.map((entry, i) => {
     width: 26px;
     height: 26px;
 
-    background: rgba(160,110,210,0.07);
-    border: 1px solid rgba(160,110,210,0.14);
-    border-radius: 5px;
-
-    color: rgba(160,110,210,0.4);
+    background: var(--surface-3); border: none;
+    border-radius: 6px;
+    color: var(--txt-muted);
 
     cursor: pointer;
     flex-shrink: 0;
@@ -256,16 +249,11 @@ const rows = tree.map((entry, i) => {
       border-color 0.15s;
   }
 
-  .ft-copy:hover {
-    background: rgba(160,110,210,0.13);
-    border-color: rgba(160,110,210,0.32);
-    color: #a87fd4;
-  }
+  .ft-copy:hover { background: var(--acc-soft); color: var(--acc-text); }
 
   .ft-copy.copied {
-    background: rgba(100,200,120,0.1);
-    border-color: rgba(100,200,120,0.32);
-    color: #6dc882;
+    background: var(--ok-soft);
+    color: var(--ok);
   }
 
   .ft-body {
@@ -288,7 +276,7 @@ const rows = tree.map((entry, i) => {
   }
 
   .ft-row:hover {
-    background: rgba(160,110,210,0.055);
+    background: var(--hover);
   }
 
   .ft-lines {
@@ -299,7 +287,7 @@ const rows = tree.map((entry, i) => {
 
   .ft-line {
     position: absolute;
-    background: rgb(57, 38, 76);
+    background: var(--surface-3);
   }
 
   .ft-icon {
@@ -313,11 +301,11 @@ const rows = tree.map((entry, i) => {
   }
 
   .ft-icon--dir {
-    color: #a87fd4;
+    color: var(--acc-text);
   }
 
   .ft-icon--file {
-    color: rgba(200,192,218,0.35);
+    color: var(--txt-subtle);
   }
 
   .ft-name {
@@ -326,16 +314,16 @@ const rows = tree.map((entry, i) => {
   }
 
   .ft-name--dir {
-    color: rgba(238,233,250,0.88);
+    color: var(--txt-head);
     font-weight: 500;
   }
 
   .ft-name--file {
-    color: rgba(222,216,240,0.72);
+    color: var(--txt);
   }
 
   .ft-arrow {
-    color: rgba(160,110,210,0.35);
+    color: var(--txt-subtle);
 
     margin: 0 0.5rem;
 
@@ -346,7 +334,7 @@ const rows = tree.map((entry, i) => {
   }
 
   .ft-desc {
-    color: rgba(200,192,218,0.42);
+    color: var(--txt-subtle);
 
     font-size: 0.9em;
     font-style: italic;

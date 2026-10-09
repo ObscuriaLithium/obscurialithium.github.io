@@ -1,0 +1,19 @@
+---
+interface Props {
+  src?: string;
+  placement: 'top-right' | 'bottom-left';
+}
+
+const { src, placement } = Astro.props;
+---
+
+{src && (
+  <img
+    src={src}
+    alt=""
+    aria-hidden="true"
+    class={`ob-prop ob-prop--${placement}`}
+    data-reveal
+    data-reveal-dir="prop"
+  />
+)}

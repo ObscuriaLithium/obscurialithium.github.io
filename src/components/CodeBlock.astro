@@ -41,111 +41,63 @@ const { label, file } = Astro.props;
 </div>
 
 <style>
-  /* Root */
-  .cb-root {
-    background: var(--code-bg, #09070f);
-    border: 1px solid var(--code-border, rgba(160,110,210,0.12));
-    border-radius: var(--radius, 10px);
+.cb-root {
+    margin: var(--space-3) 0 var(--space-6);
     overflow: hidden;
-    margin: 0.75rem 0 2rem;
-    box-shadow:
-      0 8px 40px rgba(0,0,0,0.45),
-      0 0 0 1px rgba(160,110,210,0.06) inset;
-    font-family: var(--font-mono, monospace);
-    font-size: 0.88rem;
+    border-radius: var(--radius);
+    background: var(--code-bg);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
     line-height: 1.6;
   }
 
-  /* Header bar */
   .cb-bar {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem 0.5rem 1rem;
-    background: rgba(160,110,210,0.045);
-    border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.12));
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+    background: var(--surface-2);
   }
+  .cb-dots { display: flex; gap: 5px; flex-shrink: 0; margin-right: var(--space-2); }
+  .cb-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--txt-subtle); }
 
-  .cb-dots {
-    display: flex;
-    gap: 5px;
-    flex-shrink: 0;
-    margin-right: 0.5rem;
-  }
-  .cb-dots span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(160,110,210,0.28);
-  }
-
-  /* File tab (with icon, looks like a real tab) */
-  .cb-file {
+  .cb-file,
+  .cb-lang {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: var(--space-2);
     flex: 1;
-    font-size: 0.72rem;
-    color: rgba(200,192,218,0.65);
-    letter-spacing: 0.01em;
-    background: rgba(160,110,210,0.07);
-    border: 1px solid rgba(160,110,210,0.16);
-    border-radius: 5px;
-    padding: 0.2rem 0.6rem;
-    max-width: max-content;
+    font-size: var(--fs-xs);
+    color: var(--txt-muted);
   }
-  .cb-file-icon {
-    color: rgba(160,110,210,0.5);
-    flex-shrink: 0;
-  }
+  .cb-file { max-width: max-content; }
+  .cb-file-icon { flex-shrink: 0; color: var(--txt-subtle); }
 
-  /* Plain language label (no filename) */
-  .cb-lang {
-    flex: 1;
-    font-size: 0.72rem;
-    color: rgba(200,192,218,0.38);
-    letter-spacing: 0.04em;
-  }
-
-  /* Copy button */
   .cb-copy {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 26px;
     height: 26px;
-    background: rgba(160,110,210,0.07);
-    border: 1px solid rgba(160,110,210,0.14);
-    border-radius: 5px;
-    color: rgba(160,110,210,0.4);
-    cursor: pointer;
-    flex-shrink: 0;
     margin-left: auto;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 6px;
+    background: var(--surface-3);
+    color: var(--txt-muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
   }
-  .cb-copy:hover {
-    background: rgba(160,110,210,0.13);
-    border-color: rgba(160,110,210,0.32);
-    color: #a87fd4;
-  }
-  .cb-copy.copied {
-    background: rgba(100,200,120,0.1);
-    border-color: rgba(100,200,120,0.32);
-    color: #6dc882;
-  }
+  .cb-copy:hover { background: var(--acc-soft); color: var(--acc-text); }
+  .cb-copy.copied { background: var(--ok-soft); color: var(--ok); }
 
-  /* Code body */
-  .cb-body {
-    padding: 0.75rem 0 0.85rem;
-    overflow-x: auto;
-  }
-
+  .cb-body { padding: var(--space-3) 0; overflow-x: auto; }
   .cb-body :global(pre) {
-    background: none !important;
-    border: none !important;
-    border-radius: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: none !important;
     box-shadow: none !important;
     overflow: visible !important;
     font-size: inherit;
@@ -155,51 +107,37 @@ const { label, file } = Astro.props;
     display: block;
     padding: 0 !important;
     background: none !important;
-    border: none !important;
     counter-reset: line;
     white-space: pre;
-    line-height: 0;        /* collapse whitespace text nodes between .line spans */
-    font-size: 0.88rem;
+    line-height: 0;
+    font-size: var(--fs-sm);
   }
-
   .cb-body :global(.line) {
-    display: block;
-    padding-right: 1.4rem;
-    border-radius: 3px;
-    transition: background 0.1s;
     position: relative;
+    display: block;
+    padding-right: var(--space-5);
     white-space: pre;
     line-height: 1.6;
-    font-size: 0.88rem;   /* restore from parent code's line-height:0 */
+    font-size: var(--fs-sm);
+    transition: background 0.1s;
   }
   .cb-body :global(.line:empty::after),
-  .cb-body :global(.line:not(:has(*)):not(:has(span))::after) {
-    content: ' ';
-  }
+  .cb-body :global(.line:not(:has(*)):not(:has(span))::after) { content: ' '; }
   .cb-body :global(.line:last-child:empty),
-  .cb-body :global(.line:last-child:not(:has(span))) {
-    display: none;
-  }
-  .cb-body :global(.line:hover) {
-    background: rgba(160,110,210,0.055);
-  }
-
+  .cb-body :global(.line:last-child:not(:has(span))) { display: none; }
+  .cb-body :global(.line:hover) { background: var(--hover); }
   .cb-body :global(.line::before) {
     counter-increment: line;
     content: counter(line);
     display: inline-block;
     width: 2.8rem;
-    padding-right: 1.2rem;
+    padding-right: var(--space-4);
     text-align: right;
-    color: rgba(160,110,210,0.22);
+    color: var(--txt-subtle);
     user-select: none;
     font-size: 0.82em;
-    line-height: calc(1.6 / 0.82);  /* compensate smaller font-size so baseline matches parent */
+    line-height: calc(1.6 / 0.82);
     vertical-align: baseline;
-    transition: color 0.1s;
-  }
-  .cb-body :global(.line:hover::before) {
-    color: rgba(160,110,210,0.45);
   }
 </style>
 

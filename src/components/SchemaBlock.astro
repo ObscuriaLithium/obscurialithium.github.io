@@ -114,60 +114,57 @@ const lines: LineData[] = rawLines.map((html, i) => ({
 
 <style>
 .sb-root {
-  background: var(--code-bg, #09070f);
-  border: 1px solid var(--code-border, rgba(160,110,210,0.12));
-  border-radius: var(--radius, 10px);
+  background: var(--code-bg);
+  border-radius: var(--radius);
   overflow: hidden;
   margin: 0.75rem 0 2rem;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(160,110,210,0.05) inset;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.88rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
   line-height: 1.6;
 }
 
 .sb-bar {
   display: flex; align-items: center; gap: 0.5rem;
   padding: 0.5rem 0.75rem 0.5rem 1rem;
-  background: rgba(160,110,210,0.045);
-  border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.1));
+  background: var(--surface-2);
 }
 .sb-dots { display: flex; gap: 5px; flex-shrink: 0; margin-right: 0.25rem; }
-.sb-dots span { width: 7px; height: 7px; border-radius: 50%; background: rgba(160,110,210,0.28); }
-.sb-label { flex: 1; font-size: 0.72rem; color: rgba(200,192,218,0.38); letter-spacing: 0.04em; font-family: var(--font-mono, monospace); }
+.sb-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--txt-subtle); }
+.sb-label { flex: 1; font-size: var(--fs-xs); color: var(--txt-subtle); letter-spacing: 0.04em; font-family: var(--font-mono); }
 .sb-copy-btn {
   display: flex; align-items: center; justify-content: center;
   width: 26px; height: 26px;
-  background: rgba(160,110,210,0.07); border: 1px solid rgba(160,110,210,0.14);
-  border-radius: 5px; color: rgba(160,110,210,0.4); cursor: pointer; flex-shrink: 0;
+  background: var(--surface-3); border: none;
+  border-radius: 6px; color: var(--txt-muted); cursor: pointer; flex-shrink: 0;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.sb-copy-btn:hover { background: rgba(160,110,210,0.13); border-color: rgba(160,110,210,0.32); color: var(--acc, #a87fd4); }
-.sb-copy-btn.copied { background: rgba(100,200,120,0.1); border-color: rgba(100,200,120,0.32); color: #6dc882; }
+.sb-copy-btn:hover { background: var(--acc-soft); color: var(--acc-text); }
+.sb-copy-btn.copied { background: var(--ok-soft);
+    color: var(--ok); }
 
 .sb-switcher {
   display: flex; align-items: center; gap: 2px;
   padding: 0.55rem 0.85rem;
-  border-bottom: 1px solid var(--code-border, rgba(160,110,210,0.1));
-  background: rgba(0,0,0,0.18); position: relative;
+  background: var(--surface); position: relative;
 }
 .sb-switch {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  font-family: var(--font, 'Sora', system-ui, sans-serif);
-  font-size: 0.73rem; font-weight: 500; color: rgba(200,192,218,0.38);
+  font-family: var(--font);
+  font-size: var(--fs-xs); font-weight: 500; color: var(--txt-subtle);
   padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer;
   background: transparent; border: none; letter-spacing: 0.02em;
   transition: color 0.18s ease; position: relative; z-index: 1; user-select: none;
 }
 .sb-switch svg { opacity: 0.5; transition: opacity 0.18s; }
-.sb-switch:hover { color: rgba(200,192,218,0.65); }
+.sb-switch:hover { color: var(--txt); }
 .sb-switch:hover svg { opacity: 0.7; }
-.sb-switch.active { color: var(--acc, #a87fd4); }
+.sb-switch.active { color: var(--acc-text); }
 .sb-switch.active svg { opacity: 1; }
 .sb-switch-pill {
   position: absolute; top: 0.45rem; left: 0.85rem; height: calc(100% - 0.9rem);
-  background: rgba(160,110,210,0.1); border: 1px solid rgba(160,110,210,0.18);
+  background: var(--acc-soft);
   border-radius: 6px; pointer-events: none; z-index: 0;
-  transition: left 0.22s cubic-bezier(0.16,1,0.3,1), width 0.22s cubic-bezier(0.16,1,0.3,1);
+  transition: left 0.22s var(--ease), width 0.22s var(--ease);
 }
 
 .sb-panel { display: block; }
@@ -180,17 +177,17 @@ const lines: LineData[] = rawLines.map((html, i) => ({
   transition: background 0.1s; position: relative; line-height: 1.6;
 }
 .sb-line.has-field { cursor: pointer; }
-.sb-line.has-field:hover { background: rgba(160,110,210,0.055); }
-.sb-line.sb-highlighted { background: rgba(160,110,210,0.1) !important; }
+.sb-line.has-field:hover { background: var(--hover); }
+.sb-line.sb-highlighted { background: var(--acc-soft) !important; }
 
 .sb-lnum {
   width: 2.8rem; text-align: right; padding-right: 1.2rem; flex-shrink: 0;
-  color: rgba(160,110,210,0.22); font-size: 0.82em;
+  color: var(--txt-subtle); font-size: 0.82em;
   line-height: calc(1.6 / 0.82); vertical-align: baseline;
   user-select: none; transition: color 0.1s;
 }
 .sb-line.has-field:hover .sb-lnum,
-.sb-line.sb-highlighted .sb-lnum { color: rgba(160,110,210,0.5); }
+.sb-line.sb-highlighted .sb-lnum { color: var(--acc-text); }
 
 .sb-line-content { flex: 1; white-space: pre; }
 .sb-line-content :global(pre),
@@ -198,31 +195,30 @@ const lines: LineData[] = rawLines.map((html, i) => ({
 
 .sb-line-hint {
   position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%);
-  color: rgba(160,110,210,0.3); opacity: 0; transition: opacity 0.15s;
+  color: var(--txt-subtle); opacity: 0; transition: opacity 0.15s;
   pointer-events: none; display: flex; align-items: center;
 }
 .sb-line.has-field:hover .sb-line-hint { opacity: 1; }
 
-.sb-schema-inner { font-family: var(--font, 'Sora', system-ui, sans-serif); }
+.sb-schema-inner { font-family: var(--font); }
 .sb-schema-head {
   display: grid; grid-template-columns: 38% 22% 1fr;
-  padding: 0.45rem 0; border-bottom: 1px solid rgba(160,110,210,0.1);
+  padding: 0.45rem 0; border-bottom: 1px solid var(--border);
 }
 .sb-schema-head span {
-  padding: 0 1.1rem; font-size: 0.63rem; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase; color: rgba(200,192,218,0.24);
+  padding: 0 1.1rem; font-size: var(--fs-2xs); font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--txt-subtle);
 }
 
 .sb-sync-note {
   display: flex; align-items: center; gap: 0.45rem;
   padding: 0.55rem 1.1rem;
-  font-family: var(--font, 'Sora', system-ui, sans-serif);
-  font-size: 0.68rem; color: rgba(200,192,218,0.2);
-  border-top: 1px solid rgba(255,255,255,0.035);
+  font-family: var(--font);
+  font-size: var(--fs-2xs); color: var(--txt-subtle);
 }
 .sb-sync-dot {
   width: 5px; height: 5px; border-radius: 50%;
-  background: var(--acc, #a87fd4); opacity: 0.35; flex-shrink: 0;
+  background: var(--acc); opacity: 0.35; flex-shrink: 0;
 }
 </style>
 

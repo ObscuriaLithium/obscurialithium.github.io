@@ -47,66 +47,44 @@ import Layout from '../layouts/Layout.astro';
   align-items: flex-start;
   justify-content: center;
   min-height: 60vh;
-  padding: 4rem 0;
+  padding: var(--space-8) 0;
 }
 .not-found-code {
+  margin-bottom: var(--space-3);
   font-size: 6rem;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
-  background: var(--grad-acc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   letter-spacing: -0.04em;
-  margin-bottom: 1rem;
-  opacity: 0.6;
+  color: var(--acc-text);
 }
 .not-found-title {
+  margin: 0 0 var(--space-3);
   font-size: 2rem;
   font-weight: 700;
-  color: var(--txt-head);
-  margin: 0 0 0.75rem;
   letter-spacing: -0.02em;
+  color: var(--txt-head);
 }
 .not-found-desc {
-  color: var(--txt-muted);
-  font-size: 1rem;
   max-width: 420px;
-  line-height: 1.7;
-  margin: 0 0 2rem;
+  margin: 0 0 var(--space-6);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+  color: var(--txt-muted);
 }
-.not-found-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
+.not-found-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .not-found-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-sm);
+  gap: var(--space-2);
+  padding: 0.6em 1.2em;
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+  font-weight: 600;
   text-decoration: none;
-  transition: all 0.15s var(--ease);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
 }
-.not-found-btn.primary {
-  background: var(--acc-dim);
-  color: var(--acc);
-  border: 1px solid var(--acc-border);
-}
-.not-found-btn.primary:hover {
-  background: rgba(160,110,210,0.15);
-  border-color: var(--acc);
-}
-.not-found-btn.secondary {
-  background: var(--bg-card);
-  color: var(--txt-muted);
-  border: 1px solid var(--border);
-}
-.not-found-btn.secondary:hover {
-  color: var(--txt);
-  border-color: rgba(255,255,255,0.12);
-}
+.not-found-btn.primary { background: var(--acc); color: var(--on-acc); }
+.not-found-btn.primary:hover { background: var(--acc-hover); }
+.not-found-btn.secondary { background: var(--surface-2); color: var(--txt); }
+.not-found-btn.secondary:hover { background: var(--surface-3); color: var(--txt-head); }
 </style>

@@ -1,0 +1,13 @@
+---
+interface Props {
+  src?: string;
+  tint?: 'violet' | 'blue' | 'lilac';
+}
+
+const { src, tint = 'violet' } = Astro.props;
+---
+
+<div class={`ob-block-wash ob-block-wash--${tint}`} aria-hidden="true">
+  {src && <img src={src} alt="" class="ob-block-bg" loading="lazy" decoding="async" />}
+</div>
+<div class="ob-block-scrim"></div>

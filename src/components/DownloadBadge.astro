@@ -122,72 +122,46 @@ const uid   = Math.random().toString(36).slice(2); // unique per instance
 
 <style is:global>
 .dl-root { display: contents; }
-
 .dl-compact {
   display: inline-flex;
   align-items: center;
   gap: 0.3em;
-  font-size: 0.78rem;
+  font-size: var(--fs-xs);
   font-weight: 500;
   color: var(--txt-muted);
 }
-.dl-badges {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
+.dl-badges { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
 .dl-badge {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.3em;
-  font-size: 0.72rem;
+  padding: 0.25em 0.75em;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--txt);
+  font-size: var(--fs-xs);
   font-weight: 600;
-  padding: 0.18em 0.6em;
-  border-radius: 4px;
-  letter-spacing: 0.03em;
 }
-.dl-total {
-  background: rgba(168,127,212,0.12);
-  color: var(--acc);
-  border: 1px solid rgba(168,127,212,0.2);
-}
-.dl-cf {
-  background: rgba(245,130,32,0.1);
-  color: #f08030;
-  border: 1px solid rgba(245,130,32,0.2);
-}
-.dl-mr {
-  background: rgba(27,217,106,0.08);
-  color: #1bd96a;
-  border: 1px solid rgba(27,217,106,0.18);
-}
+.dl-total { background: var(--acc-soft); color: var(--acc-text); }
 
-/* CSS tooltip */
-.dl-badge[data-tooltip] {
-  position: relative;
-}
 .dl-badge[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
   bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: 0.68rem;
+  padding: 0.25em 0.6em;
+  border-radius: 6px;
+  background: var(--surface-3);
+  color: var(--txt-head);
+  font-size: var(--fs-2xs);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 0.2em 0.55em;
-  border-radius: 4px;
-  background: rgba(20, 18, 28, 0.92);
-  color: #e8e0f0;
-  border: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s;
   z-index: 10;
 }
-.dl-badge[data-tooltip]:hover::after {
-  opacity: 1;
-}
+.dl-badge[data-tooltip]:hover::after { opacity: 1; }
 </style>

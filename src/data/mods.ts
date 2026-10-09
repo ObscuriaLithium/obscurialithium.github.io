@@ -47,6 +47,7 @@ export interface ModGalleryImage {
   src: string;
   alt: string;
   caption?: string;
+  href?: string;   // makes the item a link with a play badge (videos)
 }
 
 export interface ModEntry {
@@ -74,6 +75,33 @@ export function getModrinthId(mod: ModEntry): string | null {
 }
 
 export const MODS: ModEntry[] = [
+
+  {
+    id: 'ancient-remnants',
+    name: 'Ancient Remnants: Monoliths',
+    tagline: 'Discover mysterious monoliths and uncover the ancient powers hidden within!',
+    description: 'Scattered across the world are the monuments of a civilization nobody remembers – ancient ruins whose cores still hum with a power no one has ever figured out.',
+    icon: '/assets/img/mods/ancient-remnants.webp',
+    cover: 'https://media.forgecdn.net/attachments/1895/243/10-jpg.jpg',
+    gallery: [
+      { src: 'https://media.forgecdn.net/attachments/1895/243/10-jpg.jpg', alt: 'Img1' },
+      { src: 'https://media.forgecdn.net/attachments/1895/245/8-jpg.jpg', alt: 'Img2' },
+      { src: 'https://media.forgecdn.net/attachments/1897/538/screenshot-2026-08-26-at-7-36-41a-pm-png.png', alt: 'Img3' },
+      { src: 'https://media.forgecdn.net/attachments/1895/238/1-jpg.jpg', alt: 'Img4' },
+      { src: 'https://media.forgecdn.net/attachments/1895/239/2-jpg.jpg', alt: 'Img5' }
+    ],
+    sources: [
+      { platform: 'curseforge', id: '1668579', url: 'https://www.curseforge.com/minecraft/mc-mods/ancient-remnants' },
+      { platform: 'modrinth',   id: 'ancient-remnants', url: 'https://modrinth.com/mod/ancient-remnants' }
+    ],
+    loaders: ['forge', 'neoforge', 'fabric'],
+    releaseDate: '2026-08-27',
+    tier: 'major',
+    tags: ['exploration', 'structures'],
+    isNewRelease: true,
+    roadmapPriority: 'active'
+  },
+
   {
     id: 'accents',
     name: 'Accents',
@@ -89,7 +117,6 @@ export const MODS: ModEntry[] = [
     releaseDate: '2026-02-02',
     tier: 'major',
     tags: ['cosmetic'],
-    isNewRelease: true,
     roadmapPriority: 'passive',
   },
 
@@ -100,12 +127,19 @@ export const MODS: ModEntry[] = [
     description: 'Aquamirae expands your world with a frozen ocean biome – the Ice Maze above and a haunting Ship Graveyard beneath. Discover its unique ecosystem, progression, ambience, and lore as you uncover the fate of Captain Cornelia and survive the horrors lurking below the ice.',
     icon: '/assets/img/mods/aquamirae.webp',
     cover: 'https://youtu.be/l2P5w9AkEiQ?si=R9nh7bcVmeQ9SGTZ',
+    gallery: [
+      { src: 'https://media.forgecdn.net/attachments/2010/910/edited-photo-7-jpg.jpg', alt: 'Img1' },
+      { src: 'https://media.forgecdn.net/attachments/2010/888/19-jpg.jpg', alt: 'Img2' },
+      { src: 'https://media.forgecdn.net/attachments/2010/829/edited-photo-5-jpg.jpg', alt: 'Img3' },
+      { src: 'https://media.forgecdn.net/attachments/2010/930/6-jpg.jpg', alt: 'Img4' },
+      { src: 'https://media.forgecdn.net/attachments/2010/934/28-jpg.jpg', alt: 'Img5' }
+    ],
     sources: [
-      { platform: 'curseforge', id: '536254', url: 'https://www.curseforge.com/minecraft/mc-mods/aquamirae', label: 'Forge' },
+      { platform: 'curseforge', id: '536254', url: 'https://www.curseforge.com/minecraft/mc-mods/aquamirae', label: 'Forge/NeoForge' },
       { platform: 'curseforge', id: '891257', url: 'https://www.curseforge.com/minecraft/mc-mods/aquamirae-fabric', label: 'Fabric' },
       { platform: 'modrinth',   id: 'aquamirae', url: 'https://modrinth.com/mod/aquamirae' },
     ],
-    loaders: ['forge', 'fabric'],
+    loaders: ['forge', 'neoforge', 'fabric'],
     releaseDate: '2021-10-02',
     tier: 'featured',
     tags: ['adventure', 'story'],
@@ -119,9 +153,9 @@ export const MODS: ModEntry[] = [
     description: 'Obscure Tooltips is a client-side visual enhancement mod that transforms ordinary item tooltips into expressive, animated showcases. It adds immersive visual flair to your inventory by introducing smooth animations, dynamic particle effects, and ornamental accent frames that adapt to item rarity and context.',
     icon: '/assets/img/mods/obscure-tooltips.webp',
     cover: 'https://media.forgecdn.net/attachments/1335/389/obscure-tooltips-logo-jpg.jpg',
-    //gallery: [
-    //  { src: '/assets/img/snowcase/tooltips-example-style.png', alt: 'Example tooltip style' },
-    //],
+    gallery: [
+      { src: '/assets/img/showcase/tooltips-example-style.webp', alt: 'Example tooltip style' },
+    ],
     sources: [
       { platform: 'curseforge', id: '715660', url: 'https://www.curseforge.com/minecraft/mc-mods/obscure-tooltips' },
       { platform: 'modrinth',   id: 'obscure-tooltips', url: 'https://modrinth.com/mod/obscure-tooltips' },
@@ -140,6 +174,13 @@ export const MODS: ModEntry[] = [
     description: 'Pillager Caravans adds roaming, cargo-filled convoys guarded by pillagers, vindicators, and even ravagers. Instead of static treasure chests, caravans travel across biomes – sometimes near your base – with cargo that changes depending on the environment.',
     icon: '/assets/img/mods/pillager-caravans.webp',
     cover: 'https://media.forgecdn.net/attachments/1342/951/pillager-caravans-logo-jpg.jpg',
+    gallery: [
+      { src: 'https://media.forgecdn.net/attachments/1343/461/5-jpg.jpg', alt: 'Img1' },
+      { src: 'https://media.forgecdn.net/attachments/1343/459/3-jpg.jpg', alt: 'Img2' },
+      { src: 'https://media.forgecdn.net/attachments/1343/458/2-jpg.jpg', alt: 'Img3' },
+      { src: 'https://media.forgecdn.net/attachments/1343/457/1-jpg.jpg', alt: 'Img4' },
+      { src: 'https://media.forgecdn.net/attachments/1343/460/4-jpg.jpg', alt: 'Img5' }
+    ],
     sources: [
       { platform: 'curseforge', id: '1356772', url: 'https://www.curseforge.com/minecraft/mc-mods/pillager-caravans' },
       { platform: 'modrinth',   id: 'pillager-caravans', url: 'https://modrinth.com/mod/pillager-caravans' },
