@@ -1,5 +1,5 @@
 ---
-// Large mod block: icon, name, badges, description, stats, actions, gallery band.
+// Large mod block: gallery header, icon, name, badges, description, stats, actions.
 // variant: 'new' = accent-highlighted newest release, 'featured' = pinned popular mod, 'plain' = regular mod.
 // Gallery falls back to the mod's cover (image, or YouTube thumbnail linking to the video).
 import DownloadBadge from './DownloadBadge.astro';
@@ -23,11 +23,19 @@ const coverItem: ModGalleryImage[] = !mod.cover ? [] : yt
 const gallery = mod.gallery?.length ? mod.gallery : coverItem;
 ---
 
-<article class={`ob-block mod-spot mod-spot--${variant}`}>
-  {variant !== 'plain' && <img src={mod.icon} alt="" class="mod-spot-ghost" aria-hidden="true" />}
+<article data-reveal class:list={['ob-block', 'mod-spot', `mod-spot--${variant}`, { 'has-media': gallery.length > 0 }]}>
+  {gallery.length > 0 && (
+    <div class="mod-spot-media">
+      <ModGallery images={gallery} />
+    </div>
+  )}
 
   <div class="mod-spot-main">
-    <header class="mod-spot-head" data-reveal data-reveal-dir="fade">
+    {variant !== 'plain' && (
+      <div class="mod-spot-ghost-clip" aria-hidden="true"><img src={mod.icon} alt="" class="mod-spot-ghost" /></div>
+    )}
+
+    <header class="mod-spot-head">
       <img src={mod.icon} alt="" class="mod-spot-icon" />
       <div class="mod-spot-id">
         {eyebrow && (
@@ -40,21 +48,17 @@ const gallery = mod.gallery?.length ? mod.gallery : coverItem;
         <div class="mod-spot-badges">
           {mod.isBeta && <span class="chip chip-accent">Beta</span>}
           {mod.isAlpha && <span class="chip chip-warn">Alpha</span>}
-          {mod.loaders.map(l => <span class={`sc-loader sc-loader-${l}`}>{l}</span>)}
           {mod.tags?.map(t => <span class="chip">{t}</span>)}
         </div>
       </div>
     </header>
 
-    <div class="mod-spot-body" data-reveal data-reveal-dir="fade" data-reveal-delay="1">
+    <div class="mod-spot-body">
       <p class="mod-spot-tagline">{mod.tagline}</p>
       <p class="mod-spot-desc">{mod.description}</p>
 
       <div class="mod-spot-stats">
-        <div class="mod-spot-stat">
-          <span class="mod-spot-stat-value"><DownloadBadge sources={mod.sources} /></span>
-          <span class="mod-spot-stat-label">Downloads</span>
-        </div>
+        <DownloadBadge sources={mod.sources} hero />
         <span class="mod-spot-stat-sep"></span>
         <div class="mod-spot-stat">
           <span class="mod-spot-stat-value">{released}</span>
@@ -74,16 +78,13 @@ const gallery = mod.gallery?.length ? mod.gallery : coverItem;
     </div>
   </div>
 
-  {gallery.length > 0 && (
-    <div class="mod-spot-media" data-reveal data-reveal-dir="fade" data-reveal-delay="2">
-      <ModGallery images={gallery} />
-    </div>
-  )}
 </article>
 
 <style is:global>
-.ob-block.mod-spot{--sx:var(--space-7);--sy:var(--space-8);padding:var(--sy) var(--sx) 0}
-.mod-spot-main{position:relative;z-index:1;padding-bottom:var(--sy)}
+.ob-block.mod-spot{--sx:var(--space-7);--sy:var(--space-8);padding:0;overflow:visible}
+.ob-block.mod-spot:has(.pb-open){z-index:5}
+.mod-spot-main{position:relative;z-index:1;padding:var(--sy) var(--sx)}
+.mod-spot-ghost-clip{position:absolute;inset:0;overflow:hidden;border-radius:0 0 var(--radius-lg) var(--radius-lg);pointer-events:none}
 
 .mod-spot-ghost{position:absolute;top:calc(var(--space-6) * -1);right:calc(var(--space-6) * -1);width:380px;height:380px;opacity:.07;filter:blur(1px);image-rendering:pixelated;transform:rotate(12deg);pointer-events:none}
 
@@ -97,14 +98,14 @@ const gallery = mod.gallery?.length ? mod.gallery : coverItem;
 .mod-spot-tagline{margin-bottom:var(--space-3);font-size:var(--fs-lg);font-weight:600;line-height:var(--lh-snug);color:var(--txt-head)}
 .mod-spot-desc{font-size:var(--fs-base);font-weight:300;line-height:var(--lh-body);color:var(--txt-muted)}
 
-.mod-spot-stats{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-5);margin-top:var(--space-6)}
+.mod-spot-stats{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-6);margin-top:var(--space-6)}
 .mod-spot-stat{display:flex;flex-direction:column;gap:var(--space-1)}
 .mod-spot-stat-value{display:flex;align-items:center;min-height:1.4em;font-size:var(--fs-lg);font-weight:700;line-height:1;color:var(--txt-head)}
 .mod-spot-stat-label{font-size:var(--fs-2xs);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-subtle)}
-.mod-spot-stat-sep{width:1px;height:32px;background:var(--border)}
+.mod-spot-stat-sep{align-self:stretch;width:1px;background:var(--border)}
 .mod-spot .ob-block-actions{margin-top:var(--space-6)}
 
-.mod-spot-media{position:relative;z-index:1;margin:0 calc(var(--sx) * -1);padding:var(--space-5) var(--sx) var(--space-6);background:var(--surface-2)}
+.mod-spot-media{position:relative;z-index:1;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
 
 .ob-block.mod-spot--featured{background:radial-gradient(ellipse 60% 70% at 100% 0%,var(--acc-soft) 0%,transparent 65%),var(--surface)}
 .ob-block.mod-spot--new{background:radial-gradient(ellipse 80% 90% at 0% 0%,var(--acc-soft) 0%,transparent 70%),var(--surface);box-shadow:inset 0 0 0 1px var(--acc-soft),0 0 56px var(--acc-soft)}

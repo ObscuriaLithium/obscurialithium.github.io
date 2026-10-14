@@ -9,9 +9,10 @@ import type { ModSource } from '../data/mods';
 interface Props {
   sources?: ModSource[];
   compact?: boolean;
+  hero?: boolean;   // large headline total with per-platform badges underneath
 }
 
-const { sources = [], compact = false } = Astro.props;
+const { sources = [], compact = false, hero = false } = Astro.props;
 
 // Serialize sources into data attributes for the client script
 const cfIds = sources.filter(s => s.platform === 'curseforge').map(s => s.id).join(',');
@@ -25,6 +26,7 @@ const uid   = Math.random().toString(36).slice(2); // unique per instance
   data-mr={mrIds}
   data-uid={uid}
   data-compact={compact ? 'true' : 'false'}
+  data-hero={hero ? 'true' : 'false'}
 ></span>
 
 <script>
@@ -80,6 +82,28 @@ const uid   = Math.random().toString(36).slice(2); // unique per instance
     }
 
     if (cfTotal === 0 && mrTotal === 0) { root.innerHTML = ''; return; }
+
+    if (root.dataset.hero === 'true') {
+      const pills = [
+        cfTotal > 0 ? `<span class="dl-badge dl-cf" data-tooltip="CurseForge" aria-label="CurseForge: ${fmt(cfTotal)}">${cfIcon}${fmt(cfTotal)}</span>` : '',
+        mrTotal > 0 ? `<span class="dl-badge dl-mr" data-tooltip="Modrinth" aria-label="Modrinth: ${fmt(mrTotal)}">${mrIcon}${fmt(mrTotal)}</span>` : '',
+      ].join('');
+      const split = cfTotal > 0 && mrTotal > 0;
+      root.innerHTML = `
+        <div class="dl-stat">
+          <div class="dl-stat-value">
+            <span class="dl-stat-icon">${dlIcon.replace('width="13" height="13"', 'width="14" height="14"')}</span>
+            <span class="dl-stat-num" aria-label="${total.toLocaleString()} downloads">${fmt(total)}</span>
+          </div>
+          <span class="dl-stat-label">Downloads</span>
+        </div>
+        ${split ? `<span class="dl-stat-sep"></span>
+        <div class="dl-stat">
+          <div class="dl-stat-value">${pills}</div>
+          <span class="dl-stat-label">By platform</span>
+        </div>` : ''}`;
+      return;
+    }
 
     const totalBadge = total > 0 ? `
       <span class="dl-badge dl-total">
@@ -143,6 +167,13 @@ const uid   = Math.random().toString(36).slice(2); // unique per instance
   font-size: var(--fs-xs);
   font-weight: 600;
 }
+.dl-stat { display: flex; flex-direction: column; gap: var(--space-1); }
+.dl-stat-value { display: flex; align-items: center; gap: var(--space-2); min-height: 1.5rem; }
+.dl-stat-icon { display: flex; flex-shrink: 0; color: var(--txt-muted); }
+.dl-stat-num { font-size: var(--fs-xl); font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--txt-head); }
+.dl-stat-label { font-size: var(--fs-2xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--txt-subtle); }
+.dl-stat-sep { align-self: stretch; width: 1px; background: var(--border); }
+.dl-stat .dl-badge { padding: 0.35em 0.8em; line-height: 1; }
 .dl-total { background: var(--acc-soft); color: var(--acc-text); }
 
 .dl-badge[data-tooltip]::after {
